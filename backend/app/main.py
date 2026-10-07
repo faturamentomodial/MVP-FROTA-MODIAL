@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.api.router import api_router
 from app.core.config import settings
+from app.spa import SPAStaticFiles
 
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
@@ -35,3 +36,8 @@ async def unhandled_error(_: Request, exc: Exception):
     logger.exception("Unhandled application error", exc_info=exc)
     return JSONResponse(status_code=500, content={"detail": "Erro interno. Tente novamente."})
 
+
+# No container completo, o frontend usa /api e /uploads no mesmo dominio.
+# O mount fica depois de todas as rotas da API.
+if settings.frontend_dist is not None:
+    app.mount("/", SPAStaticFiles(directory=settings.frontend_dist, html=True), name="frontend")

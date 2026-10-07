@@ -1,5 +1,7 @@
 # Modial Controle de Frota
 
+Para hospedar o sistema completo (interface, API, banco e fotos), consulte [publicação na Render](docs/publicacao-render.md). O repositório inclui `render.yaml` e um Dockerfile completo na raiz.
+
 Para publicar a interface e configurar a API externa, consulte [publicação na Vercel](docs/publicacao-vercel.md).
 
 MVP independente para checklist e controle de frota da Modial Artigos Funerários. Motoristas usam um fluxo mobile linear; gestores acompanham cadastros, viagens, checklists, ocorrências, quilometragem e indicadores em um painel responsivo.

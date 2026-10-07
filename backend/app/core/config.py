@@ -1,7 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -23,6 +23,16 @@ class Settings(BaseSettings):
     cors_origins: str = "http://localhost:5173,http://localhost:3000"
     upload_dir: Path = BASE_DIR / "storage" / "uploads"
     max_upload_size_mb: int = 5
+    frontend_dist: Path | None = None
+
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def use_psycopg_driver(cls, value: str) -> str:
+        # Render fornece uma URL PostgreSQL sem o nome do driver SQLAlchemy.
+        for prefix in ("postgres://", "postgresql://"):
+            if value.startswith(prefix):
+                return "postgresql+psycopg://" + value[len(prefix):]
+        return value
 
     @property
     def allowed_origins(self) -> list[str]:
@@ -35,4 +45,3 @@ def get_settings() -> Settings:
 
 
 settings = get_settings()
-
