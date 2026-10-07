@@ -1,0 +1,58 @@
+name: Deploy Oracle
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: oracle-production
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ORACLE_HOST: ${{ secrets.ORACLE_HOST }}
+      ORACLE_USER: ${{ secrets.ORACLE_USER }}
+      ORACLE_SSH_KEY: ${{ secrets.ORACLE_SSH_KEY }}
+      ORACLE_KNOWN_HOSTS: ${{ secrets.ORACLE_KNOWN_HOSTS }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build image on GitHub
+        run: |
+          docker build --tag "modial-frota:${GITHUB_SHA}" .
+          docker save "modial-frota:${GITHUB_SHA}" | gzip > app-image.tar.gz
+      - name: Configure SSH
+        run: |
+          test -n "$ORACLE_HOST"
+          test -n "$ORACLE_USER"
+          test -n "$ORACLE_SSH_KEY"
+          test -n "$ORACLE_KNOWN_HOSTS"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$ORACLE_SSH_KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$ORACLE_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
+          ssh-keygen -y -f ~/.ssh/id_ed25519 > /dev/null
+      - name: Transfer image and compose
+        run: |
+          ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$ORACLE_USER@$ORACLE_HOST" 'mkdir -p ~/modial-frota && test -s ~/modial-frota/.env'
+          scp -o BatchMode=yes -o StrictHostKeyChecking=yes app-image.tar.gz docker-compose.oracle.yml "$ORACLE_USER@$ORACLE_HOST:modial-frota/"
+      - name: Deploy and check health
+        run: |
+          ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$ORACLE_USER@$ORACLE_HOST" bash -s -- "$GITHUB_SHA" <<'REMOTE'
+          set -euo pipefail
+          cd ~/modial-frota
+          gzip -dc app-image.tar.gz | sudo docker load
+          rm app-image.tar.gz
+          export APP_IMAGE="modial-frota:$1"
+          sudo env APP_IMAGE="$APP_IMAGE" docker compose -f docker-compose.oracle.yml config --quiet
+          sudo env APP_IMAGE="$APP_IMAGE" docker compose -f docker-compose.oracle.yml up -d --wait --wait-timeout 240
+          printf 'APP_IMAGE=%s\n' "$APP_IMAGE" > .release.env
+          chmod 600 .release.env
+          curl --fail --silent --show-error http://127.0.0.1/health
+          REMOTE
+      - name: Remove SSH credentials from runner
+        if: always()
+        run: rm -f ~/.ssh/id_ed25519 ~/.ssh/known_hosts
