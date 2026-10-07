@@ -3,7 +3,6 @@ import logging
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from fastapi.staticfiles import StaticFiles
 
 from app.api.router import api_router
 from app.core.config import settings
@@ -21,8 +20,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-settings.upload_dir.mkdir(parents=True, exist_ok=True)
-app.mount("/uploads", StaticFiles(directory=settings.upload_dir), name="uploads")
 app.include_router(api_router)
 
 
@@ -37,7 +34,7 @@ async def unhandled_error(_: Request, exc: Exception):
     return JSONResponse(status_code=500, content={"detail": "Erro interno. Tente novamente."})
 
 
-# No container completo, o frontend usa /api e /uploads no mesmo dominio.
+# No container completo, o frontend usa /api no mesmo dominio.
 # O mount fica depois de todas as rotas da API.
 if settings.frontend_dist is not None:
     app.mount("/", SPAStaticFiles(directory=settings.frontend_dist, html=True), name="frontend")

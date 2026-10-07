@@ -1,5 +1,5 @@
-import { Camera, CheckCircle2, ImagePlus, LoaderCircle, X } from 'lucide-react'
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { CheckCircle2, LoaderCircle, X } from 'lucide-react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import { labelEnum } from '../utils/format'
 
 export function Button({ children, loading, variant = 'primary', className = '', ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & {loading?:boolean;variant?:'primary'|'secondary'|'danger'|'ghost'}) {
@@ -23,19 +23,6 @@ export function Modal({ open, title, children, onClose }: {open:boolean;title:st
       <header><h2 id="modal-title">{title}</h2><button ref={closeRef} className="icon-button" onClick={onClose} aria-label="Fechar"><X /></button></header>
       {children}
     </section>
-  </div>
-}
-
-export function PhotoInput({ file, onChange }: {file?:File;onChange:(file?:File)=>void}) {
-  const [preview, setPreview] = useState<string>()
-  useEffect(() => {
-    if (!file) { setPreview(undefined); return }
-    const url = URL.createObjectURL(file); setPreview(url); return () => URL.revokeObjectURL(url)
-  }, [file])
-  return <div className="photo-input">
-    {preview && <img src={preview} alt="Prévia da foto selecionada" />}
-    <label className="button button--secondary"><Camera size={19}/>{file ? 'Trocar foto' : 'Adicionar foto'}<input type="file" accept="image/jpeg,image/png,image/webp" capture="environment" onChange={e => onChange(e.target.files?.[0])}/></label>
-    {file && <button className="text-button" type="button" onClick={()=>onChange(undefined)}><ImagePlus size={16}/> Remover</button>}
   </div>
 }
 

@@ -7,7 +7,7 @@ O perfil `ADMIN` acessa navegação lateral com:
 - configuração, ordem e obrigatoriedade do checklist;
 - histórico e detalhe das viagens;
 - histórico por motorista e veículo;
-- consulta de ocorrências, fotos, estado e observação de tratamento.
+- consulta de ocorrências, estado e observação de tratamento.
 
 Não existe ranking ou pontuação. Os indicadores são operacionais e respeitam os filtros aplicáveis.
 

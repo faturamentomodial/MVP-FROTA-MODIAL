@@ -171,7 +171,6 @@ class ChecklistAnswer(Base):
     checklist_item_id: Mapped[int] = mapped_column(ForeignKey("checklist_items.id"), nullable=False)
     status: Mapped[AnswerStatus] = mapped_column(Enum(AnswerStatus, native_enum=False), nullable=False)
     observacao: Mapped[str | None] = mapped_column(Text)
-    foto_url: Mapped[str | None] = mapped_column(String(500))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
 
     checklist: Mapped[Checklist] = relationship(back_populates="answers")
@@ -200,18 +199,6 @@ class Occurrence(TimestampMixin, Base):
     trip: Mapped[Trip] = relationship(back_populates="occurrences")
     driver: Mapped[Driver] = relationship()
     vehicle: Mapped[Vehicle] = relationship()
-    attachments: Mapped[list["OccurrenceAttachment"]] = relationship(cascade="all, delete-orphan", lazy="selectin")
-
-
-class OccurrenceAttachment(Base):
-    __tablename__ = "occurrence_attachments"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    occurrence_id: Mapped[int] = mapped_column(ForeignKey("occurrences.id"), nullable=False)
-    file_url: Mapped[str] = mapped_column(String(500), nullable=False)
-    file_name: Mapped[str] = mapped_column(String(255), nullable=False)
-    mime_type: Mapped[str] = mapped_column(String(100), nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
 
 
 class AuditLog(Base):

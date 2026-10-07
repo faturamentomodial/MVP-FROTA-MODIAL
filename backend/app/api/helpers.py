@@ -54,7 +54,6 @@ def occurrence_dict(item: Occurrence) -> dict:
         "observacao_gestor": item.observacao_gestor,
         "created_at": item.created_at,
         "updated_at": item.updated_at,
-        "attachments": item.attachments,
         "driver_name": item.driver.nome if item.driver else None,
         "vehicle_plate": item.vehicle.placa if item.vehicle else None,
     }

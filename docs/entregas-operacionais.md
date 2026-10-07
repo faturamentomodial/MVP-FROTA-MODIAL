@@ -19,7 +19,7 @@ As seções abaixo descrevem a implementação inicial; referências à ordem fi
 ## Sistema existente auditado
 
 - Frontend React/TypeScript/Vite: páginas por perfil, layouts mobile e administrativo, componentes UI compartilhados e cliente fetch com JWT.
-- Backend FastAPI/Pydantic/SQLAlchemy: autenticação JWT, dependências por perfil, serviços de viagens e auditoria, paginação e uploads.
+- Backend FastAPI/Pydantic/SQLAlchemy: autenticação JWT, dependências por perfil, serviços de viagens e auditoria, paginação.
 - PostgreSQL no Docker; SQLite nos testes. Evolução do banco com Alembic.
 - `Trip` já representa a saída/rota, com motorista, veículo, checklist, notas e ocorrências. `TripInvoice` já permite várias notas e volumes. A ordem existente é `TripInvoice.id`; ela foi mantida.
 - Cadastros de motoristas e veículos, abertura de saída, carga, checklist, início e retorno, ocorrências gerais e dashboard já existiam. Os 5 testes de regressão passaram antes das alterações.

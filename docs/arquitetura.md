@@ -8,8 +8,7 @@ O sistema é um monólito modular independente. Não compartilha código, banco 
 - FastAPI expõe a API REST e concentra autorização e regras críticas.
 - SQLAlchemy gerencia persistência; Alembic controla a evolução do schema.
 - PostgreSQL armazena a operação.
-- `UploadService` grava imagens em volume local. O contrato isolado permite implementar S3 depois.
-- Nginx serve o frontend e encaminha `/api` e `/uploads` no Compose.
+- Nginx serve o frontend e encaminha `/api` no Compose.
 
 ## Organização backend
 

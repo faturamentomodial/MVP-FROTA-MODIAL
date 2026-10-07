@@ -46,14 +46,18 @@ def test_complete_driver_flow_and_dashboard(client, admin_headers, driver_header
     assert started.json()["status"] == "EM_ANDAMENTO"
 
     occurrence = client.post("/api/occurrences", headers=driver_headers, json={
-        "trip_id": trip_id, "tipo": "PNEU", "descricao": "Pneu perdeu pressão", "local": "Guarulhos", "attachments": []
+        "trip_id": trip_id, "tipo": "PNEU", "descricao": "Pneu perdeu pressão", "local": "Guarulhos"
     })
     assert occurrence.status_code == 201
+    assert "attachments" not in occurrence.json()
     assert occurrence.json()["driver_id"] == trip.json()["driver_id"]
     assert occurrence.json()["vehicle_id"] == trip.json()["vehicle_id"]
     occurrence_id = occurrence.json()["id"]
     fetched = client.get(f"/api/occurrences/{occurrence_id}", headers=admin_headers)
     assert fetched.status_code == 200
+    assert fetched.json()["descricao"] == "Pneu perdeu pressão"
+    assert fetched.json()["local"] == "Guarulhos"
+    assert "attachments" not in fetched.json()
     updated = client.patch(f"/api/occurrences/{occurrence_id}", headers=admin_headers, json={"status": "EM_ANALISE", "observacao_gestor": "Em tratativa"})
     assert updated.json()["status"] == "EM_ANALISE"
 

@@ -9,10 +9,6 @@ services:
     dockerfilePath: ./Dockerfile
     dockerContext: .
     healthCheckPath: /health
-    disk:
-      name: fotos-frota
-      mountPath: /data/uploads
-      sizeGB: 1
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -22,8 +18,6 @@ services:
         generateValue: true
       - key: ENVIRONMENT
         value: production
-      - key: UPLOAD_DIR
-        value: /data/uploads
       - key: CORS_ORIGINS
         value: ""
 

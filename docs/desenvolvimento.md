@@ -2,7 +2,7 @@
 
 ## Variáveis
 
-Copie `.env.example` para `.env`. Defina uma `SECRET_KEY` longa e aleatória. A aplicação aceita ainda `DATABASE_URL`, `CORS_ORIGINS`, `UPLOAD_DIR`, `MAX_UPLOAD_SIZE_MB` e `ACCESS_TOKEN_EXPIRE_MINUTES`.
+Copie `.env.example` para `.env`. Defina uma `SECRET_KEY` longa e aleatória. A aplicação aceita ainda `DATABASE_URL`, `CORS_ORIGINS` e `ACCESS_TOKEN_EXPIRE_MINUTES`.
 
 ## Banco e usuário inicial
 
@@ -25,16 +25,12 @@ cd frontend
 npm run build
 ```
 
-## Uploads
-
-São aceitos `image/jpeg`, `image/png` e `image/webp`, até 5 MB por padrão. O nome físico é aleatório. Não coloque segredos em logs nem exponha o caminho interno do volume.
-
 ## Produção
 
 - configure segredos fortes fora do repositório;
 - use HTTPS no proxy de borda;
 - mantenha `ENVIRONMENT=production`;
-- faça backup do PostgreSQL e do storage;
+- faça backup do PostgreSQL;
 - restrinja `CORS_ORIGINS` ao domínio real;
 - execute migrações antes de subir a nova versão.
 

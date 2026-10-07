@@ -9,7 +9,7 @@
 - `trip_invoices`: notas fiscais e volumes carregados por viagem.
 - `checklist_items`: configuração ordenada dos itens.
 - `checklists` e `checklist_answers`: inspeção por viagem e respostas.
-- `occurrences` e `occurrence_attachments`: fatos de rota e imagens.
+- `occurrences`: fatos de rota descritos por escrito.
 - `audit_logs`: trilha simples de mutações.
 
 ## Invariantes

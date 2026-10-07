@@ -1,6 +1,6 @@
 # Modial Controle de Frota
 
-Para hospedar o sistema completo (interface, API, banco e fotos), consulte [publicação na Render](docs/publicacao-render.md). O repositório inclui `render.yaml` e um Dockerfile completo na raiz.
+Para hospedar o sistema completo (interface, API e banco), consulte [publicação na Render](docs/publicacao-render.md). O repositório inclui `render.yaml` e um Dockerfile completo na raiz.
 
 Para publicar a interface e configurar a API externa, consulte [publicação na Vercel](docs/publicacao-vercel.md).
 
@@ -68,7 +68,7 @@ npm install
 npm run dev
 ```
 
-O Vite encaminha `/api` e `/uploads` para `localhost:8000`.
+O Vite encaminha `/api` para `localhost:8000`.
 
 ## Estrutura
 
@@ -76,7 +76,6 @@ O Vite encaminha `/api` e `/uploads` para `localhost:8000`.
 - `backend/migrations`: histórico Alembic.
 - `backend/tests`: testes de autenticação e fluxo operacional.
 - `frontend/src`: páginas separadas por perfil, componentes, layouts e serviços.
-- `storage/uploads`: imagens locais de desenvolvimento.
 - `docs`: arquitetura, banco, API e fluxos.
 
 Consulte [desenvolvimento](docs/desenvolvimento.md) para configuração detalhada.

@@ -2,12 +2,12 @@ from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
-from sqlalchemy.orm import Session, joinedload, selectinload
+from sqlalchemy.orm import Session, joinedload
 
 from app.api.dependencies import get_current_user, require_admin, require_driver
 from app.api.helpers import occurrence_dict
 from app.core.database import get_db
-from app.models import Occurrence, OccurrenceAttachment, User
+from app.models import Occurrence, User
 from app.models.enums import OccurrenceStatus, OccurrenceType, TripStatus, UserRole
 from app.repositories.pagination import paginate
 from app.schemas import OccurrenceCreate, OccurrenceOut, OccurrenceUpdate, Page
@@ -19,7 +19,7 @@ router = APIRouter(prefix="/occurrences", tags=["Ocorrências"])
 
 
 def occurrence_query():
-    return select(Occurrence).options(joinedload(Occurrence.driver), joinedload(Occurrence.vehicle), selectinload(Occurrence.attachments))
+    return select(Occurrence).options(joinedload(Occurrence.driver), joinedload(Occurrence.vehicle))
 
 
 @router.post("", response_model=OccurrenceOut, status_code=201)
@@ -38,7 +38,6 @@ def create(payload: OccurrenceCreate, db: Session = Depends(get_db), user: User 
         descricao=payload.descricao,
         local=payload.local,
     )
-    occurrence.attachments = [OccurrenceAttachment(**attachment.model_dump()) for attachment in payload.attachments]
     db.add(occurrence)
     db.flush()
     audit(db, user, "CRIAR", "OCCURRENCE", occurrence.id, {"trip_id": trip.id, "tipo": payload.tipo.value})

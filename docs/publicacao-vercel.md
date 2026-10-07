@@ -1,6 +1,6 @@
 # Publicação para testes na Vercel
 
-A Vercel publica o frontend React/Vite. A API Python, o PostgreSQL e as fotos devem estar em um servidor externo. O `docker-compose.yml` atual continua sendo a opção para testes locais.
+A Vercel publica o frontend React/Vite. A API Python e o PostgreSQL devem estar em um servidor externo. O `docker-compose.yml` atual continua sendo a opção para testes locais.
 
 ## 1. Preparar a API
 
@@ -10,7 +10,6 @@ Publique `backend/Dockerfile` em um servidor que execute containers, com HTTPS e
 - `SECRET_KEY`: chave aleatória de pelo menos 32 caracteres.
 - `ENVIRONMENT=production`.
 - `CORS_ORIGINS=https://seu-projeto.vercel.app`: endereço exato do frontend, sem barra final. Para outros domínios, separe por vírgula.
-- `UPLOAD_DIR=/data/uploads`: monte um volume persistente nesse caminho. As fotos não podem depender do disco temporário do container.
 
 Confirme que `https://ENDERECO-DA-API/health` retorna `{"status":"ok"}`. O health check só confirma a API; login e cadastros também precisam ser testados para validar o banco. Cadastre os usuários de teste pelo procedimento de administração do projeto. O seed de desenvolvimento não executa com `ENVIRONMENT=production`; nunca use o banco de operação para dados fictícios.
 
@@ -33,7 +32,7 @@ O projeto está vinculado ao [repositório MVP-FROTA-MODIAL](https://github.com/
 
 As variáveis `VITE_` ficam públicas no navegador. `SECRET_KEY`, senhas e `DATABASE_URL` pertencem somente ao backend. `.env` e `.vercel` estão ignorados no Git.
 
-O `frontend/vercel.json` configura o build e o fallback para `index.html`, permitindo atualizar páginas internas. As chamadas à API vão diretamente ao endereço configurado; as fotos em `/uploads` são abertas no domínio da API. O proxy local do Vite não existe na Vercel.
+O `frontend/vercel.json` configura o build e o fallback para `index.html`, permitindo atualizar páginas internas. As chamadas à API vão diretamente ao endereço configurado. O proxy local do Vite não existe na Vercel.
 
 Para previews com URLs diferentes, inclua o endereço exato autorizado em `CORS_ORIGINS` e reinicie o backend. Use uma API e um banco exclusivos para testes.
 
@@ -41,11 +40,11 @@ Para previews com URLs diferentes, inclua o endereço exato autorizado em `CORS_
 
 1. Abra `/login`, faça login e confirme o perfil e os cadastros.
 2. Atualize uma página interna diretamente e confirme que ela abre.
-3. Inicie uma viagem, preencha o checklist e envie uma foto.
-4. Registre uma ocorrência com foto e abra o anexo no painel do gestor.
+3. Inicie uma viagem, preencha o checklist.
+4. Registre uma ocorrência por escrito e confira a descrição no painel do gestor.
 5. Finalize o fluxo e confirme os dados após sair e entrar novamente.
-6. Reinicie o backend e confirme que os registros e as fotos permanecem disponíveis.
+6. Reinicie o backend e confirme que os registros permanecem disponíveis.
 
-Se o navegador indicar erro de CORS, confira o domínio do frontend na API. Se uma chamada de API retornar HTML, confira `VITE_API_URL` e refaça o deploy. Se fotos retornarem 404 após reinício, confira o volume de uploads.
+Se o navegador indicar erro de CORS, confira o domínio do frontend na API. Se uma chamada de API retornar HTML, confira `VITE_API_URL` e refaça o deploy.
 
 Referência: [Vite na Vercel](https://vercel.com/docs/frameworks/frontend/vite).

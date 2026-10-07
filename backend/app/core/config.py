@@ -21,8 +21,6 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 480
     database_url: str = "postgresql+psycopg://fleet:fleet@db:5432/fleet"
     cors_origins: str = "http://localhost:5173,http://localhost:3000"
-    upload_dir: Path = BASE_DIR / "storage" / "uploads"
-    max_upload_size_mb: int = 5
     frontend_dist: Path | None = None
 
     @field_validator("database_url", mode="before")

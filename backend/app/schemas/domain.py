@@ -260,10 +260,10 @@ class ChecklistItemOut(ORMModel):
 
 
 class ChecklistAnswerIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     checklist_item_id: int
     status: AnswerStatus
     observacao: str | None = Field(default=None, max_length=2000)
-    foto_url: str | None = Field(default=None, max_length=500)
 
     @model_validator(mode="after")
     def require_problem_description(self):
@@ -282,7 +282,6 @@ class ChecklistAnswerOut(ORMModel):
     checklist_item_id: int
     status: AnswerStatus
     observacao: str | None
-    foto_url: str | None
     created_at: datetime
     item: ChecklistItemOut
 
@@ -299,26 +298,12 @@ class ChecklistOut(ORMModel):
     answers: list[ChecklistAnswerOut]
 
 
-class AttachmentIn(BaseModel):
-    file_url: str = Field(max_length=500)
-    file_name: str = Field(max_length=255)
-    mime_type: str = Field(max_length=100)
-
-
-class AttachmentOut(ORMModel):
-    id: int
-    file_url: str
-    file_name: str
-    mime_type: str
-    created_at: datetime
-
-
 class OccurrenceCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     trip_id: int
     tipo: OccurrenceType
     descricao: str = Field(min_length=3, max_length=4000)
     local: str | None = Field(default=None, max_length=255)
-    attachments: list[AttachmentIn] = Field(default_factory=list, max_length=5)
 
 
 class OccurrenceUpdate(BaseModel):
@@ -340,7 +325,6 @@ class OccurrenceOut(ORMModel):
     observacao_gestor: str | None
     created_at: datetime
     updated_at: datetime
-    attachments: list[AttachmentOut]
     driver_name: str | None = None
     vehicle_plate: str | None = None
 
@@ -388,9 +372,3 @@ class Page(BaseModel, Generic[T]):
     page: int
     page_size: int
     pages: int
-
-
-class UploadOut(BaseModel):
-    file_url: str
-    file_name: str
-    mime_type: str

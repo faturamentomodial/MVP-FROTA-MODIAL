@@ -13,7 +13,6 @@ Base local: `http://localhost:8000/api`. Rotas protegidas recebem `Authorization
 - `GET|POST /checklist-items`, `PUT /checklist-items/{id}`
 - `POST /trips/{id}/checklist`, `GET /checklists/{id}`
 - `POST|GET /occurrences`, `GET|PATCH /occurrences/{id}`
-- `POST /uploads`
 - `GET /dashboard`
 
 Listas administrativas usam `page` e `page_size`. Viagens e ocorrências aceitam filtros por período, motorista, veículo e estado. O dashboard aceita `date_from`, `date_to`, `driver_id`, `vehicle_id` e `occurrence_type`.
