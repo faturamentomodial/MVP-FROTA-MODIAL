@@ -1,0 +1,12 @@
+<svg width="180" height="72" viewBox="0 0 180 72" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title">
+  <title id="title">Modial</title>
+  <circle cx="35" cy="32" r="28" fill="#F5872B" stroke="#171717" stroke-width="3"/>
+  <path d="M35 57C27 47 27 35 35 23C43 35 43 47 35 57Z" fill="none" stroke="#171717" stroke-width="2.5"/>
+  <path d="M34 57C22 55 15 48 11 38C22 39 30 45 34 57Z" fill="none" stroke="#171717" stroke-width="2.5"/>
+  <path d="M36 57C48 55 55 48 59 38C48 39 40 45 36 57Z" fill="none" stroke="#171717" stroke-width="2.5"/>
+  <path d="M29 39C24 32 19 28 15 27C15 34 17 39 22 44" stroke="#171717" stroke-width="2.5"/>
+  <path d="M41 39C46 32 51 28 55 27C55 34 53 39 48 44" stroke="#171717" stroke-width="2.5"/>
+  <text x="72" y="35" fill="#171717" font-family="Arial, sans-serif" font-size="23" font-weight="800">MODIAL</text>
+  <text x="73" y="50" fill="#5D5D5D" font-family="Arial, sans-serif" font-size="8" font-weight="700" letter-spacing="1.2">CONTROLE DE FROTA</text>
+</svg>
+

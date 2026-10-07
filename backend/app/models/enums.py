@@ -1,0 +1,59 @@
+from enum import StrEnum
+
+
+class UserRole(StrEnum):
+    ADMIN = "ADMIN"
+    MOTORISTA = "MOTORISTA"
+
+
+class VehicleStatus(StrEnum):
+    DISPONIVEL = "DISPONIVEL"
+    EM_VIAGEM = "EM_VIAGEM"
+    ATENCAO = "ATENCAO"
+    INATIVO = "INATIVO"
+
+
+class TripStatus(StrEnum):
+    ABERTA = "ABERTA"
+    EM_ANDAMENTO = "EM_ANDAMENTO"
+    FINALIZADA = "FINALIZADA"
+    CANCELADA = "CANCELADA"
+
+
+class DeliveryStatus(StrEnum):
+    PENDENTE = "PENDENTE"
+    EM_ENTREGA = "EM_ENTREGA"
+    ENTREGUE = "ENTREGUE"
+    NAO_ENTREGUE = "NAO_ENTREGUE"
+
+
+class ChecklistStatus(StrEnum):
+    APROVADO = "APROVADO"
+    COM_PROBLEMAS = "COM_PROBLEMAS"
+
+
+class AnswerStatus(StrEnum):
+    OK = "OK"
+    PROBLEMA = "PROBLEMA"
+
+
+class OccurrenceType(StrEnum):
+    ACIDENTE = "ACIDENTE"
+    AVARIA = "AVARIA"
+    PROBLEMA_MECANICO = "PROBLEMA_MECANICO"
+    PROBLEMA_ELETRICO = "PROBLEMA_ELETRICO"
+    PNEU = "PNEU"
+    PROBLEMA_ENTREGA = "PROBLEMA_ENTREGA"
+    CLIENTE_AUSENTE = "CLIENTE_AUSENTE"
+    ATRASO = "ATRASO"
+    MULTA = "MULTA"
+    ABASTECIMENTO = "ABASTECIMENTO"
+    OUTRO = "OUTRO"
+
+
+class OccurrenceStatus(StrEnum):
+    ABERTA = "ABERTA"
+    EM_ANALISE = "EM_ANALISE"
+    RESOLVIDA = "RESOLVIDA"
+    CANCELADA = "CANCELADA"
+
