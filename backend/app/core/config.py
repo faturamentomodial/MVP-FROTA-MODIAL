@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     @field_validator("database_url", mode="before")
     @classmethod
     def use_psycopg_driver(cls, value: str) -> str:
-        # Render fornece uma URL PostgreSQL sem o nome do driver SQLAlchemy.
+        # Aceita URLs PostgreSQL de provedores sem o nome do driver SQLAlchemy.
         for prefix in ("postgres://", "postgresql://"):
             if value.startswith(prefix):
                 return "postgresql+psycopg://" + value[len(prefix):]

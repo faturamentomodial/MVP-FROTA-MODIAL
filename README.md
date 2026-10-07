@@ -1,6 +1,6 @@
 # Modial Controle de Frota
 
-Para hospedar o sistema completo (interface, API e banco), consulte [publicação na Render](docs/publicacao-render.md). O repositório inclui `render.yaml` e um Dockerfile completo na raiz.
+Para hospedar a interface e a API juntas em um container Docker no Microsoft Azure, consulte [publicação no Azure](docs/publicacao-azure.md). O Dockerfile completo fica na raiz; o PostgreSQL deve ser configurado separadamente.
 
 Para publicar a interface e configurar a API externa, consulte [publicação na Vercel](docs/publicacao-vercel.md).
 

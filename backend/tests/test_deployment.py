@@ -7,7 +7,7 @@ from app.spa import SPAStaticFiles
 
 
 @pytest.mark.parametrize("url", ["postgres://fleet:pass@db/fleet", "postgresql://fleet:pass@db/fleet"])
-def test_render_database_url_uses_installed_driver(url):
+def test_postgres_database_url_uses_installed_driver(url):
     assert Settings(database_url=url).database_url == "postgresql+psycopg://fleet:pass@db/fleet"
 
 
