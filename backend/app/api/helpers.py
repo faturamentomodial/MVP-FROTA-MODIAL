@@ -5,8 +5,8 @@ def driver_dict(driver: Driver) -> dict:
     return {
         "id": driver.id,
         "nome": driver.nome,
-        "cpf": driver.cpf,
-        "telefone": driver.telefone,
+        "cpf": driver.cpf or "",
+        "telefone": driver.telefone or "",
         "user_id": driver.user_id,
         "ativo": driver.ativo,
         "created_at": driver.created_at,

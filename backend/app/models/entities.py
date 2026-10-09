@@ -44,8 +44,8 @@ class Driver(TimestampMixin, Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     nome: Mapped[str] = mapped_column(String(160), nullable=False, index=True)
-    cpf: Mapped[str] = mapped_column(String(11), unique=True, nullable=False)
-    telefone: Mapped[str] = mapped_column(String(20), nullable=False)
+    cpf: Mapped[str | None] = mapped_column(String(11), unique=True, nullable=True)
+    telefone: Mapped[str | None] = mapped_column(String(20), nullable=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True, nullable=False)
     ativo: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 

@@ -53,14 +53,16 @@ class TokenOut(BaseModel):
 
 class DriverBase(BaseModel):
     nome: str = Field(min_length=2, max_length=160)
-    cpf: str
-    telefone: str = Field(min_length=8, max_length=20)
+    cpf: str | None = None
+    telefone: str | None = Field(default=None, min_length=8, max_length=20)
     email: EmailStr
     ativo: bool = True
 
     @field_validator("cpf")
     @classmethod
-    def clean_cpf(cls, value: str) -> str:
+    def clean_cpf(cls, value: str | None) -> str | None:
+        if value is None:
+            return value
         digits = "".join(ch for ch in value if ch.isdigit())
         if len(digits) != 11:
             raise ValueError("CPF deve conter 11 dígitos")
