@@ -1,4 +1,4 @@
-import { ClipboardCheck, Gauge, LogOut, Menu, Route, Settings2, TriangleAlert, Truck, Users, X } from 'lucide-react'
+import { ClipboardCheck, Gauge, LogOut, MapPin, Menu, Route, Settings2, TriangleAlert, Truck, Users, X } from 'lucide-react'
 import { useState } from 'react'
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { Brand } from '../components/Brand'
@@ -7,6 +7,7 @@ import { useAuth } from '../hooks/useAuth'
 const links = [
   {to:'/admin', label:'Visão geral', icon:Gauge, end:true},
   {to:'/admin/viagens', label:'Viagens', icon:Route},
+  {to:'/admin/rastreamento', label:'Rastreamento', icon:MapPin},
   {to:'/admin/ocorrencias', label:'Ocorrências', icon:TriangleAlert},
   {to:'/admin/motoristas', label:'Motoristas', icon:Users},
   {to:'/admin/veiculos', label:'Veículos', icon:Truck},

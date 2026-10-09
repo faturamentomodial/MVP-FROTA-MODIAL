@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 from typing import Any
 
-from sqlalchemy import Boolean, CheckConstraint, DateTime, Enum, ForeignKey, Index, Integer, JSON, String, Text, UniqueConstraint, text
+from sqlalchemy import Boolean, CheckConstraint, DateTime, Enum, ForeignKey, Float, Index, Integer, JSON, String, Text, UniqueConstraint, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -211,3 +211,29 @@ class AuditLog(Base):
     entidade_id: Mapped[int | None] = mapped_column(Integer)
     detalhes: Mapped[dict[str, Any] | None] = mapped_column(JSON)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True, nullable=False)
+
+
+class VehicleTracking(TimestampMixin, Base):
+    __tablename__ = "vehicle_tracking"
+    vehicle_id: Mapped[int] = mapped_column(ForeignKey("vehicles.id"), primary_key=True)
+    provider: Mapped[str] = mapped_column(String(40), default="POSITRON", nullable=False)
+    tracker_id: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+
+
+class TrackingPositionRecord(Base):
+    __tablename__ = "tracking_positions"
+    __table_args__ = (
+        UniqueConstraint("vehicle_id", "recorded_at", name="uq_tracking_position_time"),
+        CheckConstraint("latitude >= -90 AND latitude <= 90", name="ck_tracking_latitude"),
+        CheckConstraint("longitude >= -180 AND longitude <= 180", name="ck_tracking_longitude"),
+        CheckConstraint("speed IS NULL OR speed >= 0", name="ck_tracking_speed"),
+        Index("ix_tracking_vehicle_time", "vehicle_id", "recorded_at"),
+    )
+    id: Mapped[int] = mapped_column(primary_key=True)
+    vehicle_id: Mapped[int] = mapped_column(ForeignKey("vehicles.id"), nullable=False)
+    latitude: Mapped[float] = mapped_column(Float, nullable=False)
+    longitude: Mapped[float] = mapped_column(Float, nullable=False)
+    recorded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    speed: Mapped[float | None] = mapped_column(Float)
+    address: Mapped[str | None] = mapped_column(String(500))

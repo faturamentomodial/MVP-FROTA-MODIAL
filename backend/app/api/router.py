@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api import auth, checklists, dashboard, drivers, occurrences, trips, users, vehicles
+from app.api import auth, checklists, dashboard, drivers, occurrences, trips, users, vehicles, tracking
 
 
 api_router = APIRouter(prefix="/api")
@@ -12,3 +12,5 @@ api_router.include_router(trips.router)
 api_router.include_router(checklists.router)
 api_router.include_router(occurrences.router)
 api_router.include_router(dashboard.router)
+
+api_router.include_router(tracking.router)

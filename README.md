@@ -1,5 +1,7 @@
 # Modial Controle de Frota
 
+A área de Rastreamento e os requisitos para liberar a integração real com a Pósitron estão descritos em [rastreamento](docs/rastreamento.md).
+
 Para hospedar a interface e a API juntas em um container Docker no Microsoft Azure, consulte [publicação no Azure](docs/publicacao-azure.md). O Dockerfile completo fica na raiz; o PostgreSQL deve ser configurado separadamente.
 
 Para publicar a interface e configurar a API externa, consulte [publicação na Vercel](docs/publicacao-vercel.md).
