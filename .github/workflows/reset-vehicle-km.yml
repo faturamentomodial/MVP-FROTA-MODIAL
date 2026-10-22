@@ -1,0 +1,58 @@
+name: Zerar KM dos veiculos
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: oracle-production
+  cancel-in-progress: false
+jobs:
+  reset:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      ORACLE_HOST: ${{ secrets.ORACLE_HOST }}
+      ORACLE_USER: ${{ secrets.ORACLE_USER }}
+      ORACLE_SSH_KEY: ${{ secrets.ORACLE_SSH_KEY }}
+      ORACLE_KNOWN_HOSTS: ${{ secrets.ORACLE_KNOWN_HOSTS }}
+    steps:
+      - name: Configure SSH
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$ORACLE_SSH_KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$ORACLE_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
+      - name: Reset and verify current vehicle KM
+        run: |
+          set -euo pipefail
+          ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$ORACLE_USER@$ORACLE_HOST" 'cd ~/modial-frota && set -a && . ./.release.env && set +a && sudo env APP_IMAGE="$APP_IMAGE" docker compose -f docker-compose.oracle.yml exec -T app python -' <<'PY'
+          import json
+          from sqlalchemy import select, func
+          from app.core.database import SessionLocal
+          from app.models import Vehicle
+          from app.services.audit import audit
+
+          with SessionLocal() as db:
+              vehicles = list(db.scalars(select(Vehicle).order_by(Vehicle.id).with_for_update()))
+              changed = 0
+              for vehicle in vehicles:
+                  previous = vehicle.km_atual
+                  if previous != 0:
+                      audit(db, None, 'ZERAR_KM', 'VEHICLE', vehicle.id,
+                            {'placa': vehicle.placa, 'km_anterior': previous, 'km_atual': 0,
+                             'source': 'manual_maintenance'})
+                      vehicle.km_atual = 0
+                      changed += 1
+              db.flush()
+              remaining = db.scalar(select(func.count()).select_from(Vehicle).where(Vehicle.km_atual != 0))
+              if remaining:
+                  raise RuntimeError('Verificacao falhou; transacao sera revertida.')
+              db.commit()
+              print(json.dumps({'vehicles_total': len(vehicles), 'vehicles_reset': changed,
+                                'nonzero_remaining': remaining, 'audit_saved': True}))
+          PY
+      - name: Remove SSH credentials
+        if: always()
+        run: rm -f ~/.ssh/id_ed25519 ~/.ssh/known_hosts
