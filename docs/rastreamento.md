@@ -42,3 +42,8 @@ Login real aceito com perfil LOGISTICS. A resposta de autenticacao identifica o 
 O teste real de historico revelou HTTP 400 (JSON invalido) quando as datas possuem microssegundos. O cliente agora envia UTC no formato YYYY-MM-DDTHH:MM:SSZ, validado com retorno de historico real. Ha teste de regressao para conversao de fuso e remocao de microssegundos.
 
 Publicacao pendente: configurar POSITRON_LOGIN e POSITRON_PASSWORD no .env do servidor, publicar a versao corrigida e vincular cada veiculo pelo idVehicle correspondente a placa. O GitHub CLI local apresentou autenticacao invalida durante esta validacao. Nao houve alteracao no banco de producao.
+
+
+## Configuracao de producao pelo deploy
+
+O workflow Deploy Oracle exige os secrets POSITRON_LOGIN e POSITRON_PASSWORD no GitHub. Eles sao transferidos por SSH para o .env privado da VM antes de recriar o container; nao fazem parte da imagem nem do repositorio. Apos o health check, python -m app.configure_tracking consulta a Positron, cria vinculos somente para placas identicas (ignorando hifen, espacos e caixa), preserva todos os vinculos existentes e persiste as posicoes reais. Placas ambiguas ou sem correspondencia sao reportadas sem vinculo automatico. A verificacao falha se a frota nao apresentar nenhuma posicao utilizavel. A conta ainda deve ter seu ambiente DEVELOPMENT confirmado com o fornecedor.

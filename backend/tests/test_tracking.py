@@ -102,6 +102,32 @@ def test_history_dates_match_live_api_contract(monkeypatch):
     })]
 
 
+def test_configure_tracking_matches_plate_and_is_idempotent():
+    from app.configure_tracking import configure
+    from app.models.entities import VehicleTracking
+    from sqlalchemy import select, func
+    point = TrackingPosition(tracker_id='123', latitude=-23, longitude=-46,
+                             recorded_at=datetime.now(UTC))
+    with SessionLocal() as db:
+        result = configure(db, [{'id': 123, 'licensePlate': 'abc-1d23'}], [point])
+        assert result['links_created'] == result['positions_stored'] == 1
+        assert db.get(VehicleTracking, 1).tracker_id == '123'
+        again = configure(db, [{'id': 999, 'licensePlate': 'ABC1D23'}], [point])
+        assert again['links_created'] == again['positions_stored'] == 0
+        assert db.get(VehicleTracking, 1).tracker_id == '123'
+        assert db.scalar(select(func.count()).select_from(TrackingPositionRecord)) == 1
+
+
+def test_configure_tracking_skips_ambiguous_and_unmatched_plates():
+    from app.configure_tracking import configure
+    with SessionLocal() as db:
+        for rows in ([{'id': 123, 'licensePlate': 'OTHER'}],
+                     [{'id': 123, 'licensePlate': 'ABC1D23'}, {'id': 456, 'licensePlate': 'ABC1D23'}]):
+            result = configure(db, rows, [])
+            assert result['links_created'] == result['active_links'] == 0
+            assert result['unmatched_plates'] == ['ABC1D23']
+
+
 def test_sync_and_remote_history(client, admin_headers, monkeypatch):
     import app.services.tracking as tracking
     from app.core.config import settings

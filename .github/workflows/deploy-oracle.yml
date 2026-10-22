@@ -39,6 +39,38 @@ jobs:
         run: |
           ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$ORACLE_USER@$ORACLE_HOST" 'mkdir -p ~/modial-frota && test -s ~/modial-frota/.env'
           scp -o BatchMode=yes -o StrictHostKeyChecking=yes app-image.tar.gz docker-compose.oracle.yml "$ORACLE_USER@$ORACLE_HOST:modial-frota/"
+      - name: Configure Positron credentials on server
+        env:
+          POSITRON_LOGIN: ${{ secrets.POSITRON_LOGIN }}
+          POSITRON_PASSWORD: ${{ secrets.POSITRON_PASSWORD }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          values = {key: os.environ[key] for key in ('POSITRON_LOGIN', 'POSITRON_PASSWORD')}
+          if not all(values.values()):
+              raise SystemExit('Configure both Positron repository secrets before deploying.')
+          path = Path('.positron.env')
+          path.touch(mode=0o600)
+          path.write_text(''.join(f'{key}={json.dumps(value)}\n' for key, value in values.items()))
+          PY
+          scp -o BatchMode=yes -o StrictHostKeyChecking=yes .positron.env "$ORACLE_USER@$ORACLE_HOST:modial-frota/.positron.env"
+          ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$ORACLE_USER@$ORACLE_HOST" 'python3 -' <<'PY'
+          from pathlib import Path
+          root = Path.home() / 'modial-frota'
+          target, incoming = root / '.env', root / '.positron.env'
+          incoming.chmod(0o600)
+          lines = [line for line in target.read_text().splitlines()
+                   if line.partition('=')[0].strip() not in ('POSITRON_LOGIN', 'POSITRON_PASSWORD')]
+          replacement = root / '.env.next'
+          replacement.touch(mode=0o600)
+          replacement.chmod(0o600)
+          replacement.write_text('\n'.join(lines) + '\n' + incoming.read_text())
+          replacement.replace(target)
+          incoming.unlink()
+          PY
+          rm -f .positron.env
       - name: Deploy and check health
         run: |
           ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$ORACLE_USER@$ORACLE_HOST" bash -s -- "$GITHUB_SHA" <<'REMOTE'
@@ -52,7 +84,8 @@ jobs:
           printf 'APP_IMAGE=%s\n' "$APP_IMAGE" > .release.env
           chmod 600 .release.env
           curl --fail --silent --show-error http://127.0.0.1/health
+          sudo env APP_IMAGE="$APP_IMAGE" docker compose -f docker-compose.oracle.yml exec -T app python -m app.configure_tracking
           REMOTE
       - name: Remove SSH credentials from runner
         if: always()
-        run: rm -f ~/.ssh/id_ed25519 ~/.ssh/known_hosts
+        run: rm -f ~/.ssh/id_ed25519 ~/.ssh/known_hosts .positron.env
