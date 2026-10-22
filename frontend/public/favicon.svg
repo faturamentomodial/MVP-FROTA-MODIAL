@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <title>Modial</title>
+  <defs>
+    <linearGradient id="orange" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#ffc16d"/>
+      <stop offset=".5" stop-color="#f5872b"/>
+      <stop offset="1" stop-color="#c96024"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="24" fill="#101010"/>
+  <circle cx="64" cy="64" r="57" fill="none" stroke="url(#orange)" stroke-width="4"/>
+  <text x="64" y="45" text-anchor="middle" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="25" font-weight="900" letter-spacing="-1">MODIAL</text>
+  <g fill="#101010" stroke="url(#orange)" stroke-width="3.5" stroke-linejoin="round">
+    <path d="M48 86Q36 77 35 65Q46 69 53 78M77 78Q84 69 94 65Q95 78 83 87"/>
+    <path d="M64 119Q42 89 64 56Q87 88 64 119Z"/>
+    <path d="M64 119Q33 118 12 87Q44 83 64 119Z"/>
+    <path d="M64 119Q76 86 116 87Q97 117 64 119Z"/>
+  </g>
+</svg>
