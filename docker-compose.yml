@@ -19,6 +19,8 @@ services:
       DATABASE_URL: postgresql+psycopg://fleet:${POSTGRES_PASSWORD:-fleet}@db:5432/fleet
       SECRET_KEY: ${SECRET_KEY:-development-secret-change-before-production-123}
       ENVIRONMENT: ${ENVIRONMENT:-development}
+      POSITRON_LOGIN: ${POSITRON_LOGIN:-}
+      POSITRON_PASSWORD: ${POSITRON_PASSWORD:-}
       CORS_ORIGINS: http://localhost:3000,http://localhost:5173
     ports:
       - "8000:8000"

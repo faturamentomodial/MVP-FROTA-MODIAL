@@ -14,18 +14,31 @@ API interna, somente gestores:
 
 Sem posição: aguardando primeira posição. Posição com mais de cinco minutos: sem comunicação. Sem velocidade: velocidade indisponível, sem inferir veículo parado. Não há posições demonstrativas ou endpoint público para inserir localizações. Origem/destino não existem no modelo atual de viagem e não são inventados.
 
-## Dependência para integração real
+## Positron Sync
 
-Consulta pública em 09/10/2026: a [página oficial de soluções para frotas](https://conteudos.positron.com.br/para-sua-empresa-e-frota) menciona integração WebService, mas não publica contrato de autenticação, métodos e respostas. As [perguntas frequentes](https://positron.com.br/suporte/duvidas-frequentes) explicam como consultar o ID do rastreador no portal e indicam suporte pelo WhatsApp (11) 96399-0556. Não foi encontrada especificação técnica pública oficial suficiente para conectar este contrato.
+Contrato validado em 14/10/2026: [Swagger oficial](https://webservices.positronrt.com.br/srb-external-ws/swagger-ui/index.html), OpenAPI 1.0.10. O perfil LOGISTICS atende ao rastreamento. Teste real: login aceito, ambiente DEVELOPMENT, cinco veiculos e cinco posicoes. Esses dados pertencem ao fornecedor, e nao a frota Modial.
 
-Solicite à Pósitron:
+Configure `POSITRON_LOGIN` e `POSITRON_PASSWORD` exclusivamente no backend com as credenciais proprias. Os arquivos Compose encaminham essas variaveis. No Azure, configure as variaveis do servico. As credenciais de teste nao foram gravadas nem ativadas automaticamente.
 
-- Liberação de leitura das posições e histórico da frota Modial no contrato empresarial.
-- Manual técnico vigente, URL oficial do serviço e WSDL, se SOAP, ou especificação equivalente, se REST.
-- Credenciais próprias da integração e método de autenticação. Pode exigir usuário/senha ou chave/token; a forma exata precisa ser confirmada no manual.
-- Identificador de cliente/contrato, se exigido, e relação de placas com IDs de rastreadores.
-- Regras de liberação de IP do backend, se houver, limites de consulta, fuso horário e unidades de velocidade.
+Endpoints usados: POST /api/v1/auth/token (login/password e token Bearer, renovado apos HTTP 401), GET /api/v1/vehicle/list, GET /api/v1/position/latest?withAddress=true e POST /api/v1/position/history (idVehicle, start, end, withDetailedAddress).
 
-`TrackingProvider` e `PositronTrackingProvider` ficam em `app/services/tracking.py`. A implementação Pósitron lança `ProviderNotConfigured`; não acessa URLs presumidas nem usa a senha do portal. A integração deve implementar coleta, autenticação, renovação, normalização e persistência apenas após receber a documentação. Credenciais devem ficar exclusivamente no backend.
+Gestores podem consultar `GET /api/tracking/provider/vehicles` para obter placas e idVehicle autorizados. No cadastro, o campo existente tracker_id deve receber o **idVehicle**, e nao o PIN/serial do rastreador. Confira os vinculos anteriores. Nunca vincule veiculos de teste aos caminhoes reais.
 
-Referência do mapa: [Leaflet](https://leafletjs.com/reference-1.9.4.html).
+Com a tela aberta, a consulta da frota sincroniza e persiste as ultimas posicoes, no maximo uma vez a cada 30 segundos por processo. Nao ha coletor continuo com a tela fechada. O botao de rota recupera o historico remoto das ultimas 24 horas. O endpoint realtime nao e utilizado: ele consome os eventos ao ler.
+
+A data GPS e moduleDatetime, interpretada como UTC quando nao tem offset, conforme o padrao de datas documentado. Posicoes explicitamente sem GPS ou estimadas sao ignoradas. Falhas preservam as posicoes existentes e exibem aviso; erros no historico sao apresentados ao gestor. A persistencia evita duplicacao por veiculo/data. Tokens e senhas permanecem no backend.
+
+Antes de producao, confirmar com a Positron: acesso a frota Modial, limites de consulta, UTC para moduleDatetime sem offset, unidade da velocidade e eventual liberacao de IP.
+
+Resposta sugerida ao fornecedor:
+
+> Bom dia! Avaliamos a documentacao Sync e validamos o login e as consultas de veiculos e ultimas posicoes com o usuario de teste LOGISTICS. Precisamos consultar posicoes e historico dos caminhoes Modial. Solicitamos credenciais proprias no perfil LOGISTICS, com acesso a nossa frota, e a relacao de placas com seus idVehicle. Poderiam confirmar os limites de consulta, o fuso de moduleDatetime sem offset, a unidade da velocidade e eventual necessidade de liberacao de IP? Obrigado!
+
+
+## Validacao com credenciais Modial em 22/10/2026
+
+Login real aceito com perfil LOGISTICS. A resposta de autenticacao identifica o ambiente como DEVELOPMENT; confirmar com a Positron a liberacao para uso em producao. A consulta de veiculos e de ultimas posicoes retornou quatro registros. Credenciais configuradas somente no .env local, ignorado pelo Git; nao foram aplicadas ao servidor de producao.
+
+O teste real de historico revelou HTTP 400 (JSON invalido) quando as datas possuem microssegundos. O cliente agora envia UTC no formato YYYY-MM-DDTHH:MM:SSZ, validado com retorno de historico real. Ha teste de regressao para conversao de fuso e remocao de microssegundos.
+
+Publicacao pendente: configurar POSITRON_LOGIN e POSITRON_PASSWORD no .env do servidor, publicar a versao corrigida e vincular cada veiculo pelo idVehicle correspondente a placa. O GitHub CLI local apresentou autenticacao invalida durante esta validacao. Nao houve alteracao no banco de producao.

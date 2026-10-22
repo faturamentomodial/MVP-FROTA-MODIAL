@@ -14,6 +14,7 @@ from app.models.entities import TrackingPositionRecord, VehicleTracking
 from app.models.enums import TripStatus
 from app.schemas.domain import ORMModel
 from app.services.audit import audit
+from app.services.tracking import provider, ProviderNotConfigured, ProviderUnavailable, sync_latest, persist_positions, sync_lock
 
 router = APIRouter(prefix="/tracking", tags=["Rastreamento"], dependencies=[Depends(require_admin)])
 
@@ -46,6 +47,16 @@ def as_utc(value):
 
 @router.get("")
 def fleet(db: Session = Depends(get_db)):
+    message = None
+    ready = False
+    if provider.configured:
+        try:
+            sync_latest(db)
+            ready = True
+        except (ProviderNotConfigured, ProviderUnavailable) as exc:
+            message = str(exc)
+    else:
+        message = "Configure as credenciais próprias da integração Pósitron no backend."
     links = {link.vehicle_id: link for link in db.scalars(select(VehicleTracking))}
     trips = {trip.vehicle_id: trip for trip in db.scalars(select(Trip).options(joinedload(Trip.driver)).where(Trip.status.in_([TripStatus.ABERTA, TripStatus.EM_ANDAMENTO])))}
     # One latest row per vehicle, without loading the entire history.
@@ -62,8 +73,17 @@ def fleet(db: Session = Depends(get_db)):
                       "position": PositionOut.model_validate(position).model_dump() if position else None,
                       "trip_id": trip.id if trip else None, "driver_name": trip.driver.nome if trip else None,
                       "trip_started_at": as_utc(trip.data_saida) if trip else None})
-    return {"items": items, "checked_at": now, "provider_ready": False,
-            "message": "Integração Pósitron pendente de documentação e credenciais do contrato."}
+    return {"items": items, "checked_at": now, "provider_ready": ready, "message": message}
+
+
+@router.get("/provider/vehicles")
+def provider_vehicles():
+    try:
+        return [{"idVehicle": v["id"], "licensePlate": v["licensePlate"]} for v in provider.vehicles()]
+    except ProviderNotConfigured as exc:
+        raise HTTPException(503, str(exc)) from exc
+    except ProviderUnavailable as exc:
+        raise HTTPException(502, str(exc)) from exc
 
 
 @router.put("/{vehicle_id}/link")
@@ -95,5 +115,15 @@ def link_vehicle(vehicle_id: int, payload: TrackingLink, db: Session = Depends(g
 def history(vehicle_id: int, hours: int = Query(24, ge=1, le=168), db: Session = Depends(get_db)):
     if not db.get(Vehicle, vehicle_id):
         raise HTTPException(404, "Veículo não encontrado")
+    link = db.get(VehicleTracking, vehicle_id)
+    if provider.configured and link and link.active:
+        if not link.tracker_id.isdecimal():
+            raise HTTPException(422, "Vincule o idVehicle numérico da API Pósitron para consultar o histórico.")
+        try:
+            end = datetime.now(UTC)
+            with sync_lock:
+                persist_positions(db, provider.history(link.tracker_id, end - timedelta(hours=hours), end), {link.tracker_id: link})
+        except (ProviderNotConfigured, ProviderUnavailable) as exc:
+            raise HTTPException(502, str(exc)) from exc
     return db.scalars(select(TrackingPositionRecord).where(TrackingPositionRecord.vehicle_id == vehicle_id,
         TrackingPositionRecord.recorded_at >= datetime.now(UTC) - timedelta(hours=hours)).order_by(TrackingPositionRecord.recorded_at).limit(10000)).all()

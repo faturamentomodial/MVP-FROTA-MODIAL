@@ -1,7 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field, field_validator
+from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+psycopg://fleet:fleet@db:5432/fleet"
     cors_origins: str = "http://localhost:5173,http://localhost:3000"
     frontend_dist: Path | None = None
+    positron_login: str = ""
+    positron_password: SecretStr = SecretStr("")
 
     @field_validator("database_url", mode="before")
     @classmethod

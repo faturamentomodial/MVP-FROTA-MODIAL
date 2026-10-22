@@ -7,6 +7,17 @@ from app.models.entities import TrackingPositionRecord
 from app.services.tracking import PositronTrackingProvider, ProviderNotConfigured, TrackingPosition
 
 
+@pytest.fixture(autouse=True)
+def isolate_tracking_credentials(monkeypatch):
+    from app.core.config import settings
+    from pydantic import SecretStr
+    import app.services.tracking as tracking
+    monkeypatch.setattr(settings, 'positron_login', '')
+    monkeypatch.setattr(settings, 'positron_password', SecretStr(''))
+    monkeypatch.setattr(tracking.provider, '_token', None)
+    monkeypatch.setattr(tracking, 'last_sync', 0)
+
+
 def test_tracking_requires_admin(client, driver_headers):
     assert client.get('/api/tracking').status_code == 401
     assert client.get('/api/tracking', headers=driver_headers).status_code == 403
@@ -49,6 +60,75 @@ def test_provider_explicitly_unavailable():
         PositronTrackingProvider().positions()
     with pytest.raises(ValueError):
         TrackingPosition(tracker_id='1', latitude=91, longitude=0, recorded_at=datetime.now(UTC))
+
+
+def test_positron_auth_renewal_and_normalization(monkeypatch):
+    from pydantic import SecretStr
+    from urllib.error import HTTPError
+    from app.core.config import settings
+    monkeypatch.setattr(settings, 'positron_login', 'test')
+    monkeypatch.setattr(settings, 'positron_password', SecretStr('secret'))
+    provider = PositronTrackingProvider()
+    calls = []
+
+    def send(path, body=None, token=None):
+        calls.append((path, body, token))
+        if path.endswith('/token'):
+            return {'token': f'token{len(calls)}'}
+        if len(calls) == 2:
+            raise HTTPError(path, 401, 'expired', {}, None)
+        return [{'idVehicle': 123, 'moduleDatetime': '2026-10-14T13:00:00',
+                 'latitude': -23, 'longitude': -46, 'speed': 35, 'gps': True}]
+
+    monkeypatch.setattr(provider, '_send', send)
+    result = provider.positions()
+    assert len(calls) == 4
+    assert calls[0][1] == {'login': 'test', 'password': 'secret'}
+    assert result[0].tracker_id == '123'
+    assert result[0].recorded_at == datetime(2026, 10, 14, 13, tzinfo=UTC)
+    assert result[0].speed == 35
+
+
+def test_history_dates_match_live_api_contract(monkeypatch):
+    from datetime import timezone
+    provider = PositronTrackingProvider()
+    calls = []
+    monkeypatch.setattr(provider, '_request', lambda path, body: calls.append((path, body)) or [])
+    start = datetime(2026, 10, 22, 10, 30, 15, 123456, tzinfo=timezone(timedelta(hours=-3)))
+    assert provider.history('123', start, start + timedelta(hours=1)) == []
+    assert calls == [('/api/v1/position/history', {
+        'idVehicle': 123, 'start': '2026-10-22T13:30:15Z',
+        'end': '2026-10-22T14:30:15Z', 'withDetailedAddress': True,
+    })]
+
+
+def test_sync_and_remote_history(client, admin_headers, monkeypatch):
+    import app.services.tracking as tracking
+    from app.core.config import settings
+    from pydantic import SecretStr
+    monkeypatch.setattr(settings, 'positron_login', 'test')
+    monkeypatch.setattr(settings, 'positron_password', SecretStr('secret'))
+    monkeypatch.setattr(tracking, 'last_sync', 0)
+    point = TrackingPosition(tracker_id='123', latitude=-23, longitude=-46, recorded_at=datetime.now(UTC), speed=30)
+    monkeypatch.setattr(tracking.provider, 'positions', lambda: [point])
+    monkeypatch.setattr(tracking.provider, 'history', lambda *args: [point, point])
+    client.put('/api/tracking/1/link', headers=admin_headers, json={'tracker_id': '123'})
+    fleet = client.get('/api/tracking', headers=admin_headers).json()
+    assert fleet['provider_ready'] is True
+    assert fleet['items'][0]['position']['speed'] == 30
+    assert len(client.get('/api/tracking/1/history', headers=admin_headers).json()) == 1
+    with SessionLocal() as db:
+        from sqlalchemy import func, select
+        assert db.scalar(select(func.count()).select_from(TrackingPositionRecord)) == 1
+
+    def fail():
+        raise tracking.ProviderUnavailable('Serviço indisponível')
+
+    monkeypatch.setattr(tracking, 'last_sync', 0)
+    monkeypatch.setattr(tracking.provider, 'positions', fail)
+    fleet = client.get('/api/tracking', headers=admin_headers).json()
+    assert fleet['provider_ready'] is False
+    assert fleet['items'][0]['position']['speed'] == 30
 
 
 def test_tracking_migration_preserves_vehicle():
