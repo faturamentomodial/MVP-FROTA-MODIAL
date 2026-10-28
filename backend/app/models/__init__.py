@@ -23,3 +23,4 @@ __all__ = [
     "User",
     "Vehicle",
 ]
+from app.models.route_plans import RoutePlan, RoutePlanVersion

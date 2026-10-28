@@ -22,6 +22,10 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+psycopg://fleet:fleet@db:5432/fleet"
     cors_origins: str = "http://localhost:5173,http://localhost:3000"
     frontend_dist: Path | None = None
+    routes_geocoder_url: str = ''
+    routes_router_url: str = ''
+    routes_timeout_seconds: float = Field(default=15, gt=0, le=60)
+    routes_min_interval_seconds: float = Field(default=1, ge=0, le=60)
     positron_login: str = ""
     positron_password: SecretStr = SecretStr("")
 

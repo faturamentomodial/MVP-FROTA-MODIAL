@@ -6,6 +6,7 @@ import { useAuth } from '../hooks/useAuth'
 
 const links = [
   {to:'/admin', label:'Visão geral', icon:Gauge, end:true},
+  {to:'/admin/rotas', label:'Rotas', icon:Route},
   {to:'/admin/viagens', label:'Viagens', icon:Route},
   {to:'/admin/rastreamento', label:'Rastreamento', icon:MapPin},
   {to:'/admin/ocorrencias', label:'Ocorrências', icon:TriangleAlert},

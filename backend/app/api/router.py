@@ -14,3 +14,6 @@ api_router.include_router(occurrences.router)
 api_router.include_router(dashboard.router)
 
 api_router.include_router(tracking.router)
+
+from app.api import route_plans
+api_router.include_router(route_plans.router)
