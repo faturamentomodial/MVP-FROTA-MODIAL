@@ -6,6 +6,10 @@ on:
         description: Apagar viagens, checklists e ocorrencias antes de zerar KM
         type: boolean
         default: false
+      clean_plans:
+        description: Apagar planejamentos salvos e suas versoes
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -30,7 +34,7 @@ jobs:
           printf '%s\n' "$ORACLE_KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
       - name: Back up database before cleanup
-        if: inputs.clean_operations
+        if: inputs.clean_operations || inputs.clean_plans
         run: |
           set -euo pipefail
           ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$ORACLE_USER@$ORACLE_HOST" 'bash -s' <<'REMOTE'
@@ -49,19 +53,31 @@ jobs:
       - name: Reset and verify current vehicle KM
         env:
           CLEAN_OPERATIONS: ${{ inputs.clean_operations }}
+          CLEAN_PLANS: ${{ inputs.clean_plans }}
         run: |
           set -euo pipefail
-          ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$ORACLE_USER@$ORACLE_HOST" 'cd ~/modial-frota && set -a && . ./.release.env && set +a && sudo env APP_IMAGE="$APP_IMAGE" docker compose -f docker-compose.oracle.yml exec -T app python - '"$CLEAN_OPERATIONS" <<'PY'
+          ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$ORACLE_USER@$ORACLE_HOST" 'cd ~/modial-frota && set -a && . ./.release.env && set +a && sudo env APP_IMAGE="$APP_IMAGE" docker compose -f docker-compose.oracle.yml exec -T app python - '"$CLEAN_OPERATIONS $CLEAN_PLANS" <<'PY'
           import json
           import sys
           from sqlalchemy import select, func, delete, text
           from app.core.database import SessionLocal
           from app.models import Vehicle, Trip, TripInvoice, Checklist, ChecklistAnswer, Occurrence
+          from app.models.route_plans import RoutePlan, RoutePlanVersion
           from app.models.enums import VehicleStatus
           from app.services.audit import audit
 
           with SessionLocal() as db:
               removed = {}
+              clean_plans = sys.argv[2].lower() == 'true'
+              reset_km = not clean_plans or sys.argv[1].lower() == 'true'
+              if clean_plans:
+                  db.execute(text('LOCK TABLE route_plans, route_plan_versions IN ACCESS EXCLUSIVE MODE'))
+                  for model in (RoutePlanVersion, RoutePlan):
+                      removed[model.__tablename__] = db.scalar(select(func.count()).select_from(model))
+                      db.execute(delete(model))
+                      if db.scalar(select(func.count()).select_from(model)):
+                          raise RuntimeError('Planning cleanup verification failed; rolling back')
+                  audit(db, None, 'LIMPAR_PLANEJAMENTOS', 'SYSTEM', None, {'removed': dict(removed), 'source': 'manual_maintenance'})
               if sys.argv[1].lower() == 'true':
                   db.execute(text('LOCK TABLE vehicles, trips, trip_invoices, checklists, checklist_answers, occurrences IN ACCESS EXCLUSIVE MODE'))
                   for model in (Occurrence, ChecklistAnswer, Checklist, TripInvoice, Trip):
@@ -77,7 +93,7 @@ jobs:
                   if sys.argv[1].lower() == 'true' and vehicle.status == VehicleStatus.EM_VIAGEM:
                       vehicle.status = VehicleStatus.DISPONIVEL if vehicle.ativo else VehicleStatus.INATIVO
                   previous = vehicle.km_atual
-                  if previous != 0:
+                  if reset_km and previous != 0:
                       audit(db, None, 'ZERAR_KM', 'VEHICLE', vehicle.id,
                             {'placa': vehicle.placa, 'km_anterior': previous, 'km_atual': 0,
                              'source': 'manual_maintenance'})
@@ -85,7 +101,7 @@ jobs:
                       changed += 1
               db.flush()
               remaining = db.scalar(select(func.count()).select_from(Vehicle).where(Vehicle.km_atual != 0))
-              if remaining:
+              if reset_km and remaining:
                   raise RuntimeError('Verificacao falhou; transacao sera revertida.')
               db.commit()
               print(json.dumps({'vehicles_total': len(vehicles), 'vehicles_reset': changed,
