@@ -1,3 +1,4 @@
+from conftest import assigned_plan
 from app.core.database import SessionLocal
 from app.core.security import get_password_hash
 from app.models import Driver, User, Vehicle
@@ -6,25 +7,21 @@ from app.models.enums import UserRole
 
 def test_complete_driver_flow_and_dashboard(client, admin_headers, driver_headers):
     vehicles = client.get("/api/vehicles?available=true", headers=driver_headers).json()["items"]
-    trip = client.post("/api/trips", headers=driver_headers, json={"vehicle_id": vehicles[0]["id"], "km_inicial": 1000})
+    trip = client.post("/api/trips", headers=driver_headers, json={"route_plan_id": assigned_plan(vehicles[0]["id"]), "vehicle_id": vehicles[0]["id"], "km_inicial": 1000})
     assert trip.status_code == 201
     trip_id = trip.json()["id"]
 
-    second = client.post("/api/trips", headers=driver_headers, json={"vehicle_id": vehicles[0]["id"], "km_inicial": 1000})
+    second = client.post("/api/trips", headers=driver_headers, json={"route_plan_id": assigned_plan(vehicles[0]["id"]), "vehicle_id": vehicles[0]["id"], "km_inicial": 1000})
     assert second.status_code == 409
 
     start_early = client.post(f"/api/trips/{trip_id}/start", headers=driver_headers)
     assert start_early.status_code == 400
 
-    duplicate_cargo = client.put(f"/api/trips/{trip_id}/cargo", headers=driver_headers, json={
-        "notas": [{"numero_nota": "NF-100", "volumes": 3}, {"numero_nota": "nf-100", "volumes": 2}]
+    denied = client.put(f"/api/trips/{trip_id}/cargo", headers=driver_headers, json={
+        "notas": [{"numero_nota": "ALTERADA", "volumes": 1}]
     })
-    assert duplicate_cargo.status_code == 422
-
-    cargo = client.put(f"/api/trips/{trip_id}/cargo", headers=driver_headers, json={
-        "notas": [{"numero_nota": "NF-100", "volumes": 3}, {"numero_nota": "NF-101", "volumes": 2}]
-    })
-    assert cargo.status_code == 200
+    assert denied.status_code == 403
+    cargo = trip
     assert cargo.json()["total_volumes"] == 5
     assert len(cargo.json()["notas"]) == 2
 
@@ -89,8 +86,8 @@ def test_vehicle_cannot_be_in_two_open_trips(client, driver_headers):
         db.add(Driver(nome="Maria", cpf="12345678902", telefone="11988888888", user=second_user))
         db.commit()
     vehicle = client.get("/api/vehicles?available=true", headers=driver_headers).json()["items"][0]
-    assert client.post("/api/trips", headers=driver_headers, json={"vehicle_id": vehicle["id"], "km_inicial": 1000}).status_code == 201
+    assert client.post("/api/trips", headers=driver_headers, json={"route_plan_id": assigned_plan(vehicle["id"]), "vehicle_id": vehicle["id"], "km_inicial": 1000}).status_code == 201
     login = client.post("/api/auth/login", json={"email": "maria@example.com", "senha": "Driver@123"}).json()
     maria = {"Authorization": f"Bearer {login['access_token']}"}
-    blocked = client.post("/api/trips", headers=maria, json={"vehicle_id": vehicle["id"], "km_inicial": 1000})
+    blocked = client.post("/api/trips", headers=maria, json={"route_plan_id": assigned_plan(vehicle["id"], driver_id=2), "vehicle_id": vehicle["id"], "km_inicial": 1000})
     assert blocked.status_code == 409

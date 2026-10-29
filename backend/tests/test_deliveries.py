@@ -1,3 +1,4 @@
+from conftest import assigned_plan
 from datetime import UTC, datetime
 from concurrent.futures import ThreadPoolExecutor
 
@@ -12,18 +13,14 @@ from app.models.enums import UserRole
 
 def prepare(client, headers, count=1):
     vehicle = client.get("/api/vehicles?available=true", headers=headers).json()["items"][0]
-    trip = client.post("/api/trips", headers=headers, json={"vehicle_id": vehicle["id"], "km_inicial": 1000}).json()
+    trip = client.post("/api/trips", headers=headers, json={"route_plan_id": assigned_plan(vehicle["id"], notes=[{"numero_nota": str(1001+i), "volumes": i+1} for i in range(count)]), "vehicle_id": vehicle["id"], "km_inicial": 1000}).json()
     tid = trip["id"]
-    cargo = client.put(f"/api/trips/{tid}/cargo", headers=headers, json={"notas": [
-        {"numero_nota": str(1001+i), "volumes": i+1} for i in range(count)
-    ]})
-    assert cargo.status_code == 200
     items = client.get("/api/checklist-items", headers=headers).json()
     assert client.post(f"/api/trips/{tid}/checklist", headers=headers, json={
         "answers": [{"checklist_item_id": i["id"], "status": "OK"} for i in items]
     }).status_code == 201
     assert client.post(f"/api/trips/{tid}/start", headers=headers).status_code == 200
-    return tid, cargo.json()["notas"]
+    return tid, trip["notas"]
 
 
 def stamp(value):

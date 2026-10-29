@@ -92,7 +92,7 @@ def start(trip_id: int, db: Session = Depends(get_db), user: User = Depends(requ
 
 
 @router.put("/{trip_id}/cargo", response_model=TripOut)
-def update_cargo(trip_id: int, payload: TripCargoUpdate, db: Session = Depends(get_db), user: User = Depends(require_driver)):
+def update_cargo(trip_id: int, payload: TripCargoUpdate, db: Session = Depends(get_db), user: User = Depends(require_admin)):
     db.scalar(select(Trip.id).where(Trip.id == trip_id).with_for_update())
     trip = load_trip(db, trip_id)
     ensure_trip_access(trip, user, db)
@@ -157,7 +157,7 @@ def delivery_occurrence(trip_id: int, invoice_id: int, payload: DeliveryOccurren
 
 
 @router.put("/{trip_id}/delivery-order", response_model=TripOut)
-def update_delivery_order(trip_id: int, payload: DeliveryOrderIn, db: Session = Depends(get_db), user: User = Depends(require_driver)):
+def update_delivery_order(trip_id: int, payload: DeliveryOrderIn, db: Session = Depends(get_db), user: User = Depends(require_admin)):
     trip = delivery_trip(db, trip_id, user, True)
     reorder(db, trip, payload, user)
     db.expire_all()

@@ -49,3 +49,20 @@ def admin_headers(client):
 @pytest.fixture
 def driver_headers(client):
     return login(client, "driver@example.com", "Driver@123")
+
+
+def assigned_plan(vehicle_id=1, driver_id=1, notes=None):
+    """Seed a confirmed manager assignment for operational tests."""
+    from app.models.route_plans import RoutePlan
+    point = {'address': 'Rua Teste', 'latitude': -23.5, 'longitude': -46.6}
+    with SessionLocal() as db:
+        plan = RoutePlan(status='CONFIRMADO', created_by=1, data={
+            'name': 'Rota de teste', 'vehicle_id': vehicle_id, 'driver_id': driver_id,
+            'origin': point, 'profile': 'truck', 'invoices': [
+                {'number': n['numero_nota'], 'volumes': n['volumes'], 'destination': point}
+                for n in (notes or [{'numero_nota': 'NF-100', 'volumes': 3}, {'numero_nota': 'NF-101', 'volumes': 2}])
+            ]
+        })
+        db.add(plan)
+        db.commit()
+        return plan.id

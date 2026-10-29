@@ -124,6 +124,14 @@ def test_assigned_plan_creates_trip_with_cargo_once(client, admin_headers, drive
     data = trip.json()
     assert [n['numero_nota'] for n in data['notas']] == [n['number'] for n in calculated['invoices']]
     assert data['total_volumes'] == 55
+    cargo_url = f"/api/trips/{data['id']}/cargo"
+    assert client.put(cargo_url, headers=driver_headers, json={
+        'notas': [{'numero_nota': 'ALTERADA', 'volumes': 1}]
+    }).status_code == 403
+    assert client.put(f"/api/trips/{data['id']}/delivery-order", headers=driver_headers, json={
+        'invoice_ids': [n['id'] for n in reversed(data['notas'])], 'revision': data['delivery_revision']
+    }).status_code == 403
+    assert client.get(f"/api/trips/{data['id']}", headers=driver_headers).json()['notas'] == data['notas']
     assert data['route_plan']['origin'] == body['origin']
     assert client.get('/api/trips/planned', headers=driver_headers).json() == []
     assert client.post('/api/trips', json={'route_plan_id': plan['id'], 'vehicle_id': 1, 'km_inicial': 1000}, headers=driver_headers).status_code == 409
@@ -153,3 +161,10 @@ def test_other_driver_plan_is_hidden_and_forbidden(client, admin_headers, driver
     assert client.get('/api/trips/planned', headers=driver_headers).json() == []
     assert client.get(url, headers=driver_headers).status_code == 403
     assert client.post('/api/trips', json={'route_plan_id': plan['id'], 'vehicle_id': 1, 'km_inicial': 1000}, headers=driver_headers).status_code == 403
+
+
+def test_driver_cannot_create_unplanned_trip(client, driver_headers):
+    response = client.post('/api/trips', headers=driver_headers, json={'vehicle_id': 1, 'km_inicial': 1000})
+    assert response.status_code == 403
+    assert client.get('/api/trips/current', headers=driver_headers).json() is None
+    assert client.get('/api/vehicles?available=true', headers=driver_headers).json()['total'] == 1

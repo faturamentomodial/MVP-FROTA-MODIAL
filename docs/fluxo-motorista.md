@@ -1,13 +1,11 @@
 # Fluxo do motorista
 
 1. Entrar com usuário ativo do perfil `MOTORISTA`.
-2. Selecionar somente um veículo disponível e confirmar o KM inicial.
-3. Informar uma ou mais notas fiscais e a quantidade de volumes carregados em cada uma.
-4. Responder todos os itens obrigatórios do checklist.
-5. Em `PROBLEMA`, descrever o achado.
-6. Iniciar a viagem. Problemas ficam registrados, mas não bloqueiam automaticamente a saída neste MVP.
-7. Durante a rota, registrar ocorrências com tipo, descrição, local.
-8. No retorno, informar KM final e observação opcional.
-9. O sistema calcula o percurso, atualiza o veículo, encerra a viagem e libera a frota.
+2. Aguardar uma rota confirmada e vinculada pelo gestor.
+3. Iniciar a saída planejada com o veículo definido e confirmar o KM inicial.
+4. Responder os itens obrigatórios do checklist e descrever eventuais problemas.
+5. Iniciar a viagem e executar as entregas na ordem definida pelo gestor.
+6. Registrar a conclusão ou ocorrência de cada entrega e ocorrências da viagem.
+7. Após resolver todas as entregas, informar o KM final e encerrar a viagem.
 
-Botões têm área mínima adequada ao toque, campos usam teclado apropriado e o fluxo evita menus e tabelas no celular.
+Notas fiscais, volumes e ordem das entregas são definidos pelo gestor. O motorista não cadastra nem altera a carga e não inicia saídas avulsas.

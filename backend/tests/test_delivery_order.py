@@ -1,3 +1,4 @@
+from conftest import assigned_plan, login
 from concurrent.futures import ThreadPoolExecutor
 
 import pytest
@@ -17,7 +18,7 @@ def current(client, headers, tid):
 def order(client, headers, tid, ids, revision=None):
     if revision is None:
         revision=current(client,headers,tid)["delivery_revision"]
-    return client.put(f"/api/trips/{tid}/delivery-order",headers=headers,json={"invoice_ids":ids,"revision":revision})
+    return client.put(f"/api/trips/{tid}/delivery-order",headers=login(client),json={"invoice_ids":ids,"revision":revision})
 
 
 def test_reorder_pending_persists_and_controls_operations(client,driver_headers,admin_headers):
@@ -107,9 +108,10 @@ def test_reorder_security_closed_route_and_missing_route(client,driver_headers,a
     payload={"invoice_ids":ids,"revision":current(client,driver_headers,tid)["delivery_revision"]}
     url=f"/api/trips/{tid}/delivery-order"
     assert client.put(url,json=payload).status_code == 401
-    assert client.put(url,headers=admin_headers,json=payload).status_code == 403
+    assert client.put(url,headers=admin_headers,json=payload).status_code == 200
+    assert client.put(url,headers=driver_headers,json=payload).status_code == 403
     assert client.put(url,headers={"Authorization":f"Bearer {token}"},json=payload).status_code == 403
-    assert client.put("/api/trips/9999/delivery-order",headers=driver_headers,json=payload).status_code == 404
+    assert client.put("/api/trips/9999/delivery-order",headers=admin_headers,json=payload).status_code == 404
     for id in ids:
         root=f"/api/trips/{tid}/deliveries/{id}"
         assert client.post(root+"/start",headers=driver_headers).status_code == 200
@@ -129,9 +131,9 @@ def test_concurrent_order_changes_accept_one(client,driver_headers):
 
 def test_start_response_revision_can_be_used_to_reorder(client,driver_headers):
     vehicle=client.get("/api/vehicles?available=true",headers=driver_headers).json()["items"][0]
-    trip=client.post("/api/trips",headers=driver_headers,json={"vehicle_id":vehicle["id"],"km_inicial":1000}).json()
+    trip=client.post("/api/trips",headers=driver_headers,json={"route_plan_id":assigned_plan(vehicle["id"]),"vehicle_id":vehicle["id"],"km_inicial":1000}).json()
     tid=trip["id"]
-    cargo=client.put(f"/api/trips/{tid}/cargo",headers=driver_headers,json={"notas":[{"numero_nota":"1","volumes":1},{"numero_nota":"2","volumes":1}]}).json()
+    cargo=trip
     assert cargo["delivery_revision"] == current(client,driver_headers,tid)["delivery_revision"]
     items=client.get("/api/checklist-items",headers=driver_headers).json()
     assert client.post(f"/api/trips/{tid}/checklist",headers=driver_headers,json={"answers":[{"checklist_item_id":i["id"],"status":"OK"} for i in items]}).status_code == 201

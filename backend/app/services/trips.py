@@ -38,6 +38,9 @@ def create_trip(db: Session, user: User, payload: TripCreate) -> Trip:
     if get_active_trip(db, driver.id):
         raise HTTPException(status_code=409, detail="Motorista já possui uma viagem aberta")
 
+    if payload.route_plan_id is None:
+        raise HTTPException(403, "Inicie somente uma rota vinculada pelo gestor")
+
     plan = None
     if payload.route_plan_id is not None:
         plan = db.scalar(select(RoutePlan).where(RoutePlan.id == payload.route_plan_id).with_for_update())

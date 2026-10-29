@@ -1,5 +1,11 @@
 # Entregas operacionais — auditoria e implementação
 
+## Regra atual: motorista executa a rota vinculada
+
+O motorista inicia somente planejamentos confirmados e vinculados pelo gestor. Notas, volumes e ordem das entregas ficam sob controle do gestor; os endpoints de carga e de ordem exigem perfil `ADMIN`. O editor de ordem foi retirado da interface do motorista.
+
+As regras abaixo documentam o histórico anterior e ficam substituídas por esta regra quanto a essas permissões.
+
 ## Atualização: motorista pode alterar a ordem
 
 A ordem fixa por ID foi substituída por `TripInvoice.position`, conforme a solicitação posterior de permitir ao motorista ajustar sua rota. A migration `20261007_0004_delivery_order` adiciona `trip_invoices.position`, o índice `(trip_id, position)` e `trips.delivery_revision`. Notas existentes recebem a posição correspondente ao ID anterior, preservando a sequência de cada rota. Novas cargas recebem posições sequenciais.
