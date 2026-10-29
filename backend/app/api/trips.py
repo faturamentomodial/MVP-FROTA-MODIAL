@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session, joinedload, selectinload
 from app.api.dependencies import get_current_user, require_admin, require_driver
 from app.api.helpers import trip_dict
 from app.core.database import get_db
-from app.models import Checklist, Trip, TripInvoice, User
+from app.models import Checklist, Trip, TripInvoice, User, Vehicle
 from app.models.enums import TripStatus, UserRole
 from app.repositories.pagination import paginate
 from app.schemas import DeliveryOrderIn, DeliveryOccurrenceIn, TripInvoiceOut, Page, TripCargoUpdate, TripCreate, TripFinish, TripOut
@@ -17,6 +17,18 @@ from app.services.trips import create_trip, finish_trip, get_active_trip, get_dr
 
 
 router = APIRouter(prefix="/trips", tags=["Viagens"])
+
+
+@router.get('/planned')
+def planned(db: Session = Depends(get_db), user: User = Depends(require_driver)):
+    from app.models.route_plans import RoutePlan
+    driver = get_driver_for_user(db, user)
+    plans = db.scalars(select(RoutePlan).where(
+        RoutePlan.status == 'CONFIRMADO',
+        RoutePlan.data['driver_id'].as_integer() == driver.id,
+        RoutePlan.data['trip_id'].as_integer().is_(None),
+    ).order_by(RoutePlan.id))
+    return [{'id': p.id, **p.data, 'vehicle_plate': db.get(Vehicle, p.data['vehicle_id']).placa} for p in plans]
 
 
 def ensure_trip_access(trip: Trip, user: User, db: Session) -> None:

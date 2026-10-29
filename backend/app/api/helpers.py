@@ -16,7 +16,13 @@ def driver_dict(driver: Driver) -> dict:
 
 
 def trip_dict(trip: Trip) -> dict:
+    from sqlalchemy import select
+    from sqlalchemy.orm import object_session
+    from app.models.route_plans import RoutePlan
+    db = object_session(trip)
+    plan = db.scalar(select(RoutePlan).where(RoutePlan.data['trip_id'].as_integer() == trip.id)) if db else None
     return {
+        "route_plan": {'id': plan.id, **plan.data} if plan else None,
         "delivery_revision": trip.delivery_revision,
         "id": trip.id,
         "driver_id": trip.driver_id,

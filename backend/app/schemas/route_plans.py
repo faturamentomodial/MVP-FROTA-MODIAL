@@ -22,6 +22,7 @@ class PlanInput(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True, extra="forbid")
     name: str = Field(min_length=1, max_length=160)
     vehicle_id: int | None = None
+    driver_id: int | None = Field(default=None, gt=0)
     profile: Literal["car", "truck"] = "car"
     origin: Point | None = None
     invoices: list[PlannedInvoice] = Field(default_factory=list, max_length=10)

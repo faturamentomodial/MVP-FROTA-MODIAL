@@ -1,11 +1,12 @@
 from datetime import UTC, datetime
 
 from fastapi import HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, joinedload, selectinload
 
-from app.models import Checklist, Driver, Trip, User, Vehicle
+from app.models import Checklist, Driver, Trip, TripInvoice, User, Vehicle
+from app.models.route_plans import RoutePlan
 from app.models.enums import TripStatus, VehicleStatus
 from app.schemas import TripCreate, TripFinish
 from app.services.audit import audit
@@ -37,6 +38,16 @@ def create_trip(db: Session, user: User, payload: TripCreate) -> Trip:
     if get_active_trip(db, driver.id):
         raise HTTPException(status_code=409, detail="Motorista já possui uma viagem aberta")
 
+    plan = None
+    if payload.route_plan_id is not None:
+        plan = db.scalar(select(RoutePlan).where(RoutePlan.id == payload.route_plan_id).with_for_update())
+        if not plan or plan.data.get('driver_id') != driver.id:
+            raise HTTPException(403, 'Planejamento não pertence a este motorista')
+        if plan.status != 'CONFIRMADO' or plan.data.get('trip_id'):
+            raise HTTPException(409, 'Planejamento indisponível para iniciar saída')
+        if plan.data.get('vehicle_id') != payload.vehicle_id:
+            raise HTTPException(422, 'Utilize o veículo do planejamento')
+
     vehicle = db.scalar(select(Vehicle).where(Vehicle.id == payload.vehicle_id).with_for_update())
     if not vehicle:
         raise HTTPException(status_code=404, detail="Veículo não encontrado")
@@ -51,6 +62,17 @@ def create_trip(db: Session, user: User, payload: TripCreate) -> Trip:
     db.add(trip)
     try:
         db.flush()
+        if plan:
+            data = {**plan.data, 'trip_id': trip.id}
+            claimed = db.execute(update(RoutePlan).where(
+                RoutePlan.id == plan.id, RoutePlan.revision == plan.revision,
+                RoutePlan.data['trip_id'].as_integer().is_(None),
+            ).values(data=data), execution_options={'synchronize_session': False})
+            if claimed.rowcount != 1:
+                db.rollback()
+                raise HTTPException(409, 'Planejamento já utilizado')
+            trip.invoices = [TripInvoice(numero_nota=n['number'], volumes=n['volumes'], position=i)
+                             for i, n in enumerate(plan.data['invoices'], start=1)]
     except IntegrityError as exc:
         db.rollback()
         raise HTTPException(status_code=409, detail="Motorista ou veículo já possui viagem aberta") from exc

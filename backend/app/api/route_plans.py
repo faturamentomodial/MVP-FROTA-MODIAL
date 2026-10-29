@@ -4,7 +4,7 @@ from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 from app.api.dependencies import require_admin
 from app.core.database import get_db
-from app.models import Vehicle
+from app.models import Vehicle, Driver
 from app.models.route_plans import RoutePlan, RoutePlanVersion
 from app.schemas.route_plans import PlanInput, CalculateInput, RevisionInput
 from app.services import route_planning as provider
@@ -25,6 +25,10 @@ def output(plan):
 
 
 def validate_vehicle(db, data):
+    if data.driver_id is not None:
+        driver = db.get(Driver, data.driver_id)
+        if not driver or not driver.ativo or not driver.user.ativo:
+            raise HTTPException(422, 'Selecione um motorista ativo')
     if data.vehicle_id is not None:
         vehicle = db.get(Vehicle, data.vehicle_id)
         if not vehicle or not vehicle.ativo:
@@ -131,6 +135,7 @@ def calculate(plan_id: int, payload: CalculateInput, db: Session = Depends(get_d
 @router.post('/{plan_id}/confirm')
 def confirm(plan_id: int, payload: RevisionInput, db: Session = Depends(get_db), user=Depends(require_admin)):
     plan = load(db, plan_id)
+    validate_vehicle(db, PlanInput.model_validate({k: v for k, v in plan.data.items() if k in PlanInput.model_fields}))
     if not plan.data.get('result'):
         raise HTTPException(422, 'Calcule o percurso antes de confirmar')
     return save(db, plan, payload.revision, plan.data, user, 'CONFIRMADO')

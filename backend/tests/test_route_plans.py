@@ -104,3 +104,52 @@ def test_aditive_migration_roundtrip():
         assert 'route_plans' in inspect(connection).get_table_names()
         migration.downgrade()
         assert inspect(connection).get_table_names()==['users']
+
+
+def test_assigned_plan_creates_trip_with_cargo_once(client, admin_headers, driver_headers, monkeypatch):
+    monkeypatch.setattr(provider, 'matrix', fake_matrix)
+    monkeypatch.setattr(provider, 'geometry', fake_geometry)
+    body = {**payload(), 'driver_id': 1}
+    invalid = client.post('/api/route-plans', json={**body, 'driver_id': 999}, headers=admin_headers)
+    assert invalid.status_code == 422
+    plan = client.post('/api/route-plans', json=body, headers=admin_headers).json()
+    url = f"/api/route-plans/{plan['id']}"
+    assert client.get('/api/trips/planned', headers=driver_headers).json() == []
+    calculated = client.post(url+'/calculate', json={'revision': 0}, headers=admin_headers).json()
+    assert client.post(url+'/confirm', json={'revision': calculated['revision']}, headers=admin_headers).status_code == 200
+    assigned = client.get('/api/trips/planned', headers=driver_headers).json()
+    assert [p['id'] for p in assigned] == [plan['id']]
+    trip = client.post('/api/trips', json={'route_plan_id': plan['id'], 'vehicle_id': 1, 'km_inicial': 1000}, headers=driver_headers)
+    assert trip.status_code == 201, trip.text
+    data = trip.json()
+    assert [n['numero_nota'] for n in data['notas']] == [n['number'] for n in calculated['invoices']]
+    assert data['total_volumes'] == 55
+    assert data['route_plan']['origin'] == body['origin']
+    assert client.get('/api/trips/planned', headers=driver_headers).json() == []
+    assert client.post('/api/trips', json={'route_plan_id': plan['id'], 'vehicle_id': 1, 'km_inicial': 1000}, headers=driver_headers).status_code == 409
+    assert client.post(f"/api/trips/{data['id']}/start", headers=driver_headers).status_code == 400
+
+
+def test_unassigned_plan_cannot_be_used_by_driver(client, admin_headers, driver_headers):
+    plan = client.post('/api/route-plans', json=payload(), headers=admin_headers).json()
+    response = client.post('/api/trips', json={'route_plan_id': plan['id'], 'vehicle_id': 1, 'km_inicial': 1000}, headers=driver_headers)
+    assert response.status_code == 403
+
+
+def test_other_driver_plan_is_hidden_and_forbidden(client, admin_headers, driver_headers, monkeypatch):
+    from app.models import Driver, User
+    from app.models.enums import UserRole
+    with SessionLocal() as db:
+        other = Driver(nome='Outro motorista', user=User(nome='Outro', email='other@example.com', senha_hash='unused', role=UserRole.MOTORISTA))
+        db.add(other)
+        db.commit()
+        other_id = other.id
+    monkeypatch.setattr(provider, 'matrix', fake_matrix)
+    monkeypatch.setattr(provider, 'geometry', fake_geometry)
+    plan = client.post('/api/route-plans', json={**payload(), 'driver_id': other_id}, headers=admin_headers).json()
+    url = f"/api/route-plans/{plan['id']}"
+    client.post(url+'/calculate', json={'revision': 0}, headers=admin_headers)
+    assert client.post(url+'/confirm', json={'revision': 1}, headers=admin_headers).status_code == 200
+    assert client.get('/api/trips/planned', headers=driver_headers).json() == []
+    assert client.get(url, headers=driver_headers).status_code == 403
+    assert client.post('/api/trips', json={'route_plan_id': plan['id'], 'vehicle_id': 1, 'km_inicial': 1000}, headers=driver_headers).status_code == 403

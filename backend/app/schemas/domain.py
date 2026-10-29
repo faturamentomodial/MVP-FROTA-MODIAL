@@ -152,6 +152,7 @@ class VehicleOut(ORMModel):
 
 
 class TripCreate(BaseModel):
+    route_plan_id: int | None = Field(default=None, gt=0)
     vehicle_id: int
     km_inicial: int = Field(ge=0)
 
@@ -215,6 +216,7 @@ class TripInvoiceOut(ORMModel):
 
 
 class TripOut(ORMModel):
+    route_plan: dict | None = None
     delivery_revision: int
     id: int
     driver_id: int
