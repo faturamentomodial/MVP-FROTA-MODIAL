@@ -1,6 +1,11 @@
 name: Zerar KM dos veiculos
 on:
   workflow_dispatch:
+    inputs:
+      clean_operations:
+        description: Apagar viagens, checklists e ocorrencias antes de zerar KM
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -24,20 +29,53 @@ jobs:
           printf '%s\n' "$ORACLE_SSH_KEY" > ~/.ssh/id_ed25519
           printf '%s\n' "$ORACLE_KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
-      - name: Reset and verify current vehicle KM
+      - name: Back up database before cleanup
+        if: inputs.clean_operations
         run: |
           set -euo pipefail
-          ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$ORACLE_USER@$ORACLE_HOST" 'cd ~/modial-frota && set -a && . ./.release.env && set +a && sudo env APP_IMAGE="$APP_IMAGE" docker compose -f docker-compose.oracle.yml exec -T app python -' <<'PY'
+          ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$ORACLE_USER@$ORACLE_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          cd ~/modial-frota
+          set -a
+          . ./.release.env
+          set +a
+          umask 077
+          mkdir -p backups
+          backup="backups/before-cleanup-$(date -u +%Y%m%dT%H%M%SZ).sql"
+          sudo env APP_IMAGE="$APP_IMAGE" docker compose -f docker-compose.oracle.yml exec -T db pg_dump -U fleet -d fleet > "$backup"
+          test -s "$backup"
+          echo "Backup saved: $backup"
+          REMOTE
+      - name: Reset and verify current vehicle KM
+        env:
+          CLEAN_OPERATIONS: ${{ inputs.clean_operations }}
+        run: |
+          set -euo pipefail
+          ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$ORACLE_USER@$ORACLE_HOST" 'cd ~/modial-frota && set -a && . ./.release.env && set +a && sudo env APP_IMAGE="$APP_IMAGE" docker compose -f docker-compose.oracle.yml exec -T app python - '"$CLEAN_OPERATIONS" <<'PY'
           import json
-          from sqlalchemy import select, func
+          import sys
+          from sqlalchemy import select, func, delete, text
           from app.core.database import SessionLocal
-          from app.models import Vehicle
+          from app.models import Vehicle, Trip, TripInvoice, Checklist, ChecklistAnswer, Occurrence
+          from app.models.enums import VehicleStatus
           from app.services.audit import audit
 
           with SessionLocal() as db:
+              removed = {}
+              if sys.argv[1].lower() == 'true':
+                  db.execute(text('LOCK TABLE vehicles, trips, trip_invoices, checklists, checklist_answers, occurrences IN ACCESS EXCLUSIVE MODE'))
+                  for model in (Occurrence, ChecklistAnswer, Checklist, TripInvoice, Trip):
+                      removed[model.__tablename__] = db.scalar(select(func.count()).select_from(model))
+                      db.execute(delete(model))
+                  for model in (Occurrence, ChecklistAnswer, Checklist, TripInvoice, Trip):
+                      if db.scalar(select(func.count()).select_from(model)):
+                          raise RuntimeError('Cleanup verification failed; rolling back')
+                  audit(db, None, 'LIMPAR_OPERACAO', 'SYSTEM', None, {'removed': removed, 'source': 'manual_maintenance'})
               vehicles = list(db.scalars(select(Vehicle).order_by(Vehicle.id).with_for_update()))
               changed = 0
               for vehicle in vehicles:
+                  if sys.argv[1].lower() == 'true' and vehicle.status == VehicleStatus.EM_VIAGEM:
+                      vehicle.status = VehicleStatus.DISPONIVEL if vehicle.ativo else VehicleStatus.INATIVO
                   previous = vehicle.km_atual
                   if previous != 0:
                       audit(db, None, 'ZERAR_KM', 'VEHICLE', vehicle.id,
@@ -51,7 +89,7 @@ jobs:
                   raise RuntimeError('Verificacao falhou; transacao sera revertida.')
               db.commit()
               print(json.dumps({'vehicles_total': len(vehicles), 'vehicles_reset': changed,
-                                'nonzero_remaining': remaining, 'audit_saved': True}))
+                                'nonzero_remaining': remaining, 'audit_saved': True, 'removed': removed}))
           PY
       - name: Remove SSH credentials
         if: always()
