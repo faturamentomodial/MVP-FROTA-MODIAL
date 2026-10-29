@@ -30,6 +30,10 @@ def test_ten_notes_persistence_manual_conflict_confirmation(client, admin_header
     p=calc.json()
     assert len(p['invoices'])==10 and len(p['stops'])==9
     assert p['result']['truck_restrictions_supported'] is False
+    assert p['result']['return_to_origin'] is True
+    line = p['result']['geometry']['coordinates']
+    assert line[0] == line[-1]
+    assert len(line) == len(p['stops']) + 2
     assert client.post(url+'/calculate',json={'revision':0},headers=admin_headers).status_code==409
     with SessionLocal() as db:
         assert db.get(RoutePlan,p['id']).data['result']['distance']==900
@@ -41,6 +45,7 @@ def test_ten_notes_persistence_manual_conflict_confirmation(client, admin_header
     assert client.post(url+'/confirm',json={'revision':2},headers=admin_headers).status_code==422
     manual=client.post(url+'/calculate',json={'revision':2,'optimize':False},headers=admin_headers).json()
     assert manual['invoices'][0]['number']=='9'
+    assert manual['result']['geometry']['coordinates'][0] == manual['result']['geometry']['coordinates'][-1]
     confirmed=client.post(url+'/confirm',json={'revision':3},headers=admin_headers)
     assert confirmed.json()['status']=='CONFIRMADO'
     assert client.put(url,json={**body,'revision':4},headers=admin_headers).status_code==409
@@ -48,6 +53,7 @@ def test_ten_notes_persistence_manual_conflict_confirmation(client, admin_header
 
 
 def test_provider_failure_atomicity_and_geocoding(client,admin_headers,monkeypatch):
+    monkeypatch.setattr(provider.settings, 'routes_geocoder_provider', 'photon')
     p=client.post('/api/route-plans',json=payload(),headers=admin_headers).json()
     original_matrix = provider.matrix
     def unavailable(*args): raise HTTPException(503,'Provedor indisponível')
@@ -64,7 +70,7 @@ def test_provider_failure_atomicity_and_geocoding(client,admin_headers,monkeypat
     assert client.post(url+'/calculate',json={'revision':0},headers=admin_headers).status_code==422
 
 
-def test_exact_asymmetric_open_path():
+def test_exact_asymmetric_round_trip():
     assert provider.optimal_order([[0,10,1],[1,0,10],[1,1,0]])==[2,1]
 
 
@@ -132,7 +138,8 @@ def test_assigned_plan_creates_trip_with_cargo_once(client, admin_headers, drive
         'invoice_ids': [n['id'] for n in reversed(data['notas'])], 'revision': data['delivery_revision']
     }).status_code == 403
     assert client.get(f"/api/trips/{data['id']}", headers=driver_headers).json()['notas'] == data['notas']
-    assert data['route_plan']['origin'] == body['origin']
+    assert data['route_plan']['origin'] == calculated['origin']
+    assert all(data['route_plan']['origin'][key] == value for key, value in body['origin'].items())
     assert client.get('/api/trips/planned', headers=driver_headers).json() == []
     assert client.post('/api/trips', json={'route_plan_id': plan['id'], 'vehicle_id': 1, 'km_inicial': 1000}, headers=driver_headers).status_code == 409
     assert client.post(f"/api/trips/{data['id']}/start", headers=driver_headers).status_code == 400
@@ -168,3 +175,31 @@ def test_driver_cannot_create_unplanned_trip(client, driver_headers):
     assert response.status_code == 403
     assert client.get('/api/trips/current', headers=driver_headers).json() is None
     assert client.get('/api/vehicles?available=true', headers=driver_headers).json()['total'] == 1
+
+
+def test_round_trip_order_accounts_for_return_cost():
+    # Open path would choose 1 then 2 (cost 2), but its return costs 100.
+    cost = [[0, 1, 2], [1, 0, 1], [100, 2, 0]]
+    assert provider.optimal_order(cost) == [2, 1]
+
+
+def test_nominatim_geocoding_quality_and_errors(monkeypatch):
+    import pytest
+    monkeypatch.setattr(provider.settings, 'routes_geocoder_provider', 'nominatim')
+    def response(base, path):
+        assert 'countrycodes=br' in path and 'addressdetails=1' in path
+        return [{'display_name': 'Rua A, Brasil', 'lat': '-23', 'lon': '-46', 'address': {}}]
+    monkeypatch.setattr(provider, 'request', response)
+    provider._nominatim_geocode.cache_clear()
+    result = provider.geocode('Rua A 123')
+    assert result['provider'] == 'nominatim' and result['selection_required']
+    assert result['candidates'][0]['house_number_found'] is False
+    provider._nominatim_geocode.cache_clear()
+    monkeypatch.setattr(provider, 'request', lambda *args: [])
+    assert provider.geocode('Rua A 123')['candidates'] == []
+    for invalid in [{'error': 'bad'}, [{'lat': 'NaN', 'lon': '0'}]]:
+        provider._nominatim_geocode.cache_clear()
+        monkeypatch.setattr(provider, 'request', lambda *args: invalid)
+        with pytest.raises(HTTPException) as caught:
+            provider.geocode('Rua A 123')
+        assert caught.value.status_code == 503

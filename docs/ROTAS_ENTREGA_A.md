@@ -39,7 +39,7 @@ Documentação: https://project-osrm.org/docs/v5.24.0/api/ e https://github.com/
 
 OSRM driving NÃO suporta aqui altura/peso/eixos/restrições legais de caminhões. A interface e o resultado informam explicitamente essa limitação. O perfil truck não deve ser interpretado como validação de circulação de caminhão.
 
-Held-Karp calcula a sequência exata de até 10 destinos em matriz assimétrica: origem fixa, término livre, sem retorno, sem janelas de entrega ou capacidade. OR-Tools foi avaliado: acrescentaria dependência binária e configuração sem benefício neste limite; é indicado para múltiplos veículos, capacidades e janelas na etapa seguinte. O objetivo distância minimiza a soma das distâncias dos trechos da matriz OSRM, que representam caminhos escolhidos pelo perfil driving, normalmente por tempo; não é garantia do menor caminho global por distância na malha viária. Os tempos não incluem trânsito ao vivo ou serviço na parada.
+Held-Karp calcula a sequência exata de até 10 destinos em matriz assimétrica: origem fixa e retorno ao mesmo ponto, sem janelas de entrega ou capacidade. OR-Tools foi avaliado: acrescentaria dependência binária e configuração sem benefício neste limite; é indicado para múltiplos veículos, capacidades e janelas na etapa seguinte. O objetivo distância minimiza a soma das distâncias dos trechos da matriz OSRM, que representam caminhos escolhidos pelo perfil driving, normalmente por tempo; não é garantia do menor caminho global por distância na malha viária. Os tempos não incluem trânsito ao vivo ou serviço na parada.
 
 ## Executar localmente
 
@@ -86,3 +86,22 @@ Modificados:
 - backend/app/api/router.py
 - frontend/src/App.tsx
 - frontend/src/layouts/AdminLayout.tsx
+
+
+## Busca gratuita e circuito com retorno
+
+O provedor padrão de busca agora é Nominatim (OpenStreetMap), sem chave ou cobrança por consulta no servidor público. Configure:
+
+```dotenv
+ROUTES_GEOCODER_PROVIDER=nominatim
+ROUTES_GEOCODER_URL=https://nominatim.openstreetmap.org
+ROUTES_ROUTER_URL=https://router.project-osrm.org
+```
+
+Reinicie/recrie o backend após alterar o ambiente. A pesquisa manual restringe resultados ao Brasil, solicita português e detalhes do endereço. A interface avisa quando o resultado não informa número: confira o marcador no mapa antes de operar. A cobertura depende do cadastro OpenStreetMap e não há garantia de precisão por imóvel. Photon continua disponível com ROUTES_GEOCODER_PROVIDER=photon e sua URL compatível.
+
+O servidor público limita o conjunto da aplicação a uma consulta por segundo, não permite autocomplete e não oferece SLA. O adaptador aplica intervalo mínimo de um segundo por processo e cache limitado de 256 pesquisas em períodos de 24 horas. Use um único worker para baixo volume; múltiplas instâncias exigem limite/cache compartilhado ou servidor próprio. Não envie dados pessoais ou confidenciais ao serviço público. O mapa permanece Leaflet/OpenStreetMap. Nenhuma integração com Google foi mantida.
+
+Novos cálculos otimizados e manuais incluem a volta à origem na geometria, distância e duração. A otimização considera o custo do retorno ao escolher a ordem. Resultados antigos são preservados: recalcule rascunhos; para planos confirmados, crie outro planejamento. OSRM continua sem trânsito ao vivo ou restrições específicas de caminhão.
+
+Referências: https://nominatim.org/release-docs/latest/api/Search/ e https://operations.osmfoundation.org/policies/nominatim/

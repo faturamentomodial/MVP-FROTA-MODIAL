@@ -1,4 +1,4 @@
-"""Real Photon/OSRM adapters. No synthetic routing fallback."""
+"""Real Nominatim/Photon geocoding and OSRM routing adapters."""
 import json
 import math
 from functools import lru_cache
@@ -20,7 +20,8 @@ def request(base, path):
     bucket = base + path.split('?')[0].split('/v1/')[0]
     with _lock:
         now = monotonic()
-        if now - _last.get(bucket, -100) < settings.routes_min_interval_seconds:
+        interval = max(settings.routes_min_interval_seconds, 1 if 'nominatim.openstreetmap.org' in base else 0)
+        if now - _last.get(bucket, -100) < interval:
             raise HTTPException(429, "Limite local do provedor. Aguarde e tente novamente.")
         _last[bucket] = now
     try:
@@ -33,6 +34,8 @@ def request(base, path):
 
 
 def geocode(address):
+    if settings.routes_geocoder_provider == 'nominatim':
+        return nominatim_geocode(address)
     try:
         rows = request(settings.routes_geocoder_url, '/api/?' + urlencode({'q': address, 'limit': 5}))['features']
         candidates = []
@@ -45,6 +48,33 @@ def geocode(address):
         return {'candidates': candidates, 'selection_required': True, 'provider': 'photon'}
     except (KeyError, TypeError, ValueError) as exc:
         raise HTTPException(503, 'Resposta de geocodificação inválida.') from exc
+
+
+def nominatim_geocode(address):
+    return _nominatim_geocode(' '.join(address.split()), settings.routes_geocoder_url, int(monotonic() // 86400))
+
+
+@lru_cache(maxsize=256)
+def _nominatim_geocode(address, base, cache_period):
+    data = request(base, '/search?' + urlencode({
+        'q': address, 'format': 'jsonv2', 'addressdetails': 1, 'countrycodes': 'br',
+        'accept-language': 'pt-BR', 'limit': 5, 'dedupe': 1,
+    }))
+    try:
+        if not isinstance(data, list):
+            raise ValueError()
+        candidates = []
+        for row in data[:5]:
+            lat, lon = float(row['lat']), float(row['lon'])
+            if not math.isfinite(lat) or not math.isfinite(lon) or not -90 <= lat <= 90 or not -180 <= lon <= 180:
+                raise ValueError()
+            details = row.get('address', {})
+            candidates.append({'address': row['display_name'], 'latitude': lat, 'longitude': lon,
+                               'house_number_found': bool(details.get('house_number'))})
+        return {'candidates': candidates, 'selection_required': True, 'provider': 'nominatim',
+                'attribution': 'OpenStreetMap contributors'}
+    except (KeyError, TypeError, ValueError) as exc:
+        raise HTTPException(503, 'Resposta de geocodifica\u00e7\u00e3o Nominatim inv\u00e1lida.') from exc
 
 
 def coordinates(points):
@@ -82,11 +112,11 @@ def geometry(points):
 
 
 def optimal_order(cost):
-    """Held-Karp: exact open path from origin, no return, <=10 stops."""
+    """Held-Karp: exact circuit from and back to origin, <=10 stops."""
     n = len(cost) - 1
     @lru_cache(None)
     def solve(current, remaining):
         if not remaining:
-            return 0, ()
+            return cost[current][0], ()
         return min((cost[current][j] + solve(j, remaining ^ (1 << (j-1)))[0], (j,) + solve(j, remaining ^ (1 << (j-1)))[1]) for j in range(1, n+1) if remaining & (1 << (j-1)))
     return list(solve(0, (1 << n)-1)[1])

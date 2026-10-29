@@ -53,7 +53,7 @@ def list_plans(db: Session = Depends(get_db), limit: int = Query(50, ge=1, le=10
 
 @router.get('/providers')
 def providers():
-    return {'geocoder': 'photon', 'router': 'osrm', 'truck_restrictions_supported': False, 'warning': WARNING, 'max_invoices': 10}
+    return {'geocoder': provider.settings.routes_geocoder_provider, 'router': 'osrm', 'truck_restrictions_supported': False, 'warning': WARNING, 'max_invoices': 10, 'return_to_origin': True}
 
 
 @router.get('/geocode')
@@ -124,11 +124,11 @@ def calculate(plan_id: int, payload: CalculateInput, db: Session = Depends(get_d
     data = deepcopy(plan.data)
     matrix = provider.matrix(points)
     order = provider.optimal_order(matrix['durations' if data['objective'] == 'duration' else 'distances']) if payload.optimize else list(range(1, len(points)))
-    result = provider.geometry([points[0]] + [points[i] for i in order])
+    result = provider.geometry([points[0]] + [points[i] for i in order] + [points[0]])
     data['stops'] = [stops[i-1] for i in order]
     notes = {n['number']: n for n in data['invoices']}
     data['invoices'] = [notes[number] for stop in data['stops'] for number in stop['invoices']]
-    data['result'] = {**result, 'matrix': {'durations': matrix['durations'], 'distances': matrix['distances']}, 'matrix_points': points, 'provider': 'osrm', 'truck_restrictions_supported': False, 'warning': WARNING if data['profile'] == 'truck' else None, 'algorithm': 'held-karp' if payload.optimize else 'manual', 'objective': data['objective'], 'return_to_origin': False}
+    data['result'] = {**result, 'matrix': {'durations': matrix['durations'], 'distances': matrix['distances']}, 'matrix_points': points, 'provider': 'osrm', 'truck_restrictions_supported': False, 'warning': WARNING if data['profile'] == 'truck' else None, 'algorithm': 'held-karp' if payload.optimize else 'manual', 'objective': data['objective'], 'return_to_origin': True}
     return save(db, plan, payload.revision, data, user)
 
 

@@ -1,5 +1,6 @@
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal
 
 from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -22,7 +23,8 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+psycopg://fleet:fleet@db:5432/fleet"
     cors_origins: str = "http://localhost:5173,http://localhost:3000"
     frontend_dist: Path | None = None
-    routes_geocoder_url: str = ''
+    routes_geocoder_provider: Literal['photon', 'nominatim'] = 'nominatim'
+    routes_geocoder_url: str = 'https://nominatim.openstreetmap.org'
     routes_router_url: str = ''
     routes_timeout_seconds: float = Field(default=15, gt=0, le=60)
     routes_min_interval_seconds: float = Field(default=1, ge=0, le=60)
