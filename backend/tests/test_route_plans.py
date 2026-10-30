@@ -54,6 +54,7 @@ def test_ten_notes_persistence_manual_conflict_confirmation(client, admin_header
 
 def test_provider_failure_atomicity_and_geocoding(client,admin_headers,monkeypatch):
     monkeypatch.setattr(provider.settings, 'routes_geocoder_provider', 'photon')
+    monkeypatch.setattr(provider.settings, 'routes_geocoder_url', 'https://photon.komoot.io')
     p=client.post('/api/route-plans',json=payload(),headers=admin_headers).json()
     original_matrix = provider.matrix
     def unavailable(*args): raise HTTPException(503,'Provedor indisponível')
@@ -203,3 +204,42 @@ def test_nominatim_geocoding_quality_and_errors(monkeypatch):
         with pytest.raises(HTTPException) as caught:
             provider.geocode('Rua A 123')
         assert caught.value.status_code == 503
+
+
+def test_nominatim_cep_uses_postal_search_and_shared_cache(monkeypatch):
+    monkeypatch.setattr(provider.settings, 'routes_geocoder_provider', 'nominatim')
+    monkeypatch.setattr(provider.settings, 'routes_geocoder_url', 'https://nominatim.openstreetmap.org')
+    calls = []
+    def response(base, path):
+        calls.append(path)
+        assert 'postalcode=04744-040' in path and 'q=' not in path
+        return []
+    monkeypatch.setattr(provider, 'request', response)
+    provider._nominatim_geocode.cache_clear()
+    assert provider.geocode('04744040')['candidates'] == []
+    assert provider.geocode('04744-040')['candidates'] == []
+    assert len(calls) == 1
+    provider._nominatim_geocode.cache_clear()
+
+
+def test_provider_http_errors_explain_failure(monkeypatch):
+    import pytest
+    from urllib.error import HTTPError
+    monkeypatch.setattr(provider.settings, 'routes_min_interval_seconds', 0)
+    for status in (403, 404, 429, 502):
+        def fail(*args, **kwargs):
+            raise HTTPError('https://example.invalid', status, 'failure', {}, None)
+        monkeypatch.setattr(provider, 'urlopen', fail)
+        with pytest.raises(HTTPException) as caught:
+            provider.request('https://example.invalid', '/search')
+        assert caught.value.status_code == (429 if status == 429 else 503)
+        assert str(status) in caught.value.detail or status == 429
+
+
+def test_geocoder_rejects_mismatched_public_endpoint(monkeypatch):
+    import pytest
+    monkeypatch.setattr(provider.settings, 'routes_geocoder_provider', 'nominatim')
+    monkeypatch.setattr(provider.settings, 'routes_geocoder_url', 'https://photon.komoot.io')
+    with pytest.raises(HTTPException) as caught:
+        provider.geocode('04744040')
+    assert 'incompatível' in caught.value.detail

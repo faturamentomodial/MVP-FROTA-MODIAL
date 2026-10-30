@@ -1,10 +1,12 @@
 """Real Nominatim/Photon geocoding and OSRM routing adapters."""
 import json
+import logging
 import math
+import re
 from functools import lru_cache
 from threading import Lock
 from time import monotonic
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlsplit
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
 from fastapi import HTTPException
@@ -12,6 +14,7 @@ from app.core.config import settings
 
 _lock = Lock()
 _last = {}
+logger = logging.getLogger(__name__)
 
 
 def request(base, path):
@@ -28,12 +31,24 @@ def request(base, path):
         with urlopen(Request(base.rstrip('/') + path, headers={'User-Agent': 'Modial-RoutePlanning/1.0', 'Accept': 'application/json'}), timeout=settings.routes_timeout_seconds) as response:
             return json.loads(response.read(5_000_001))
     except HTTPError as exc:
-        raise HTTPException(429 if exc.code == 429 else 503, "Provedor excedeu o limite de uso." if exc.code == 429 else "Provedor indisponível.") from exc
+        logger.warning('Route provider HTTP failure: base=%s status=%s', base, exc.code)
+        detail = {
+            403: 'Provedor de mapas recusou o acesso (HTTP 403). Verifique o bloqueio do IP do servidor e a configuração do provedor.',
+            404: 'Endpoint do provedor não encontrado (HTTP 404). Confira ROUTES_GEOCODER_PROVIDER, ROUTES_GEOCODER_URL e ROUTES_ROUTER_URL.',
+            429: 'Provedor excedeu o limite de uso. Aguarde e tente novamente.',
+        }.get(exc.code, f'Provedor de mapas indisponível (HTTP {exc.code}). Tente novamente mais tarde.')
+        raise HTTPException(429 if exc.code == 429 else 503, detail) from exc
     except (OSError, ValueError) as exc:
+        logger.warning('Route provider connection or JSON failure: base=%s error=%s', base, type(exc).__name__)
         raise HTTPException(503, "Provedor indisponível ou resposta inválida; nenhum resultado estimado foi utilizado.") from exc
 
 
 def geocode(address):
+    # A previous Photon configuration may remain when switching to Nominatim.
+    host = urlsplit(settings.routes_geocoder_url).hostname or ''
+    if ((settings.routes_geocoder_provider == 'nominatim' and host == 'photon.komoot.io')
+            or (settings.routes_geocoder_provider == 'photon' and host == 'nominatim.openstreetmap.org')):
+        raise HTTPException(503, 'Configuração de geocodificação incompatível. Ajuste ROUTES_GEOCODER_PROVIDER e ROUTES_GEOCODER_URL para o mesmo serviço e reinicie o backend.')
     if settings.routes_geocoder_provider == 'nominatim':
         return nominatim_geocode(address)
     try:
@@ -51,13 +66,18 @@ def geocode(address):
 
 
 def nominatim_geocode(address):
-    return _nominatim_geocode(' '.join(address.split()), settings.routes_geocoder_url, int(monotonic() // 86400))
+    address = ' '.join(address.split())
+    if re.fullmatch(r'\d{5}-?\d{3}', address):
+        digits = address.replace('-', '')
+        address = digits[:5] + '-' + digits[5:]
+    return _nominatim_geocode(address, settings.routes_geocoder_url, int(monotonic() // 86400))
 
 
 @lru_cache(maxsize=256)
 def _nominatim_geocode(address, base, cache_period):
     data = request(base, '/search?' + urlencode({
-        'q': address, 'format': 'jsonv2', 'addressdetails': 1, 'countrycodes': 'br',
+        ('postalcode' if re.fullmatch(r'\d{5}-\d{3}', address) else 'q'): address,
+        'format': 'jsonv2', 'addressdetails': 1, 'countrycodes': 'br',
         'accept-language': 'pt-BR', 'limit': 5, 'dedupe': 1,
     }))
     try:
