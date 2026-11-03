@@ -2,7 +2,7 @@ from datetime import UTC, datetime
 from typing import Literal
 from typing import Generic, TypeVar
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, computed_field, field_validator, model_validator
 
 from app.models.enums import (
     DeliveryStatus,
@@ -149,6 +149,14 @@ class VehicleOut(ORMModel):
     ativo: bool
     created_at: datetime
     updated_at: datetime
+
+
+    @computed_field
+    @property
+    def rodizio_dia(self) -> str | None:
+        # Derived on every response so existing vehicles and plate edits stay current.
+        from app.services.vehicle_restrictions import restriction_day
+        return restriction_day(self.placa)
 
 
 class TripCreate(BaseModel):

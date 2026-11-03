@@ -8,7 +8,7 @@ export interface User { id: number; nome: string; email: string; role: Role; ati
 export interface AuthResponse { access_token: string; token_type: string; user: User }
 export interface Page<T> { items: T[]; total: number; page: number; page_size: number; pages: number }
 export interface Driver { id: number; nome: string; cpf: string; telefone: string; email?: string; ativo: boolean; user_id: number; created_at: string; updated_at: string }
-export interface Vehicle { id: number; placa: string; marca: string; modelo: string; tipo: string; km_atual: number; status: VehicleStatus; ativo: boolean; created_at: string; updated_at: string }
+export interface Vehicle { rodizio_dia: string | null; id: number; placa: string; marca: string; modelo: string; tipo: string; km_atual: number; status: VehicleStatus; ativo: boolean; created_at: string; updated_at: string }
 export type DeliveryStatus = 'PENDENTE' | 'EM_ENTREGA' | 'ENTREGUE' | 'NAO_ENTREGUE'
 export interface TripInvoice { position: number; id: number; numero_nota: string; volumes: number; status: DeliveryStatus; started_at: string | null; delivered_at: string | null; occurrence_at: string | null; occurrence_reason: string | null; occurrence_note: string | null }
 export interface Trip { route_plan?: PlannedRoute | null; delivery_revision: number; id: number; driver_id: number; vehicle_id: number; data_saida: string; km_inicial: number; data_retorno?: string; km_final?: number; km_percorrido?: number; status: TripStatus; observacao?: string; driver_name?: string; vehicle_plate?: string; checklist_id?: number; occurrence_count: number; notas: TripInvoice[]; total_volumes: number }
