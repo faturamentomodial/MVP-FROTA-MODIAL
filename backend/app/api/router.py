@@ -17,3 +17,6 @@ api_router.include_router(tracking.router)
 
 from app.api import route_plans
 api_router.include_router(route_plans.router)
+
+from app.api import tasks
+api_router.include_router(tasks.router)

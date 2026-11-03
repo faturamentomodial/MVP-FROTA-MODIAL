@@ -24,3 +24,5 @@ __all__ = [
     "Vehicle",
 ]
 from app.models.route_plans import RoutePlan, RoutePlanVersion
+
+from app.models.tasks import Task, TaskStatus

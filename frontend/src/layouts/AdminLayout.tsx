@@ -5,6 +5,7 @@ import { Brand } from '../components/Brand'
 import { useAuth } from '../hooks/useAuth'
 
 const links = [
+  {to:'/admin/tarefas', label:'Central de Tarefas', icon:ClipboardCheck},
   {to:'/admin', label:'Visão geral', icon:Gauge, end:true},
   {to:'/admin/rotas', label:'Rotas', icon:Route},
   {to:'/admin/viagens', label:'Viagens', icon:Route},
