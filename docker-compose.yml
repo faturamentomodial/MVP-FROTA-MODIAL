@@ -19,6 +19,10 @@ services:
       DATABASE_URL: postgresql+psycopg://fleet:${POSTGRES_PASSWORD:-fleet}@db:5432/fleet
       SECRET_KEY: ${SECRET_KEY:-development-secret-change-before-production-123}
       ENVIRONMENT: ${ENVIRONMENT:-development}
+      SANKHYA_BASE_URL: ${SANKHYA_BASE_URL:-https://api.sankhya.com.br}
+      SANKHYA_CLIENT_ID: ${SANKHYA_CLIENT_ID:-}
+      SANKHYA_CLIENT_SECRET: ${SANKHYA_CLIENT_SECRET:-}
+      SANKHYA_TOKEN: ${SANKHYA_TOKEN:-}
       POSITRON_LOGIN: ${POSITRON_LOGIN:-}
       POSITRON_PASSWORD: ${POSITRON_PASSWORD:-}
       ROUTES_GEOCODER_PROVIDER: ${ROUTES_GEOCODER_PROVIDER:-nominatim}
