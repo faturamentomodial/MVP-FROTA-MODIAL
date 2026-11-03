@@ -14,7 +14,7 @@ class PlannedInvoice(BaseModel):
     number: str = Field(min_length=1, max_length=80)
     volumes: int = Field(gt=0, le=1000000)
     destination: Point
-    source: Literal["MANUAL"] = "MANUAL"
+    source: Literal["MANUAL", "SANKHYA"] = "MANUAL"
     external_id: str | None = Field(default=None, max_length=120)
 
 

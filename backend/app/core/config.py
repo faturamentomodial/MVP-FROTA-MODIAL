@@ -1,8 +1,10 @@
 from functools import lru_cache
+import logging
 from pathlib import Path
 from typing import Literal
+from urllib.parse import urlsplit
 
-from pydantic import Field, SecretStr, field_validator
+from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -28,8 +30,29 @@ class Settings(BaseSettings):
     routes_router_url: str = ''
     routes_timeout_seconds: float = Field(default=15, gt=0, le=60)
     routes_min_interval_seconds: float = Field(default=1, ge=0, le=60)
+    sankhya_base_url: str = "https://api.sankhya.com.br"
+    sankhya_client_id: str = ""
+    sankhya_client_secret: SecretStr = SecretStr("")
+    sankhya_token: SecretStr = SecretStr("")
+    sankhya_timeout_seconds: float = Field(default=20, gt=0, le=60)
     positron_login: str = ""
     positron_password: SecretStr = SecretStr("")
+
+    @model_validator(mode="after")
+    def align_public_geocoder_url(self) -> "Settings":
+        public_hosts = {
+            "photon": "photon.komoot.io",
+            "nominatim": "nominatim.openstreetmap.org",
+        }
+        host = urlsplit(self.routes_geocoder_url).hostname
+        expected_host = public_hosts[self.routes_geocoder_provider]
+        if host in public_hosts.values() and host != expected_host:
+            self.routes_geocoder_url = f"https://{expected_host}"
+            logging.getLogger(__name__).warning(
+                "Geocoder URL incompatible with provider %s; using %s",
+                self.routes_geocoder_provider, self.routes_geocoder_url,
+            )
+        return self
 
     @field_validator("database_url", mode="before")
     @classmethod

@@ -27,6 +27,7 @@ Cada gravação usa compare-and-swap por revisão e estado, retornando 409 em co
 Adaptadores reais Photon (geocodificação) e OSRM (table/route), configurados no backend, sem dependência da Pósitron. As URLs ficam vazias por padrão; sem configuração retorna 503. Configure instâncias próprias ou contratadas compatíveis com os contratos:
 
 ```dotenv
+ROUTES_GEOCODER_PROVIDER=photon
 ROUTES_GEOCODER_URL=https://photon.komoot.io
 ROUTES_ROUTER_URL=https://router.project-osrm.org
 ROUTES_TIMEOUT_SECONDS=15
@@ -52,7 +53,7 @@ Use PostgreSQL LOCAL e confira DATABASE_URL antes de qualquer comando Alembic. N
 5. Na pasta frontend execute `npm.cmd run dev` (ou npm run dev em outros shells).
 6. Entre como administrador e abra /admin/rotas. Crie nome, origem, veículo, notas/destinos; reutilize destino para duas notas no mesmo endereço; otimize, altere com setas, calcule ordem manual e confirme.
 
-`Salvar rascunho` permite continuar depois sem origem ou veículo. Cada nota salva exige um destino selecionado. A lista mostra os 50 planos mais recentes; a API suporta paginação. Planos confirmados são somente leitura. O campo source=MANUAL e external_id fica reservado para a futura ingestão; Sankhya não foi implementado.
+`Salvar rascunho` permite continuar depois sem origem ou veículo. Cada nota salva exige um destino selecionado. A lista mostra os 50 planos mais recentes; a API suporta paginação. Planos confirmados são somente leitura. A consulta Sankhya e os campos de origem estão descritos ao final deste documento.
 
 ## Validação e limites
 
@@ -64,7 +65,7 @@ Comandos: `python -m pytest tests -q -p no:cacheprovider` na pasta backend e `np
 
 B (escopo a confirmar): homologar provedor com restrições reais de caminhão, testes simultâneos PostgreSQL e UI, políticas de quota compartilhada, capacidade/janelas, retorno opcional e eventual conversão explícita em viagem operacional. A confirmação atual não inicia viagem.
 
-C: adaptador de ingestão Sankhya, mapeamento e validação de documentos/endereços, idempotência por identificador externo, autenticação própria, reconciliação e auditoria. Nenhuma chamada ou credencial Sankhya foi adicionada.
+C: adaptador de ingestão Sankhya, mapeamento e validação de documentos/endereços, idempotência por identificador externo, autenticação própria, reconciliação e auditoria. A consulta inicial Sankhya está descrita ao final; credenciais devem ser configuradas no servidor.
 
 Resultado executado em 28/10/2026: 56 testes aprovados em 102,36 s (4 avisos de depreciação preexistentes). Build frontend aprovado: TypeScript + Vite, 1622 módulos, bundle JS 442,35 kB / gzip 130,62 kB. O build foi repetido fora do sandbox após bloqueio de leitura do esbuild. Nenhum deploy foi realizado.
 
@@ -98,10 +99,20 @@ ROUTES_GEOCODER_URL=https://nominatim.openstreetmap.org
 ROUTES_ROUTER_URL=https://router.project-osrm.org
 ```
 
-Reinicie/recrie o backend após alterar o ambiente. A pesquisa manual restringe resultados ao Brasil, solicita português e detalhes do endereço. A interface avisa quando o resultado não informa número: confira o marcador no mapa antes de operar. A cobertura depende do cadastro OpenStreetMap e não há garantia de precisão por imóvel. Photon continua disponível com ROUTES_GEOCODER_PROVIDER=photon e sua URL compatível.
+Reinicie/recrie o backend após alterar o ambiente. Ao iniciar, se a URL pública for do outro provedor (Photon ou Nominatim), o backend usa a URL pública do provedor selecionado e registra um aviso no log. URLs próprias e URLs vazias são preservadas. A pesquisa manual restringe resultados ao Brasil, solicita português e detalhes do endereço. A interface avisa quando o resultado não informa número: confira o marcador no mapa antes de operar. A cobertura depende do cadastro OpenStreetMap e não há garantia de precisão por imóvel. Photon continua disponível com ROUTES_GEOCODER_PROVIDER=photon e sua URL compatível.
 
 O servidor público limita o conjunto da aplicação a uma consulta por segundo, não permite autocomplete e não oferece SLA. O adaptador aplica intervalo mínimo de um segundo por processo e cache limitado de 256 pesquisas em períodos de 24 horas. Use um único worker para baixo volume; múltiplas instâncias exigem limite/cache compartilhado ou servidor próprio. Não envie dados pessoais ou confidenciais ao serviço público. O mapa permanece Leaflet/OpenStreetMap. Nenhuma integração com Google foi mantida.
 
 Novos cálculos otimizados e manuais incluem a volta à origem na geometria, distância e duração. A otimização considera o custo do retorno ao escolher a ordem. Resultados antigos são preservados: recalcule rascunhos; para planos confirmados, crie outro planejamento. OSRM continua sem trânsito ao vivo ou restrições específicas de caminhão.
 
 Referências: https://nominatim.org/release-docs/latest/api/Search/ e https://operations.osmfoundation.org/policies/nominatim/
+
+## Consulta de notas no Sankhya
+
+Na tela Rotas, informe o número e clique em `Buscar nota no Sankhya`. Havendo mais de uma nota, selecione por empresa, série e identificador. O endereço preenche o campo Destino e QTDVOL preenche Volumes. Clique em `Buscar endereço` e selecione o ponto correto para adicionar a nota. Volumes ausentes ou fracionários exigem correção manual. A origem SANKHYA e o NUNOTA são preservados ao salvar.
+
+Configure no ambiente do backend SANKHYA_CLIENT_ID, SANKHYA_CLIENT_SECRET e SANKHYA_TOKEN (X-Token do Gateway), e reinicie o serviço. SANKHYA_BASE_URL assume https://api.sankhya.com.br; homologação pode usar https://api.sandbox.sankhya.com.br. A integração utiliza OAuth client_credentials e DbExplorerSP.executeQuery, que precisa estar liberado ao usuário de integração.
+
+O mapeamento inicial consulta vendas TGFCAB (TIPMOV=V), volumes QTDVOL e endereço do contato CODCONTATOENTREGA em TGFCTT, com fallback campo a campo para TGFPAR. Validar esse mapeamento no ambiente real, especialmente endereços de entrega personalizados e permissões das tabelas. Não houve validação ao vivo sem credenciais. Números repetidos entre empresas/séries são retornados para seleção; notas com mesmo número continuam sujeitas à regra atual de unicidade do planejamento.
+
+Referências: https://developer.sankhya.com.br/reference/post_authenticate e https://developer.sankhya.com.br/reference/requisi%C3%A7%C3%B5es-via-gateway.

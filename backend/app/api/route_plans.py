@@ -8,6 +8,7 @@ from app.models import Vehicle, Driver
 from app.models.route_plans import RoutePlan, RoutePlanVersion
 from app.schemas.route_plans import PlanInput, CalculateInput, RevisionInput
 from app.services import route_planning as provider
+from app.services import sankhya
 
 router = APIRouter(prefix='/route-plans', tags=['Planejamento de rotas'], dependencies=[Depends(require_admin)])
 WARNING = 'OSRM driving não considera altura, peso, eixos ou restrições legais de caminhões. Revisão humana obrigatória antes da operação.'
@@ -59,6 +60,11 @@ def providers():
 @router.get('/geocode')
 def geocode(address: str = Query(min_length=5, max_length=500)):
     return provider.geocode(address)
+
+
+@router.get('/invoice-lookup')
+def invoice_lookup(number: str = Query(pattern=r"^[0-9]{1,18}$")):
+    return {'invoices': sankhya.lookup_invoice(number)}
 
 
 @router.post('', status_code=201)
