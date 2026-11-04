@@ -16,6 +16,7 @@ const links = [
   {to:'/admin/ocorrencias', label:'Ocorrências', icon:TriangleAlert},
   {to:'/admin/motoristas', label:'Motoristas', icon:Users},
   {to:'/admin/veiculos', label:'Veículos', icon:Truck},
+  {to:'/admin/coletas', label:'Coletas', icon:MapPin},
   {to:'/admin/checklist', label:'Checklist', icon:ClipboardCheck},
   {to:'/admin/configuracoes', label:'Configurações', icon:Settings2},
 ]
