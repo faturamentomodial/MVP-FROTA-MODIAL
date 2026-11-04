@@ -1,4 +1,4 @@
-export type Role = 'ADMIN' | 'MOTORISTA'
+export type Role = 'ADMIN' | 'COMPRAS' | 'MOTORISTA'
 export type VehicleStatus = 'DISPONIVEL' | 'EM_VIAGEM' | 'ATENCAO' | 'INATIVO'
 export type TripStatus = 'ABERTA' | 'EM_ANDAMENTO' | 'FINALIZADA' | 'CANCELADA'
 export type OccurrenceStatus = 'ABERTA' | 'EM_ANALISE' | 'RESOLVIDA' | 'CANCELADA'

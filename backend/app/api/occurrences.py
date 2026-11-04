@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
 
-from app.api.dependencies import get_current_user, require_admin, require_driver
+from app.api.dependencies import get_current_user, require_admin, require_driver, require_operations
 from app.api.helpers import occurrence_dict
 from app.core.database import get_db
 from app.models import Occurrence, User, Vehicle
@@ -72,8 +72,10 @@ def list_occurrences(
     date_from: datetime | None = None,
     date_to: datetime | None = None,
     db: Session = Depends(get_db),
-    _: User = Depends(require_admin),
+    user: User = Depends(require_operations),
 ):
+    if user.role == UserRole.COMPRAS and trip_id is None:
+        raise HTTPException(403, "Acesso permitido somente às ocorrências de uma viagem")
     stmt = occurrence_query().order_by(Occurrence.data_hora.desc())
     vehicle_types = (
         OccurrenceType.AVARIA,
@@ -110,6 +112,8 @@ def get(occurrence_id: int, db: Session = Depends(get_db), user: User = Depends(
     item = db.scalar(occurrence_query().where(Occurrence.id == occurrence_id))
     if not item:
         raise HTTPException(status_code=404, detail="Ocorrência não encontrada")
+    if user.role == UserRole.COMPRAS and item.trip_id is None:
+        raise HTTPException(status_code=403, detail="Acesso negado")
     if user.role == UserRole.MOTORISTA and item.driver_id != get_driver_for_user(db, user).id:
         raise HTTPException(status_code=403, detail="Acesso negado")
     return occurrence_dict(item)

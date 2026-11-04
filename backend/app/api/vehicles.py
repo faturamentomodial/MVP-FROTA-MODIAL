@@ -24,6 +24,8 @@ def list_vehicles(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
+    if user.role == UserRole.COMPRAS:
+        raise HTTPException(403, "Acesso não autorizado para este perfil")
     stmt = select(Vehicle).order_by(Vehicle.placa)
     if user.role == UserRole.MOTORISTA or available:
         stmt = stmt.where(Vehicle.ativo.is_(True), Vehicle.status == VehicleStatus.DISPONIVEL)

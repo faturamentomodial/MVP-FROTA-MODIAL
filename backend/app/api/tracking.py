@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, joinedload
 
-from app.api.dependencies import require_admin
+from app.api.dependencies import require_admin, require_operations
 from app.core.database import get_db
 from app.models import Trip, User, Vehicle
 from app.models.entities import TrackingPositionRecord, VehicleTracking
@@ -16,7 +16,7 @@ from app.schemas.domain import ORMModel
 from app.services.audit import audit
 from app.services.tracking import provider, ProviderNotConfigured, ProviderUnavailable, sync_latest, persist_positions, sync_lock
 
-router = APIRouter(prefix="/tracking", tags=["Rastreamento"], dependencies=[Depends(require_admin)])
+router = APIRouter(prefix="/tracking", tags=["Rastreamento"], dependencies=[Depends(require_operations)])
 
 
 class TrackingLink(BaseModel):
@@ -77,7 +77,7 @@ def fleet(db: Session = Depends(get_db)):
 
 
 @router.get("/provider/vehicles")
-def provider_vehicles():
+def provider_vehicles(_: User = Depends(require_admin)):
     try:
         return [{"idVehicle": v["id"], "licensePlate": v["licensePlate"]} for v in provider.vehicles()]
     except ProviderNotConfigured as exc:

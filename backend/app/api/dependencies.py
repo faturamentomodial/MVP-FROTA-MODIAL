@@ -42,4 +42,5 @@ def require_role(*roles: UserRole) -> Callable:
 
 require_admin = require_role(UserRole.ADMIN)
 require_driver = require_role(UserRole.MOTORISTA)
+require_operations = require_role(UserRole.ADMIN, UserRole.COMPRAS)
 

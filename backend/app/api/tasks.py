@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, StringConstraints
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session, joinedload
 
-from app.api.dependencies import get_current_user, require_admin, require_driver
+from app.api.dependencies import get_current_user, require_operations, require_driver
 from app.core.database import get_db
 from app.models import Driver, Task, TaskStatus, User
 from app.models.entities import utcnow
@@ -47,7 +47,7 @@ def find_task(db: Session, task_id: int) -> Task:
 
 
 @router.post("", status_code=201)
-def create_task(body: TaskCreate, user: User = Depends(require_admin), db: Session = Depends(get_db)):
+def create_task(body: TaskCreate, user: User = Depends(require_operations), db: Session = Depends(get_db)):
     task = Task(**body.model_dump(), created_by=user.id)
     db.add(task)
     db.commit()
@@ -56,7 +56,7 @@ def create_task(body: TaskCreate, user: User = Depends(require_admin), db: Sessi
 
 
 @router.get("")
-def admin_tasks(status: TaskStatus | None = None, offset: int = Query(0, ge=0), limit: int = Query(100, ge=1, le=200), user: User = Depends(require_admin), db: Session = Depends(get_db)):
+def admin_tasks(status: TaskStatus | None = None, offset: int = Query(0, ge=0), limit: int = Query(100, ge=1, le=200), user: User = Depends(require_operations), db: Session = Depends(get_db)):
     query = select(Task).options(joinedload(Task.driver))
     if status is not None:
         query = query.where(Task.status == status)
@@ -77,7 +77,7 @@ def my_tasks(completed: bool = False, offset: int = Query(0, ge=0), limit: int =
 
 @router.get("/{task_id}")
 def task_detail(task_id: int, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    driver = eligible_driver(user, db) if user.role != UserRole.ADMIN else None
+    driver = eligible_driver(user, db) if user.role == UserRole.MOTORISTA else None
     task = find_task(db, task_id)
     if driver and task.status != TaskStatus.DISPONIVEL and task.driver_id != driver.id:
         raise HTTPException(403, "Esta tarefa pertence a outro motorista")

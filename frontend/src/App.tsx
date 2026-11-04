@@ -2,7 +2,7 @@ import { TasksPage } from './pages/TasksPage'
 import { RoutesPage } from './pages/admin/RoutesPage'
 import { TrackingPage } from './pages/admin/TrackingPage'
 import type { ReactNode } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
 import { AdminLayout } from './layouts/AdminLayout'
 import { DriverLayout } from './layouts/DriverLayout'
@@ -23,5 +23,7 @@ import { FinishTripPage } from './pages/driver/FinishTripPage'
 import { OccurrencePage } from './pages/driver/OccurrencePage'
 import { StartTripPage } from './pages/driver/StartTripPage'
 
-function Protected({role,children}:{role:'ADMIN'|'MOTORISTA';children:ReactNode}){const{user}=useAuth();if(!user)return <Navigate to="/login" replace/>;if(user.role!==role)return <Navigate to={user.role==='ADMIN'?'/admin':'/motorista'} replace/>;return children}
+import { canAccess, homeFor } from './utils/access'
+
+function Protected({role,children}:{role:'ADMIN'|'MOTORISTA';children:ReactNode}){const{user}=useAuth();const{pathname}=useLocation();if(!user)return <Navigate to="/login" replace/>;if(role==='MOTORISTA'?user.role!=='MOTORISTA':!canAccess(user.role,pathname))return <Navigate to={homeFor(user.role)} replace/>;return children}
 export default function App(){return <Routes><Route path="/login" element={<LoginPage/>}/><Route path="/motorista" element={<Protected role="MOTORISTA"><DriverLayout/></Protected>}><Route index element={<DriverHome/>}/><Route path="tarefas" element={<TasksPage/>}/><Route path="entrega/:tripId/:invoiceId" element={<DeliveryPage/>}/><Route path="iniciar" element={<StartTripPage/>}/><Route path="carga/:tripId" element={<Navigate to="/motorista" replace/>}/><Route path="checklist/:tripId" element={<ChecklistPage/>}/><Route path="ocorrencia" element={<OccurrencePage/>}/><Route path="finalizar" element={<FinishTripPage/>}/></Route><Route path="/admin" element={<Protected role="ADMIN"><AdminLayout/></Protected>}><Route index element={<DashboardPage/>}/><Route path="tarefas" element={<TasksPage admin/>}/><Route path="configuracoes" element={<SettingsPage/>}/><Route path="motoristas" element={<DriversPage/>}/><Route path="motoristas/:id" element={<EntityDetailPage kind="driver"/>}/><Route path="veiculos" element={<VehiclesPage/>}/><Route path="veiculos/:id" element={<EntityDetailPage kind="vehicle"/>}/><Route path="checklist" element={<ChecklistSettingsPage/>}/><Route path="viagens" element={<TripsPage/>}/><Route path="viagens/:id" element={<TripDetailPage/>}/><Route path="rotas" element={<RoutesPage/>}/><Route path="rastreamento" element={<TrackingPage/>}/><Route path="ocorrencias" element={<OccurrencesPage/>}/></Route><Route path="/rastreamento" element={<Navigate to="/admin/rastreamento" replace/>}/><Route path="*" element={<Navigate to="/login" replace/>}/></Routes>}

@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload, selectinload
 
-from app.api.dependencies import get_current_user, require_admin, require_driver
+from app.api.dependencies import get_current_user, require_admin, require_driver, require_operations
 from app.api.helpers import trip_dict
 from app.core.database import get_db
 from app.models import Checklist, Trip, TripInvoice, User, Vehicle
@@ -60,7 +60,7 @@ def list_trips(
     date_from: datetime | None = None,
     date_to: datetime | None = None,
     db: Session = Depends(get_db),
-    _: User = Depends(require_admin),
+    _: User = Depends(require_operations),
 ):
     stmt = select(Trip).options(joinedload(Trip.driver), joinedload(Trip.vehicle), joinedload(Trip.checklist), selectinload(Trip.occurrences), selectinload(Trip.invoices)).order_by(Trip.data_saida.desc())
     if driver_id:

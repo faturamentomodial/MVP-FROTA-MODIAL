@@ -4,6 +4,8 @@ import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { Brand } from '../components/Brand'
 import { useAuth } from '../hooks/useAuth'
 
+import { canAccess, roleLabels } from '../utils/access'
+
 const links = [
   {to:'/admin/tarefas', label:'Central de Tarefas', icon:ClipboardCheck},
   {to:'/admin', label:'Visão geral', icon:Gauge, end:true},
@@ -22,11 +24,11 @@ export function AdminLayout() {
   return <div className="admin-shell">
     <aside className={`sidebar ${open?'sidebar--open':''}`}>
       <div className="sidebar-brand"><Brand/><button className="icon-button sidebar-close" onClick={()=>setOpen(false)} aria-label="Fechar menu"><X/></button></div>
-      <nav aria-label="Navegação principal">{links.map(({to,label,icon:Icon,end})=><NavLink key={to} to={to} end={end} onClick={()=>setOpen(false)}><Icon size={20}/>{label}</NavLink>)}</nav>
-      <div className="sidebar-user"><span>{user?.nome}</span><small>Gestor</small><button onClick={()=>{logout();navigate('/login')}}><LogOut size={17}/> Sair</button></div>
+      <nav aria-label="Navegação principal">{links.filter(link => user && canAccess(user.role, link.to)).map(({to,label,icon:Icon,end})=><NavLink key={to} to={to} end={end} onClick={()=>setOpen(false)}><Icon size={20}/>{label}</NavLink>)}</nav>
+      <div className="sidebar-user"><span>{user?.nome}</span><small>{user && roleLabels[user.role]}</small><button onClick={()=>{logout();navigate('/login')}}><LogOut size={17}/> Sair</button></div>
     </aside>
     <div className="admin-content">
-      <header className="admin-topbar"><button className="icon-button menu-button" onClick={()=>setOpen(true)} aria-label="Abrir menu"><Menu/></button><div><strong>Controle de Frota</strong><span>Operação Modial</span></div><Link className="icon-button" to="/admin/configuracoes" aria-label="Abrir configurações"><Settings2 size={19}/></Link></header>
+      <header className="admin-topbar"><button className="icon-button menu-button" onClick={()=>setOpen(true)} aria-label="Abrir menu"><Menu/></button><div><strong>Controle de Frota</strong><span>Operação Modial</span></div>{user?.role === 'ADMIN' && <Link className="icon-button" to="/admin/configuracoes" aria-label="Abrir configurações"><Settings2 size={19}/></Link>}</header>
       <main id="main" className="admin-main"><Outlet/></main>
     </div>
     {open && <div className="sidebar-scrim" onClick={()=>setOpen(false)}/>} 

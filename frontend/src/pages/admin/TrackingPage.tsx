@@ -1,3 +1,4 @@
+import { useAuth } from '../../hooks/useAuth'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { MapPin, RefreshCw } from 'lucide-react'
@@ -14,6 +15,7 @@ const filters = [['TODOS','Todos'],['EM_MOVIMENTO','Em movimento'],['PARADO','Pa
 const date = (value:string) => new Date(value).toLocaleString('pt-BR', {timeZone:'America/Sao_Paulo'})
 
 export function TrackingPage() {
+  const { user } = useAuth()
   const [fleet,setFleet]=useState<Fleet>(); const [error,setError]=useState(''); const [loading,setLoading]=useState(false)
   const [filter,setFilter]=useState('TODOS'); const [search,setSearch]=useState(''); const [selected,setSelected]=useState<number>()
   const [history,setHistory]=useState<Position[]>([]); const [historyMessage,setHistoryMessage]=useState(''); const [historyLoading,setHistoryLoading]=useState(false)
@@ -52,6 +54,6 @@ export function TrackingPage() {
       {!vehicles.length&&<Empty title="Nenhum veículo" description="Verifique os filtros ou cadastre veículos."/>}</aside>
       <div className="tracking-map-wrap"><div ref={container} className="tracking-map" aria-label="Mapa da frota"/>{!vehicles.some(v=>v.position)&&<div className="tracking-map-notice"><MapPin/><strong>Sem posições disponíveis</strong><span>O mapa exibirá somente localizações recebidas dos rastreadores.</span></div>}</div>
     </section>
-    {current&&<section className="panel tracking-details"><header><h2>{current.placa}</h2><Link to={`/admin/veiculos/${current.vehicle_id}`}>Ver veículo</Link></header><dl><div><dt>Motorista</dt><dd>{current.driver_name||'Sem viagem atual'}</dd></div><div><dt>Status</dt><dd>{labels[current.status]}</dd></div><div><dt>Rastreador Pósitron</dt><dd>{current.tracker_id||'Não vinculado'}</dd></div><div><dt>Velocidade</dt><dd>{current.position?.speed!=null?`${current.position.speed} km/h`:'Indisponível'}</dd></div><div><dt>Última posição</dt><dd>{current.position?date(current.position.recorded_at):'Não recebida'}</dd></div><div><dt>Latitude / longitude</dt><dd>{current.position?`${current.position.latitude}, ${current.position.longitude}`:'Indisponível'}</dd></div><div><dt>Endereço aproximado</dt><dd>{current.position?.address||'Indisponível'}</dd></div><div><dt>Viagem atual</dt><dd>{current.trip_id?<Link to={`/admin/viagens/${current.trip_id}`}>Viagem #{current.trip_id}</Link>:'Sem viagem atual'}</dd></div><div><dt>Início da viagem</dt><dd>{current.trip_started_at?date(current.trip_started_at):'—'}</dd></div></dl><Button variant="secondary" onClick={showHistory} loading={historyLoading}>Ver rota percorrida · 24 horas</Button>{historyMessage&&<p role="status">{historyMessage}</p>}</section>}
+    {current&&<section className="panel tracking-details"><header><h2>{current.placa}</h2>{user?.role === 'ADMIN' && <Link to={`/admin/veiculos/${current.vehicle_id}`}>Ver veículo</Link>}</header><dl><div><dt>Motorista</dt><dd>{current.driver_name||'Sem viagem atual'}</dd></div><div><dt>Status</dt><dd>{labels[current.status]}</dd></div><div><dt>Rastreador Pósitron</dt><dd>{current.tracker_id||'Não vinculado'}</dd></div><div><dt>Velocidade</dt><dd>{current.position?.speed!=null?`${current.position.speed} km/h`:'Indisponível'}</dd></div><div><dt>Última posição</dt><dd>{current.position?date(current.position.recorded_at):'Não recebida'}</dd></div><div><dt>Latitude / longitude</dt><dd>{current.position?`${current.position.latitude}, ${current.position.longitude}`:'Indisponível'}</dd></div><div><dt>Endereço aproximado</dt><dd>{current.position?.address||'Indisponível'}</dd></div><div><dt>Viagem atual</dt><dd>{current.trip_id?<Link to={`/admin/viagens/${current.trip_id}`}>Viagem #{current.trip_id}</Link>:'Sem viagem atual'}</dd></div><div><dt>Início da viagem</dt><dd>{current.trip_started_at?date(current.trip_started_at):'—'}</dd></div></dl><Button variant="secondary" onClick={showHistory} loading={historyLoading}>Ver rota percorrida · 24 horas</Button>{historyMessage&&<p role="status">{historyMessage}</p>}</section>}
   </div>
 }

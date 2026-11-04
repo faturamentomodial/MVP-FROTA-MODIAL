@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
 
-from app.api.dependencies import get_current_user, require_admin, require_driver
+from app.api.dependencies import get_current_user, require_admin, require_driver, require_role
 from app.core.database import get_db
 from app.models import Checklist, ChecklistAnswer, ChecklistItem, Occurrence, Trip, User
 from app.models.enums import AnswerStatus, ChecklistStatus, OccurrenceType, TripStatus, UserRole
@@ -23,7 +23,7 @@ router = APIRouter(tags=["Checklist"])
 
 
 @router.get("/checklist-items", response_model=list[ChecklistItemOut])
-def list_items(active_only: bool = True, db: Session = Depends(get_db), _: User = Depends(get_current_user)):
+def list_items(active_only: bool = True, db: Session = Depends(get_db), _: User = Depends(require_role(UserRole.ADMIN, UserRole.MOTORISTA))):
     stmt = select(ChecklistItem).where(ChecklistItem.excluido.is_(False)).order_by(ChecklistItem.ordem, ChecklistItem.nome)
     if active_only:
         stmt = stmt.where(ChecklistItem.ativo.is_(True))

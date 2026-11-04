@@ -3,6 +3,7 @@ from enum import StrEnum
 
 class UserRole(StrEnum):
     ADMIN = "ADMIN"
+    COMPRAS = "COMPRAS"
     MOTORISTA = "MOTORISTA"
 
 
