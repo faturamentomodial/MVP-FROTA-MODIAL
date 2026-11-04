@@ -1,7 +1,7 @@
 from datetime import UTC, datetime, time, timedelta
 
 from fastapi import APIRouter, Depends
-from sqlalchemy import case, func, select
+from sqlalchemy import and_, or_, case, func, select
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import require_admin
@@ -53,6 +53,16 @@ def dashboard(
     fleet = db.execute(vehicle_stmt).one()
 
     trip_base = apply_trip_filters(select(Trip.id), date_from, date_to, driver_id, vehicle_id).subquery()
+    standalone_conditions = [Occurrence.trip_id.is_(None)]
+    if date_from:
+        standalone_conditions.append(Occurrence.data_hora >= date_from)
+    if date_to:
+        standalone_conditions.append(Occurrence.data_hora <= date_to)
+    if driver_id:
+        standalone_conditions.append(Occurrence.driver_id == driver_id)
+    if vehicle_id:
+        standalone_conditions.append(Occurrence.vehicle_id == vehicle_id)
+    occurrence_scope = or_(Occurrence.trip_id.in_(select(trip_base.c.id)), and_(*standalone_conditions))
     trip_metrics = db.execute(
         select(func.count(Trip.id), func.coalesce(func.sum(Trip.km_percorrido), 0)).where(Trip.id.in_(select(trip_base.c.id)))
     ).one()
@@ -78,7 +88,7 @@ def dashboard(
         func.sum(case((Occurrence.status == OccurrenceStatus.ABERTA, 1), else_=0)),
         func.sum(case((Occurrence.status == OccurrenceStatus.EM_ANALISE, 1), else_=0)),
         func.sum(case((Occurrence.status == OccurrenceStatus.RESOLVIDA, 1), else_=0)),
-    ).where(Occurrence.trip_id.in_(select(trip_base.c.id)))
+    ).where(occurrence_scope)
     if occurrence_type:
         occurrence_stmt = occurrence_stmt.where(Occurrence.tipo == occurrence_type)
     occurrence_metrics = db.execute(occurrence_stmt).one()
@@ -93,7 +103,7 @@ def dashboard(
 
     type_stmt = (
         select(Occurrence.tipo, func.count(Occurrence.id).label("total"))
-        .where(Occurrence.trip_id.in_(select(trip_base.c.id)))
+        .where(occurrence_scope)
         .group_by(Occurrence.tipo)
         .order_by(func.count(Occurrence.id).desc())
     )
@@ -119,7 +129,7 @@ def dashboard(
     )
     occurrence_agg = (
         select(Occurrence.driver_id.label("driver_id"), func.count(Occurrence.id).label("occurrences"))
-        .where(Occurrence.trip_id.in_(select(trip_base.c.id)))
+        .where(occurrence_scope)
         .group_by(Occurrence.driver_id)
         .subquery()
     )
@@ -153,7 +163,7 @@ def dashboard(
     )
     vehicle_occ_agg = (
         select(Occurrence.vehicle_id.label("vehicle_id"), func.count(Occurrence.id).label("occurrences"))
-        .where(Occurrence.trip_id.in_(select(trip_base.c.id)))
+        .where(occurrence_scope)
         .group_by(Occurrence.vehicle_id)
         .subquery()
     )

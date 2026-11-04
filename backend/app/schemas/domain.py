@@ -312,7 +312,8 @@ class ChecklistOut(ORMModel):
 
 class OccurrenceCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    trip_id: int
+    trip_id: int | None = None
+    vehicle_id: int | None = Field(default=None, gt=0)
     tipo: OccurrenceType
     descricao: str = Field(min_length=3, max_length=4000)
     local: str | None = Field(default=None, max_length=255)
@@ -326,7 +327,7 @@ class OccurrenceUpdate(BaseModel):
 class OccurrenceOut(ORMModel):
     invoice_id: int | None = None
     id: int
-    trip_id: int
+    trip_id: int | None
     driver_id: int
     vehicle_id: int
     tipo: OccurrenceType

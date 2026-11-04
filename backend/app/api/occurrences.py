@@ -8,8 +8,8 @@ from sqlalchemy.orm import Session, joinedload
 from app.api.dependencies import get_current_user, require_admin, require_driver
 from app.api.helpers import occurrence_dict
 from app.core.database import get_db
-from app.models import Occurrence, User
-from app.models.enums import OccurrenceStatus, OccurrenceType, TripStatus, UserRole
+from app.models import Occurrence, User, Vehicle
+from app.models.enums import OccurrenceStatus, OccurrenceType, TripStatus, UserRole, VehicleStatus
 from app.repositories.pagination import paginate
 from app.schemas import OccurrenceCreate, OccurrenceOut, OccurrenceUpdate, Page
 from app.services.audit import audit
@@ -25,23 +25,35 @@ def occurrence_query():
 
 @router.post("", response_model=OccurrenceOut, status_code=201)
 def create(payload: OccurrenceCreate, db: Session = Depends(get_db), user: User = Depends(require_driver)):
-    trip = load_trip(db, payload.trip_id)
     driver = get_driver_for_user(db, user)
-    if trip.driver_id != driver.id:
-        raise HTTPException(status_code=403, detail="Esta viagem pertence a outro motorista")
-    if trip.status != TripStatus.EM_ANDAMENTO:
-        raise HTTPException(status_code=400, detail="Ocorrência só pode ser registrada em viagem em andamento")
+    trip = None
+    if payload.trip_id is not None:
+        trip = load_trip(db, payload.trip_id)
+        if trip.driver_id != driver.id:
+            raise HTTPException(status_code=403, detail="Esta viagem pertence a outro motorista")
+        if trip.status != TripStatus.EM_ANDAMENTO:
+            raise HTTPException(status_code=400, detail="Ocorrencia permitida apenas em viagem em andamento")
+        if payload.vehicle_id is not None and payload.vehicle_id != trip.vehicle_id:
+            raise HTTPException(status_code=400, detail="Veiculo diferente do vinculado a viagem")
+        vehicle_id = trip.vehicle_id
+    else:
+        if payload.vehicle_id is None:
+            raise HTTPException(status_code=400, detail="Selecione um veiculo")
+        vehicle = db.get(Vehicle, payload.vehicle_id)
+        if not vehicle or not vehicle.ativo or vehicle.status != VehicleStatus.DISPONIVEL:
+            raise HTTPException(status_code=400, detail="Veiculo indisponivel para registrar ocorrencia")
+        vehicle_id = vehicle.id
     occurrence = Occurrence(
-        trip_id=trip.id,
-        driver_id=trip.driver_id,
-        vehicle_id=trip.vehicle_id,
+        trip_id=trip.id if trip else None,
+        driver_id=driver.id,
+        vehicle_id=vehicle_id,
         tipo=payload.tipo,
         descricao=payload.descricao,
         local=payload.local,
     )
     db.add(occurrence)
     db.flush()
-    audit(db, user, "CRIAR", "OCCURRENCE", occurrence.id, {"trip_id": trip.id, "tipo": payload.tipo.value})
+    audit(db, user, "CRIAR", "OCCURRENCE", occurrence.id, {"trip_id": occurrence.trip_id, "tipo": payload.tipo.value})
     db.commit()
     item = db.scalar(occurrence_query().where(Occurrence.id == occurrence.id))
     return occurrence_dict(item)

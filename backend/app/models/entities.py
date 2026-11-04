@@ -186,7 +186,7 @@ class Occurrence(TimestampMixin, Base):
 
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    trip_id: Mapped[int] = mapped_column(ForeignKey("trips.id"), index=True, nullable=False)
+    trip_id: Mapped[int | None] = mapped_column(ForeignKey("trips.id"), index=True, nullable=True)
     driver_id: Mapped[int] = mapped_column(ForeignKey("drivers.id"), index=True, nullable=False)
     vehicle_id: Mapped[int] = mapped_column(ForeignKey("vehicles.id"), index=True, nullable=False)
     tipo: Mapped[OccurrenceType] = mapped_column(Enum(OccurrenceType, native_enum=False), index=True, nullable=False)
@@ -196,7 +196,7 @@ class Occurrence(TimestampMixin, Base):
     status: Mapped[OccurrenceStatus] = mapped_column(Enum(OccurrenceStatus, native_enum=False), default=OccurrenceStatus.ABERTA, index=True, nullable=False)
     observacao_gestor: Mapped[str | None] = mapped_column(Text)
 
-    trip: Mapped[Trip] = relationship(back_populates="occurrences")
+    trip: Mapped[Trip | None] = relationship(back_populates="occurrences")
     driver: Mapped[Driver] = relationship()
     vehicle: Mapped[Vehicle] = relationship()
 
