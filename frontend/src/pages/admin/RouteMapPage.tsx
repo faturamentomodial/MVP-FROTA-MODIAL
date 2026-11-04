@@ -23,7 +23,7 @@ export function RouteMapPage() {
         batch = await api<Plan[]>(`/route-plans?limit=100&offset=${items.length}`)
         items.push(...batch)
       } while (batch.length === 100)
-      const plan = selectedId ? await api<Plan>(`/route-plans/${selectedId}`) : items[0] ?? null
+      const plan = selectedId ? await api<Plan>(`/route-plans/${selectedId}`) : null
       if (plan && !items.some(item => item.id === plan.id)) items.unshift(plan)
       if (active) { setPlans(items); setSelected(plan) }
     }
@@ -35,8 +35,8 @@ export function RouteMapPage() {
     {error && <Alert>{error}</Alert>}
     {loading ? <p role="status">Carregando rotas...</p> : !error && <>
       {plans.length > 0 ? <>
-        <div className="route-map-toolbar"><label>Planejamento<select value={selected?.id ?? ''} onChange={e => setParams({planejamento:e.target.value})}>{plans.map(plan => <option key={plan.id} value={plan.id}>{plan.name} · {plan.status}</option>)}</select></label>{selected && <p>{selected.invoices.length} notas · {selected.result ? `${(selected.result.distance / 1000).toFixed(1)} km · ${Math.round(selected.result.duration / 60)} min estimados` : 'Percurso ainda não calculado'}</p>}</div>
-        {selected && <section className="route-map-view" aria-label="Mapa das entregas"><RouteMap plan={selected}/>{!selected.origin && selected.invoices.length === 0 && <p className="route-map-notice">Adicione a origem e as notas deste planejamento em Rotas.</p>}{!selected.result && selected.invoices.length > 0 && <p className="route-map-notice">Os marcadores mostram os destinos cadastrados. Calcule e salve o percurso em Rotas para visualizar o trajeto.</p>}{selected.result?.warning && <Alert tone="info">{selected.result.warning}</Alert>}</section>}
+        <div className="route-map-toolbar"><label>Planejamento<select value={selected?.id ?? ''} onChange={e => setParams(e.target.value ? {planejamento:e.target.value} : {})}><option value="">Selecione um planejamento</option>{plans.map(plan => <option key={plan.id} value={plan.id}>{plan.name} · {plan.status}</option>)}</select></label>{selected && <p>{selected.invoices.length} notas · {selected.result ? `${(selected.result.distance / 1000).toFixed(1)} km · ${Math.round(selected.result.duration / 60)} min estimados` : 'Percurso ainda não calculado'}</p>}</div>
+        <section className="route-map-view" aria-label="Mapa das entregas"><RouteMap plan={selected}/>{!selected && <p className="route-map-notice">Selecione um planejamento para visualizar as entregas no mapa.</p>}{selected && !selected.origin && selected.invoices.length === 0 && <p className="route-map-notice">Adicione a origem e as notas deste planejamento em Rotas.</p>}{selected && !selected.result && selected.invoices.length > 0 && <p className="route-map-notice">Os marcadores mostram os destinos cadastrados. Calcule e salve o percurso em Rotas para visualizar o trajeto.</p>}{selected?.result?.warning && <Alert tone="info">{selected.result.warning}</Alert>}</section>
       </> : <section className="panel"><h2>Nenhuma rota cadastrada</h2><p>Cadastre as notas e salve um planejamento em Rotas para visualizar as entregas aqui.</p><Link className="button button--primary" to="/admin/rotas">Cadastrar rota</Link></section>}
     </>}
   </div>
