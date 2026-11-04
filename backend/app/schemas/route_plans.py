@@ -16,9 +16,6 @@ class PlannedInvoice(BaseModel):
     destination: Point
     source: Literal["MANUAL", "SANKHYA"] = "MANUAL"
     external_id: str | None = Field(default=None, max_length=120)
-    company: str = Field(default='', max_length=80)
-    series: str = Field(default='', max_length=80)
-    partner: str = Field(default='', max_length=240)
 
 
 class PlanInput(BaseModel):
@@ -34,16 +31,9 @@ class PlanInput(BaseModel):
 
     @model_validator(mode="after")
     def unique_numbers(self):
-        if len({invoice_identity(n.model_dump()) for n in self.invoices}) != len(self.invoices):
+        if len({n.number for n in self.invoices}) != len(self.invoices):
             raise ValueError("Número de nota duplicado")
         return self
-
-
-def invoice_identity(note):
-    # NUNOTA identifies Sankhya documents; company/series retain their scope.
-    if note.get('source') == 'SANKHYA' and note.get('external_id'):
-        return ('SANKHYA', note.get('company', ''), note.get('series', ''), note['external_id'])
-    return ('MANUAL', note.get('company', '').strip().casefold(), note.get('series', '').strip().casefold(), note['number'].strip().casefold())
 
 
 class CalculateInput(BaseModel):

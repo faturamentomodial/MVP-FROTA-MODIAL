@@ -22,30 +22,3 @@ class RoutePlanVersion(TimestampMixin, Base):
     revision: Mapped[int] = mapped_column(Integer, nullable=False)
     data: Mapped[dict] = mapped_column(JSON, nullable=False)
     created_by: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
-
-
-class Distribution(TimestampMixin, Base):
-    __tablename__ = "distributions"
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(160), nullable=False)
-    revision: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
-    data: Mapped[dict] = mapped_column(JSON, nullable=False)
-    created_by: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
-
-
-class DistributionVersion(TimestampMixin, Base):
-    __tablename__ = "distribution_versions"
-    __table_args__ = (UniqueConstraint("distribution_id", "revision", name="uq_distribution_revision"),)
-    id: Mapped[int] = mapped_column(primary_key=True)
-    distribution_id: Mapped[int] = mapped_column(ForeignKey("distributions.id"), nullable=False)
-    revision: Mapped[int] = mapped_column(Integer, nullable=False)
-    data: Mapped[dict] = mapped_column(JSON, nullable=False)
-    created_by: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
-
-
-class DistributionRoute(Base):
-    __tablename__ = "distribution_routes"
-    plan_id: Mapped[int] = mapped_column(ForeignKey("route_plans.id"), primary_key=True)
-    distribution_id: Mapped[int] = mapped_column(ForeignKey("distributions.id"), nullable=False, index=True)
-    key: Mapped[str] = mapped_column(String(36), nullable=False)
-    color: Mapped[str] = mapped_column(String(7), nullable=False)
