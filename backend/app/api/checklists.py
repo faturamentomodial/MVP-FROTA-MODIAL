@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
@@ -24,7 +24,7 @@ router = APIRouter(tags=["Checklist"])
 
 @router.get("/checklist-items", response_model=list[ChecklistItemOut])
 def list_items(active_only: bool = True, db: Session = Depends(get_db), _: User = Depends(get_current_user)):
-    stmt = select(ChecklistItem).order_by(ChecklistItem.ordem, ChecklistItem.nome)
+    stmt = select(ChecklistItem).where(ChecklistItem.excluido.is_(False)).order_by(ChecklistItem.ordem, ChecklistItem.nome)
     if active_only:
         stmt = stmt.where(ChecklistItem.ativo.is_(True))
     return list(db.scalars(stmt).all())
@@ -48,7 +48,7 @@ def create_item(payload: ChecklistItemCreate, db: Session = Depends(get_db), use
 @router.put("/checklist-items/{item_id}", response_model=ChecklistItemOut)
 def update_item(item_id: int, payload: ChecklistItemUpdate, db: Session = Depends(get_db), user: User = Depends(require_admin)):
     item = db.get(ChecklistItem, item_id)
-    if not item:
+    if not item or item.excluido:
         raise HTTPException(status_code=404, detail="Item não encontrado")
     for key, value in payload.model_dump(exclude_unset=True).items():
         setattr(item, key, value)
@@ -56,6 +56,18 @@ def update_item(item_id: int, payload: ChecklistItemUpdate, db: Session = Depend
     db.commit()
     db.refresh(item)
     return item
+
+
+@router.delete("/checklist-items/{item_id}", status_code=204)
+def delete_item(item_id: int, db: Session = Depends(get_db), user: User = Depends(require_admin)):
+    item = db.get(ChecklistItem, item_id)
+    if not item or item.excluido:
+        raise HTTPException(status_code=404, detail="Item nao encontrado")
+    item.excluido = True
+    item.ativo = False
+    audit(db, user, "EXCLUIR", "CHECKLIST_ITEM", item.id)
+    db.commit()
+    return Response(status_code=204)
 
 
 @router.patch("/checklist-items/{item_id}/status", response_model=ChecklistItemOut)
@@ -74,7 +86,7 @@ def submit_checklist(trip_id: int, payload: ChecklistCreate, db: Session = Depen
     if trip.checklist:
         raise HTTPException(status_code=409, detail="Checklist já realizado")
 
-    active_items = list(db.scalars(select(ChecklistItem).where(ChecklistItem.ativo.is_(True))).all())
+    active_items = list(db.scalars(select(ChecklistItem).where(ChecklistItem.ativo.is_(True), ChecklistItem.excluido.is_(False))).all())
     active_ids = {item.id for item in active_items}
     required_ids = {item.id for item in active_items if item.obrigatorio}
     answer_ids = [answer.checklist_item_id for answer in payload.answers]
