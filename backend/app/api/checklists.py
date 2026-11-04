@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.api.dependencies import get_current_user, require_admin, require_driver
 from app.core.database import get_db
-from app.models import Checklist, ChecklistAnswer, ChecklistItem, Trip, User
-from app.models.enums import AnswerStatus, ChecklistStatus, TripStatus, UserRole
+from app.models import Checklist, ChecklistAnswer, ChecklistItem, Occurrence, Trip, User
+from app.models.enums import AnswerStatus, ChecklistStatus, OccurrenceType, TripStatus, UserRole
 from app.schemas import (
     ActiveUpdate,
     ChecklistCreate,
@@ -96,6 +96,19 @@ def submit_checklist(trip_id: int, payload: ChecklistCreate, db: Session = Depen
     )
     checklist.answers = [ChecklistAnswer(**answer.model_dump()) for answer in payload.answers]
     db.add(checklist)
+    item_names = {item.id: item.nome for item in active_items}
+    for answer in payload.answers:
+        if answer.status == AnswerStatus.PROBLEMA:
+            occurrence = Occurrence(
+                trip_id=trip.id,
+                driver_id=trip.driver_id,
+                vehicle_id=trip.vehicle_id,
+                tipo=OccurrenceType.AVARIA,
+                descricao=f"Checklist - {item_names[answer.checklist_item_id]}: {answer.observacao or 'Problema identificado'}",
+            )
+            db.add(occurrence)
+            db.flush()
+            audit(db, user, "CRIAR", "OCCURRENCE", occurrence.id, {"trip_id": trip.id, "origem": "CHECKLIST"})
     audit(db, user, "FINALIZAR", "CHECKLIST", None, {"trip_id": trip.id, "status": checklist_status.value})
     db.commit()
     return db.scalar(select(Checklist).where(Checklist.id == checklist.id).options(selectinload(Checklist.answers).joinedload(ChecklistAnswer.item)))

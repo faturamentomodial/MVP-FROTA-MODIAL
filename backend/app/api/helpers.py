@@ -61,5 +61,6 @@ def occurrence_dict(item: Occurrence) -> dict:
         "created_at": item.created_at,
         "updated_at": item.updated_at,
         "driver_name": item.driver.nome if item.driver else None,
+        "vehicle_name": f"{item.vehicle.marca} {item.vehicle.modelo}" if item.vehicle else None,
         "vehicle_plate": item.vehicle.placa if item.vehicle else None,
     }

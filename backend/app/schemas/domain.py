@@ -339,6 +339,7 @@ class OccurrenceOut(ORMModel):
     updated_at: datetime
     driver_name: str | None = None
     vehicle_plate: str | None = None
+    vehicle_name: str | None = None
 
 
 class DeliveryRouteSummary(ORMModel):

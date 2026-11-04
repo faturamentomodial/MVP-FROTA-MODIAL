@@ -38,6 +38,20 @@ def test_complete_driver_flow_and_dashboard(client, admin_headers, driver_header
     assert checklist.json()["status"] == "COM_PROBLEMAS"
     assert len(checklist.json()["answers"]) == len(items)
 
+    vehicle_occurrences = client.get("/api/occurrences?categoria=VEICULO", headers=admin_headers).json()
+    assert vehicle_occurrences["total"] == 1
+    problem = vehicle_occurrences["items"][0]
+    assert problem["vehicle_name"] == "VW Delivery"
+    assert problem["vehicle_plate"] == vehicles[0]["placa"]
+    assert problem["data_hora"]
+    assert problem["status"] == "ABERTA"
+    assert items[0]["nome"] in problem["descricao"]
+    assert answers[0]["observacao"] in problem["descricao"]
+    assert client.get("/api/occurrences?categoria=ROTA", headers=admin_headers).json()["total"] == 0
+    duplicate = client.post(f"/api/trips/{trip_id}/checklist", headers=driver_headers, json={"answers": answers})
+    assert duplicate.status_code == 409
+    assert client.get("/api/occurrences?categoria=VEICULO", headers=admin_headers).json()["total"] == 1
+
     started = client.post(f"/api/trips/{trip_id}/start", headers=driver_headers)
     assert started.status_code == 200
     assert started.json()["status"] == "EM_ANDAMENTO"
@@ -76,7 +90,7 @@ def test_complete_driver_flow_and_dashboard(client, admin_headers, driver_header
     data = dashboard.json()
     assert data["total_trips"] == 1
     assert data["total_checklists"] == 1
-    assert data["total_occurrences"] == 1
+    assert data["total_occurrences"] == 2
     assert data["total_km"] == 267
 
 
