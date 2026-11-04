@@ -2,7 +2,8 @@ export type Role = 'ADMIN' | 'MOTORISTA'
 export type VehicleStatus = 'DISPONIVEL' | 'EM_VIAGEM' | 'ATENCAO' | 'INATIVO'
 export type TripStatus = 'ABERTA' | 'EM_ANDAMENTO' | 'FINALIZADA' | 'CANCELADA'
 export type OccurrenceStatus = 'ABERTA' | 'EM_ANALISE' | 'RESOLVIDA' | 'CANCELADA'
-export type OccurrenceType = 'ACIDENTE' | 'AVARIA' | 'PROBLEMA_MECANICO' | 'PROBLEMA_ELETRICO' | 'PNEU' | 'PROBLEMA_ENTREGA' | 'CLIENTE_AUSENTE' | 'ATRASO' | 'MULTA' | 'ABASTECIMENTO' | 'OUTRO'
+export const occurrenceTypes = ['ACIDENTE', 'AVARIA', 'PROBLEMA_MECANICO', 'PROBLEMA_ELETRICO', 'PNEU', 'PROBLEMA_ENTREGA', 'CLIENTE_AUSENTE', 'ATRASO', 'MULTA', 'ABASTECIMENTO', 'LAVAGEM', 'OUTRO'] as const
+export type OccurrenceType = typeof occurrenceTypes[number]
 
 export interface User { id: number; nome: string; email: string; role: Role; ativo: boolean }
 export interface AuthResponse { access_token: string; token_type: string; user: User }

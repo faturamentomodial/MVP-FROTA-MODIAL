@@ -15,7 +15,7 @@ def test_driver_occurrences_are_filtered_by_category(client, admin_headers, driv
     assert client.post(f'/api/trips/{trip_id}/start', headers=driver_headers).status_code == 200
 
     categories = {
-        'VEICULO': {'AVARIA', 'PROBLEMA_MECANICO', 'PROBLEMA_ELETRICO', 'PNEU', 'MULTA', 'ABASTECIMENTO'},
+        'VEICULO': {'AVARIA', 'PROBLEMA_MECANICO', 'PROBLEMA_ELETRICO', 'PNEU', 'MULTA', 'ABASTECIMENTO', 'LAVAGEM'},
         'ROTA': {'ACIDENTE', 'PROBLEMA_ENTREGA', 'CLIENTE_AUSENTE', 'ATRASO'},
         'OUTROS': {'OUTRO'},
     }
@@ -33,7 +33,14 @@ def test_driver_occurrences_are_filtered_by_category(client, admin_headers, driv
         assert data['total'] == len(types)
         assert {item['tipo'] for item in data['items']} == types
         assert all(item['vehicle_name'] == 'VW Delivery' and item['data_hora'] for item in data['items'])
+        for occurrence_type in types:
+            result = client.get(f'/api/occurrences?categoria={category}&tipo={occurrence_type}', headers=admin_headers).json()
+            assert result['total'] == 1
+            assert result['items'][0]['tipo'] == occurrence_type
+        incompatible = client.get(f'/api/occurrences?categoria={category}&tipo=INVALIDO', headers=admin_headers)
+        assert incompatible.status_code == 422
+
 
     filtered = client.get('/api/occurrences?categoria=OUTROS&status=RESOLVIDA', headers=admin_headers).json()
     assert filtered['total'] == 0
-    assert client.get('/api/occurrences', headers=admin_headers).json()['total'] == 11
+    assert client.get('/api/occurrences', headers=admin_headers).json()['total'] == 12

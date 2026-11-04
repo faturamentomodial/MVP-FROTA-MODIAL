@@ -78,4 +78,4 @@ label{display:flex;flex-direction:column;gap:.45rem;font-weight:600;color:#3f3c3
 .status--aceita { background:var(--blue-soft); color:var(--blue); }
 .status--concluida { background:var(--green-soft); color:var(--green); }
 
-@media(min-width:641px){.filter-bar--occurrences{grid-template-columns:minmax(180px,280px) minmax(140px,220px) 1fr}}
+@media(min-width:641px){.filter-bar--occurrences{grid-template-columns:repeat(3,minmax(0,1fr)) auto}}

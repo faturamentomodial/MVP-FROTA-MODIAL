@@ -70,6 +70,7 @@ def list_occurrences(
         OccurrenceType.PNEU,
         OccurrenceType.MULTA,
         OccurrenceType.ABASTECIMENTO,
+        OccurrenceType.LAVAGEM,
     )
     if categoria == "VEICULO":
         stmt = stmt.where(Occurrence.tipo.in_(vehicle_types))
