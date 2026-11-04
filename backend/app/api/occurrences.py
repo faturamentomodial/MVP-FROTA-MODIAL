@@ -55,7 +55,7 @@ def list_occurrences(
     vehicle_id: int | None = None,
     trip_id: int | None = None,
     tipo: OccurrenceType | None = None,
-    categoria: Literal["VEICULO", "ROTA"] | None = None,
+    categoria: Literal["VEICULO", "ROTA", "OUTROS"] | None = None,
     status_filter: OccurrenceStatus | None = Query(None, alias="status"),
     date_from: datetime | None = None,
     date_to: datetime | None = None,
@@ -63,11 +63,20 @@ def list_occurrences(
     _: User = Depends(require_admin),
 ):
     stmt = occurrence_query().order_by(Occurrence.data_hora.desc())
-    vehicle_types = (OccurrenceType.ACIDENTE, OccurrenceType.AVARIA, OccurrenceType.PROBLEMA_MECANICO, OccurrenceType.PROBLEMA_ELETRICO, OccurrenceType.PNEU)
+    vehicle_types = (
+        OccurrenceType.AVARIA,
+        OccurrenceType.PROBLEMA_MECANICO,
+        OccurrenceType.PROBLEMA_ELETRICO,
+        OccurrenceType.PNEU,
+        OccurrenceType.MULTA,
+        OccurrenceType.ABASTECIMENTO,
+    )
     if categoria == "VEICULO":
         stmt = stmt.where(Occurrence.tipo.in_(vehicle_types))
     elif categoria == "ROTA":
-        stmt = stmt.where(Occurrence.tipo.not_in(vehicle_types))
+        stmt = stmt.where(Occurrence.tipo.not_in((*vehicle_types, OccurrenceType.OUTRO)))
+    elif categoria == "OUTROS":
+        stmt = stmt.where(Occurrence.tipo == OccurrenceType.OUTRO)
     for condition in (
         Occurrence.driver_id == driver_id if driver_id else None,
         Occurrence.vehicle_id == vehicle_id if vehicle_id else None,
