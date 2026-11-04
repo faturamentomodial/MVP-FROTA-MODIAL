@@ -59,7 +59,8 @@ def geocode(address):
             props = row['properties']
             label = ', '.join(str(props[k]) for k in ('name', 'street', 'housenumber', 'postcode', 'city', 'state', 'country') if props.get(k))
             if math.isfinite(lat) and math.isfinite(lon) and -90 <= lat <= 90 and -180 <= lon <= 180:
-                candidates.append({'address': label or address, 'latitude': lat, 'longitude': lon})
+                candidates.append({'address': label or address, 'latitude': lat, 'longitude': lon,
+                                   'house_number_found': bool(props.get('housenumber'))})
         return {'candidates': candidates, 'selection_required': True, 'provider': 'photon'}
     except (KeyError, TypeError, ValueError) as exc:
         raise HTTPException(503, 'Resposta de geocodificação inválida.') from exc
@@ -134,6 +135,8 @@ def geometry(points):
 def optimal_order(cost):
     """Held-Karp: exact circuit from and back to origin, <=10 stops."""
     n = len(cost) - 1
+    if n > 10:
+        raise HTTPException(422, 'Otimização exata limitada a 10 paradas. Divida as notas em múltiplas rotas.')
     @lru_cache(None)
     def solve(current, remaining):
         if not remaining:

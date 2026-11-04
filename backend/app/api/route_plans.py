@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.api.dependencies import require_admin
 from app.core.database import get_db
 from app.models import Vehicle, Driver
-from app.models.route_plans import RoutePlan, RoutePlanVersion
+from app.models.route_plans import RoutePlan, RoutePlanVersion, DistributionRoute
 from app.schemas.route_plans import PlanInput, CalculateInput, RevisionInput
 from app.services import route_planning as provider
 from app.services import sankhya
@@ -93,6 +93,8 @@ def versions(plan_id: int, db: Session = Depends(get_db)):
 
 @router.put('/{plan_id}')
 def edit(plan_id: int, payload: PlanInput, db: Session = Depends(get_db), user=Depends(require_admin)):
+    if db.get(DistributionRoute, plan_id):
+        raise HTTPException(409, 'Edite esta rota pela Central de Distribuição para preservar as atribuições')
     validate_vehicle(db, payload)
     data = payload.model_dump(exclude={'revision'})
     data.update(stops=[], result=None)
@@ -132,8 +134,7 @@ def calculate(plan_id: int, payload: CalculateInput, db: Session = Depends(get_d
     order = provider.optimal_order(matrix['durations' if data['objective'] == 'duration' else 'distances']) if payload.optimize else list(range(1, len(points)))
     result = provider.geometry([points[0]] + [points[i] for i in order] + [points[0]])
     data['stops'] = [stops[i-1] for i in order]
-    notes = {n['number']: n for n in data['invoices']}
-    data['invoices'] = [notes[number] for stop in data['stops'] for number in stop['invoices']]
+    data['invoices'] = [n for stop in data['stops'] for n in plan.data['invoices'] if n['destination']['latitude'] == stop['latitude'] and n['destination']['longitude'] == stop['longitude']]
     data['result'] = {**result, 'matrix': {'durations': matrix['durations'], 'distances': matrix['distances']}, 'matrix_points': points, 'provider': 'osrm', 'truck_restrictions_supported': False, 'warning': WARNING if data['profile'] == 'truck' else None, 'algorithm': 'held-karp' if payload.optimize else 'manual', 'objective': data['objective'], 'return_to_origin': True}
     return save(db, plan, payload.revision, data, user)
 
@@ -141,6 +142,11 @@ def calculate(plan_id: int, payload: CalculateInput, db: Session = Depends(get_d
 @router.post('/{plan_id}/confirm')
 def confirm(plan_id: int, payload: RevisionInput, db: Session = Depends(get_db), user=Depends(require_admin)):
     plan = load(db, plan_id)
+    if db.get(DistributionRoute, plan_id) and not plan.data.get('driver_id'):
+        raise HTTPException(422, 'Selecione um motorista ativo antes de confirmar a rota')
+    numbers = [n['number'] for n in plan.data['invoices']]
+    if len(numbers) != len(set(numbers)):
+        raise HTTPException(422, 'Distribua notas com mesmo número em rotas diferentes para preservar a identificação das entregas')
     validate_vehicle(db, PlanInput.model_validate({k: v for k, v in plan.data.items() if k in PlanInput.model_fields}))
     if not plan.data.get('result'):
         raise HTTPException(422, 'Calcule o percurso antes de confirmar')

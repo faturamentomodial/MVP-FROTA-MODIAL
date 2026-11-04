@@ -47,7 +47,7 @@ def query(sql):
                    {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + auth['access_token']})
     try:
         if str(result.get('status')) != '1':
-            raise ValueError()
+            raise HTTPException(502, 'Consulta Sankhya recusada. Solicite ao administrador autorização para DbExplorerSP.executeQuery e acesso às tabelas de notas e endereços. Nenhum endpoint alternativo foi utilizado.')
         body = result['responseBody']
         fields = [f['name'].upper() for f in body['fieldsMetadata']]
         rows = body['rows']

@@ -20,3 +20,6 @@ api_router.include_router(route_plans.router)
 
 from app.api import tasks
 api_router.include_router(tasks.router)
+
+from app.api import distributions
+api_router.include_router(distributions.router)
