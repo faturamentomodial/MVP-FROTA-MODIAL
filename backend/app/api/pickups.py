@@ -7,6 +7,7 @@ from app.api.dependencies import require_admin
 from app.core.database import get_db
 from app.models import Pickup, User
 from app.services.audit import audit
+from app.schemas import ActiveUpdate
 
 
 class PickupInput(BaseModel):
@@ -19,6 +20,7 @@ class PickupInput(BaseModel):
 class PickupOut(PickupInput):
     model_config = ConfigDict(from_attributes=True, str_strip_whitespace=True)
     id: int
+    ativo: bool
 
 
 router = APIRouter(prefix="/pickups", tags=["Coletas"])
@@ -44,10 +46,32 @@ def create_pickup(payload: PickupInput, db: Session = Depends(get_db), user: Use
 def update_pickup(pickup_id: int, payload: PickupInput, db: Session = Depends(get_db), user: User = Depends(require_admin)):
     item = db.get(Pickup, pickup_id)
     if not item:
-        raise HTTPException(404, "Coleta n?o encontrada")
+        raise HTTPException(404, "Coleta n\u00e3o encontrada")
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
     audit(db, user, "ALTERAR", "PICKUP", item.id)
     db.commit()
     db.refresh(item)
     return item
+
+
+@router.patch("/{pickup_id}/status", response_model=PickupOut)
+def set_pickup_status(pickup_id: int, payload: ActiveUpdate, db: Session = Depends(get_db), user: User = Depends(require_admin)):
+    item = db.get(Pickup, pickup_id)
+    if not item:
+        raise HTTPException(404, "Coleta n\u00e3o encontrada")
+    item.ativo = payload.ativo
+    audit(db, user, "ATIVAR" if item.ativo else "DESATIVAR", "PICKUP", item.id)
+    db.commit()
+    db.refresh(item)
+    return item
+
+
+@router.delete("/{pickup_id}", status_code=204)
+def delete_pickup(pickup_id: int, db: Session = Depends(get_db), user: User = Depends(require_admin)):
+    item = db.get(Pickup, pickup_id)
+    if not item:
+        raise HTTPException(404, "Coleta n\u00e3o encontrada")
+    audit(db, user, "EXCLUIR", "PICKUP", item.id)
+    db.delete(item)
+    db.commit()

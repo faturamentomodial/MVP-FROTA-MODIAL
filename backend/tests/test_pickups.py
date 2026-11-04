@@ -21,3 +21,22 @@ def test_pickup_validation_and_access(client, admin_headers, driver_headers):
     for field in data:
         assert client.post("/api/pickups", headers=admin_headers, json={**data, field: "  "}).status_code == 422
     assert client.put("/api/pickups/999", headers=admin_headers, json=data).status_code == 404
+
+
+def test_pickup_status_and_delete(client, admin_headers, driver_headers):
+    data = {"nome": "Fornecedor", "telefone": "123", "endereco": "Rua A"}
+    item = client.post("/api/pickups", headers=admin_headers, json=data).json()
+    url = f"/api/pickups/{item['id']}"
+    assert item["ativo"] is True
+    assert client.patch(url + "/status", headers=driver_headers, json={"ativo": False}).status_code == 403
+    assert client.delete(url, headers=driver_headers).status_code == 403
+    for active in (False, True, False):
+        response = client.patch(url + "/status", headers=admin_headers, json={"ativo": active})
+        assert response.status_code == 200
+        assert response.json()["ativo"] is active
+        assert client.get("/api/pickups", headers=admin_headers).json()[0]["ativo"] is active
+    assert client.put(url, headers=admin_headers, json=data).json()["ativo"] is False
+    assert client.delete(url, headers=admin_headers).status_code == 204
+    assert client.get("/api/pickups", headers=admin_headers).json() == []
+    assert client.delete(url, headers=admin_headers).status_code == 404
+    assert client.patch(url + "/status", headers=admin_headers, json={"ativo": True}).status_code == 404

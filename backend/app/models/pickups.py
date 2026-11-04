@@ -1,4 +1,4 @@
-from sqlalchemy import String
+from sqlalchemy import Boolean, String, true
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
@@ -12,3 +12,5 @@ class Pickup(TimestampMixin, Base):
     nome: Mapped[str] = mapped_column(String(160), nullable=False)
     telefone: Mapped[str] = mapped_column(String(40), nullable=False)
     endereco: Mapped[str] = mapped_column(String(500), nullable=False)
+
+    ativo: Mapped[bool] = mapped_column(Boolean, default=True, server_default=true(), nullable=False)
