@@ -1,3 +1,5 @@
+from typing import Literal
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
@@ -15,6 +17,7 @@ class PickupInput(BaseModel):
     nome: str = Field(min_length=2, max_length=160)
     telefone: str = Field(min_length=1, max_length=40)
     endereco: str = Field(min_length=1, max_length=500)
+    tipo: Literal["COSTUREIRA", "FLORISTA"] | None = None
 
 
 class PickupOut(PickupInput):
@@ -47,7 +50,7 @@ def update_pickup(pickup_id: int, payload: PickupInput, db: Session = Depends(ge
     item = db.get(Pickup, pickup_id)
     if not item:
         raise HTTPException(404, "Coleta n\u00e3o encontrada")
-    for key, value in payload.model_dump().items():
+    for key, value in payload.model_dump(exclude_unset=True).items():
         setattr(item, key, value)
     audit(db, user, "ALTERAR", "PICKUP", item.id)
     db.commit()

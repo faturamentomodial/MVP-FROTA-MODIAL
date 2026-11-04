@@ -14,3 +14,5 @@ class Pickup(TimestampMixin, Base):
     endereco: Mapped[str] = mapped_column(String(500), nullable=False)
 
     ativo: Mapped[bool] = mapped_column(Boolean, default=True, server_default=true(), nullable=False)
+
+    tipo: Mapped[str | None] = mapped_column(String(20), nullable=True)

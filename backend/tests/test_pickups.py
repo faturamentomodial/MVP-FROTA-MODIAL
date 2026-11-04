@@ -40,3 +40,19 @@ def test_pickup_status_and_delete(client, admin_headers, driver_headers):
     assert client.get("/api/pickups", headers=admin_headers).json() == []
     assert client.delete(url, headers=admin_headers).status_code == 404
     assert client.patch(url + "/status", headers=admin_headers, json={"ativo": True}).status_code == 404
+
+
+def test_pickup_types(client, admin_headers):
+    data = {"nome": "Contato", "telefone": "123", "endereco": "Rua A", "tipo": "COSTUREIRA"}
+    response = client.post("/api/pickups", headers=admin_headers, json=data)
+    assert response.status_code == 201
+    assert response.json()["tipo"] == "COSTUREIRA"
+    url = f"/api/pickups/{response.json()['id']}"
+    data["tipo"] = "FLORISTA"
+    assert client.put(url, headers=admin_headers, json=data).json()["tipo"] == "FLORISTA"
+    assert client.get("/api/pickups", headers=admin_headers).json()[0]["tipo"] == "FLORISTA"
+    data.pop("tipo")
+    assert client.put(url, headers=admin_headers, json=data).json()["tipo"] == "FLORISTA"
+    for invalid in ("OUTRO", "", "costureira"):
+        assert client.post("/api/pickups", headers=admin_headers, json={**data, "tipo": invalid}).status_code == 422
+    assert client.post("/api/pickups", headers=admin_headers, json=data).json()["tipo"] is None
