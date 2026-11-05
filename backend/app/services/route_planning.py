@@ -5,7 +5,7 @@ import math
 import re
 from functools import lru_cache
 from threading import Lock
-from time import monotonic
+from time import monotonic, sleep
 from urllib.parse import urlencode, urlsplit
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
@@ -44,6 +44,22 @@ def request(base, path):
 
 
 def geocode(address):
+    variants = geocoding_address_variants(address)
+    for index, query in enumerate(variants):
+        if index:
+            # Additional attempts share the same provider quota as the first one.
+            sleep(max(settings.routes_min_interval_seconds, 1.1))
+        result = _geocode_exact(query)
+        if index:
+            # A neighborhood or city centroid is not a street location.
+            result = {**result, 'candidates': [p for p in result['candidates'] if p.get('street_found')]}
+        if result['candidates']:
+            return {**result, 'query_used': query, 'approximate': index > 0 or any(
+                not p.get('house_number_found', False) for p in result['candidates'])}
+    return result
+
+
+def _geocode_exact(address):
     # A previous Photon configuration may remain when switching to Nominatim.
     host = urlsplit(settings.routes_geocoder_url).hostname or ''
     if ((settings.routes_geocoder_provider == 'nominatim' and host == 'photon.komoot.io')
@@ -59,14 +75,51 @@ def geocode(address):
             props = row['properties']
             label = ', '.join(str(props[k]) for k in ('name', 'street', 'housenumber', 'postcode', 'city', 'state', 'country') if props.get(k))
             if math.isfinite(lat) and math.isfinite(lon) and -90 <= lat <= 90 and -180 <= lon <= 180:
-                candidates.append({'address': label or address, 'latitude': lat, 'longitude': lon})
+                candidates.append({'address': label or address, 'latitude': lat, 'longitude': lon,
+                                   'street_found': bool(props.get('street') or props.get('osm_key') == 'highway'),
+                                   'house_number_found': bool(props.get('housenumber'))})
         return {'candidates': candidates, 'selection_required': True, 'provider': 'photon'}
     except (KeyError, TypeError, ValueError) as exc:
         raise HTTPException(503, 'Resposta de geocodificação inválida.') from exc
 
 
-def nominatim_geocode(address):
+def normalize_geocoding_address(address):
     address = ' '.join(address.split())
+    # Expand common Brazilian abbreviations without dropping neighborhood/city.
+    for abbreviation, expanded in (
+        ('sra', 'Senhora'), ('sr', 'Senhor'), ('nsa', 'Nossa'),
+        ('ns', 'Nossa Senhora'), ('jd', 'Jardim'), ('vl', 'Vila'),
+        ('sta', 'Santa'), ('sto', 'Santo'), ('dr', 'Doutor'), ('dra', 'Doutora'),
+        ('prof', 'Professor'), ('profa', 'Professora'), ('pres', 'Presidente'),
+        ('eng', 'Engenheiro'), ('dep', 'Deputado'), ('ver', 'Vereador'),
+        ('pca', 'Praca'), ('tv', 'Travessa'), ('trav', 'Travessa'),
+        ('rod', 'Rodovia'), ('estr', 'Estrada'), ('pq', 'Parque'),
+        ('res', 'Residencial'), ('cj', 'Conjunto'), ('av', 'Avenida'), ('r', 'Rua'),
+    ):
+        address = re.sub(r'(?<!\w)' + abbreviation + r'\.?(?!\w)', expanded, address, flags=re.IGNORECASE)
+    address = re.sub(r'\s+[-\u2013\u2014]\s+', ', ', address)
+    return address
+
+
+def geocoding_address_variants(address):
+    normalized = normalize_geocoding_address(address)
+    # Remove delivery instructions and unit details, retaining geographic context.
+    clean = re.sub(r'\([^)]*\)', '', normalized)
+    clean = re.sub(
+        r'(?<!\w)(?:apto?|apartamento|bloco|bl|sala|fundos|complemento|referencia|referência)\b\.?[^,]*',
+        '', clean, flags=re.IGNORECASE,
+    )
+    clean = ', '.join(part.strip(' ,') for part in clean.split(',') if part.strip(' ,'))
+    # Only strip numbers after a comma or at the end of the street component.
+    # Street names such as "Rua 25 de Marco" must retain their numbers.
+    street_only = re.sub(r',\s*(?:(?:n[º°o]?\.?|numero)\s*)?\d+[A-Za-z]?(?:-[A-Za-z])?(?=\s*(?:,|$))', '', clean, flags=re.IGNORECASE)
+    street_only = re.sub(r'^((?:\S+\s+)+\S*[^\W\d_])\s+\d+[A-Za-z]?(?=,|$)', r'\1', street_only)
+    without_type = re.sub(r'^(?:Rua|Avenida|Travessa|Praca|Praça|Estrada|Rodovia)\s+', '', street_only, flags=re.IGNORECASE)
+    return list(dict.fromkeys(q for q in (normalized, clean, street_only, without_type) if len(q) >= 5))
+
+
+def nominatim_geocode(address):
+    address = normalize_geocoding_address(address)
     if re.fullmatch(r'\d{5}-?\d{3}', address):
         digits = address.replace('-', '')
         address = digits[:5] + '-' + digits[5:]
@@ -90,7 +143,8 @@ def _nominatim_geocode(address, base, cache_period):
                 raise ValueError()
             details = row.get('address', {})
             candidates.append({'address': row['display_name'], 'latitude': lat, 'longitude': lon,
-                               'house_number_found': bool(details.get('house_number'))})
+                               'house_number_found': bool(details.get('house_number')),
+                               'street_found': bool(details.get('road') or row.get('class') == 'highway' or row.get('category') == 'highway')})
         return {'candidates': candidates, 'selection_required': True, 'provider': 'nominatim',
                 'attribution': 'OpenStreetMap contributors'}
     except (KeyError, TypeError, ValueError) as exc:

@@ -18,11 +18,12 @@ export function RouteMapPage() {
   const [pickups, setPickups] = useState<PickupMarker[]>([])
   const [locating, setLocating] = useState(false)
   const [pickupError, setPickupError] = useState('')
+  const [failed, setFailed] = useState<string[]>([])
   const [unlocated, setUnlocated] = useState<string[]>([])
   useEffect(() => {
     const controller = new AbortController()
     const { signal } = controller
-    setPickups([]); setUnlocated([]); setPickupError(''); setLocating(true)
+    setPickups([]); setUnlocated([]); setFailed([]); setPickupError(''); setLocating(true)
     async function loadPickups() {
       const items = await api<Pickup[]>('/pickups', { signal })
       const cache = new Map<string, Point | undefined>()
@@ -46,7 +47,7 @@ export function RouteMapPage() {
           else setUnlocated(previous => [...previous, item.nome])
         } catch (e) {
           if (signal.aborted) return
-          setUnlocated(previous => [...previous, item.nome])
+          setFailed(previous => [...previous, item.nome])
           setPickupError((e as Error).message)
         }
       }
@@ -78,6 +79,7 @@ export function RouteMapPage() {
         <div className="route-map-toolbar"><label>Planejamento<select value={selected?.id ?? ''} onChange={e => setParams(e.target.value ? {planejamento:e.target.value} : {})}><option value="">Somente locais de coleta</option>{plans.map(plan => <option key={plan.id} value={plan.id}>{plan.name} · {plan.status}</option>)}</select></label>{selected && <p>{selected.invoices.length} notas · {selected.result ? `${(selected.result.distance / 1000).toFixed(1)} km · ${Math.round(selected.result.duration / 60)} min estimados` : 'Percurso ainda não calculado'}</p>}</div>
         <section className="route-map-view" aria-label="Mapa das entregas"><RouteMap plan={selected} pickups={pickups}/>{!selected && <p className="route-map-notice">Os locais de coleta ativos aparecem em azul (C), com localização aproximada pelo endereço. Selecione um planejamento para visualizar também as entregas.</p>}{selected && !selected.origin && selected.invoices.length === 0 && <p className="route-map-notice">Adicione a origem e as notas deste planejamento em Rotas.</p>}{selected && !selected.result && selected.invoices.length > 0 && <p className="route-map-notice">Os marcadores mostram os destinos cadastrados. Calcule e salve o percurso em Rotas para visualizar o trajeto.</p>}{selected?.result?.warning && <Alert tone="info">{selected.result.warning}</Alert>}</section>
       {locating && <p role="status">Localizando endereços de coleta… {pickups.length} no mapa.</p>}
+      {failed.length > 0 && <Alert tone="info">Consulta pendente para: {failed.join(', ')}. Use Atualizar mapa para tentar novamente.</Alert>}
       {pickupError && <Alert>Não foi possível localizar todas as coletas: {pickupError}</Alert>}
       {unlocated.length > 0 && <Alert tone="info">Confira os endereços das coletas sem localização: {unlocated.join(', ')}.</Alert>}
       {!locating && pickups.length === 0 && !pickupError && unlocated.length === 0 && <p>Nenhuma coleta ativa cadastrada. <Link to="/admin/coletas">Cadastrar coleta</Link></p>}
