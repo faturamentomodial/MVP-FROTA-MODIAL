@@ -10,6 +10,8 @@ type Pickup = { id: number; nome: string; endereco: string; ativo: boolean; tipo
 export function RouteMapPage() {
   const [params, setParams] = useSearchParams()
   const selectedId = Number(params.get('planejamento'))
+  const templateId = Number(params.get('rota'))
+  const [templates, setTemplates] = useState<Plan[]>([])
   const [plans, setPlans] = useState<Plan[]>([])
   const [selected, setSelected] = useState<Plan | null>(null)
   const [loading, setLoading] = useState(true)
@@ -89,18 +91,24 @@ export function RouteMapPage() {
         batch = await api<Plan[]>(`/route-plans?limit=100&offset=${items.length}`)
         items.push(...batch)
       } while (batch.length === 100)
-      const plan = selectedId ? await api<Plan>(`/route-plans/${selectedId}`) : null
-      if (plan && !items.some(item => item.id === plan.id)) items.unshift(plan)
-      if (active) { setPlans(items); setSelected(plan) }
+      const routeItems: Plan[] = []
+      let routeBatch: Plan[]
+      do {
+        routeBatch = await api<Plan[]>(`/route-templates?limit=100&offset=${routeItems.length}`)
+        routeItems.push(...routeBatch)
+      } while (routeBatch.length === 100)
+      const plan = templateId ? await api<Plan>(`/route-templates/${templateId}`) : selectedId ? await api<Plan>(`/route-plans/${selectedId}`) : null
+      if (plan && !templateId && !items.some(item => item.id === plan.id)) items.unshift(plan)
+      if (active) { setPlans(items); setTemplates(routeItems); setSelected(plan) }
     }
     load().catch(e => { if (active) setError((e as Error).message) }).finally(() => { if (active) setLoading(false) })
     return () => { active = false }
-  }, [selectedId, refresh])
+  }, [selectedId, templateId, refresh])
   return <div className="admin-page route-map-page">
     <header className="page-heading"><div><p className="eyebrow">PLANEJAMENTO</p><h1>Mapa rotas</h1><p>Visualize os locais de coleta cadastrados e os destinos das rotas.</p></div><Button variant="secondary" disabled={loading || locating} onClick={() => setRefresh(value => value + 1)}>Atualizar mapa</Button></header>
     {error && <Alert>{error}</Alert>}
     {loading ? <p role="status">Carregando rotas...</p> : !error && <>
-        <div className="route-map-toolbar"><label>Planejamento<select value={selected?.id ?? ''} onChange={e => setParams(e.target.value ? {planejamento:e.target.value} : {})}><option value="">Somente locais de coleta</option>{plans.map(plan => <option key={plan.id} value={plan.id}>{plan.name} · {plan.status}</option>)}</select></label>{selected && <p>{selected.invoices.length} notas · {selected.result ? `${(selected.result.distance / 1000).toFixed(1)} km · ${Math.round(selected.result.duration / 60)} min estimados` : 'Percurso ainda não calculado'}</p>}</div>
+        <div className="route-map-toolbar"><label>Rota<select value={selected ? `${templateId?'rota':'planejamento'}:${selected.id}` : ''} onChange={e => {const [kind,id]=e.target.value.split(':');setParams(id?{[kind]:id}:{})}}><option value="">Somente locais de coleta</option>{templates.map(plan => <option key={`rota:${plan.id}`} value={`rota:${plan.id}`}>{plan.name} - {plan.status}</option>)}{plans.map(plan => <option key={plan.id} value={`planejamento:${plan.id}`}>{plan.name} · {plan.status}</option>)}</select></label>{selected && <p>{selected.addresses?.length||0} paradas por endereço - {selected.invoices.length} notas · {selected.result ? `${(selected.result.distance / 1000).toFixed(1)} km · ${Math.round(selected.result.duration / 60)} min estimados` : 'Percurso ainda não calculado'}</p>}</div>
         {(!locating || pickups.length > 0) && <section className="route-map-view" aria-label="Mapa das entregas"><RouteMap plan={selected} pickups={pickups}/>{!selected && <p className="route-map-notice">Os locais de coleta ativos aparecem em azul (C), com localização aproximada pelo endereço. Selecione um planejamento para visualizar também as entregas.</p>}{selected && !selected.origin && selected.invoices.length === 0 && <p className="route-map-notice">Adicione a origem e as notas deste planejamento em Rotas.</p>}{selected && !selected.result && selected.invoices.length > 0 && <p className="route-map-notice">Os marcadores mostram os destinos cadastrados. Calcule e salve o percurso em Rotas para visualizar o trajeto.</p>}{selected?.result?.warning && <Alert tone="info">{selected.result.warning}</Alert>}</section>}
       {locating && <p role="status">Preparando o mapa com todos os locais de coleta…</p>}
       {failed.length > 0 && <Alert tone="info">Consulta pendente para: {failed.join(', ')}. Use Atualizar mapa para tentar novamente.</Alert>}

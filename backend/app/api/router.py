@@ -23,3 +23,6 @@ api_router.include_router(tasks.router)
 
 from app.api import pickups
 api_router.include_router(pickups.router)
+
+from app.api import route_templates
+api_router.include_router(route_templates.router)

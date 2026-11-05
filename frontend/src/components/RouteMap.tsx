@@ -9,8 +9,9 @@ const noPickups: PickupMarker[] = []
 export function RouteMap({plan, pickups = noPickups}:{plan:Plan|null; pickups?:PickupMarker[]}) {
   const container=useRef<HTMLDivElement>(null)
   useEffect(()=>{if(!container.current)return;const map=L.map(container.current).setView([-14.2,-51.9],4);L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:19}).addTo(map);const points:L.LatLngTuple[]=[]
-    const stops=plan?.result?plan.stops:(plan?.invoices ?? []).map(n=>({...n.destination,invoices:[n.number]}))
-    for(const [i,p] of [plan?.origin,...stops].entries()){if(!p)continue;const point:L.LatLngTuple=[p.latitude,p.longitude];points.push(point);const text=document.createElement('span');text.textContent=`${i===0?(plan?.result?.return_to_origin?'Origem e retorno':'Origem'):`Parada ${i}`} · ${p.address}${p && 'invoices' in p && Array.isArray(p.invoices) ? ` · NF ${p.invoices.join(', ')}` : ''}`;L.marker(point,{icon:L.divIcon({className:'tracking-marker',html:`<span>${i}</span>`,iconSize:[30,30]})}).bindPopup(text).addTo(map)}
+    const stops=plan?.result?plan.stops:plan?.addresses?.length?plan.addresses.map(p=>({...p,invoices:[]})):(plan?.invoices ?? []).map(n=>({...n.destination,invoices:[n.number]}))
+    for(const [i,p] of [plan?.origin,...stops].entries()){if(!p)continue;const point:L.LatLngTuple=[p.latitude,p.longitude];points.push(point);const text=document.createElement('span');text.textContent=`${i===0?(plan?.result?.return_to_origin?'Origem e retorno':'Origem'):`Parada ${i}`} · ${p.address}${p && 'invoices' in p && Array.isArray(p.invoices) && p.invoices.length ? ` · NF ${p.invoices.join(', ')}` : ''}`;L.marker(point,{icon:L.divIcon({className:'tracking-marker',html:`<span>${i}</span>`,iconSize:[30,30]})}).bindPopup(text).addTo(map)}
+    if(plan?.return_point&&!plan.result?.return_to_origin){const p=plan.return_point;const point:L.LatLngTuple=[p.latitude,p.longitude];points.push(point);const label=document.createElement('span');label.textContent=`Retorno - ${p.address}`;L.marker(point,{icon:L.divIcon({className:'tracking-marker',html:'<span>R</span>',iconSize:[30,30]})}).bindPopup(label).addTo(map)}
     for (const pickup of pickups) {
       const point: L.LatLngTuple = [pickup.latitude, pickup.longitude]
       points.push(point)

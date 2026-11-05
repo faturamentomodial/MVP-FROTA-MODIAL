@@ -113,7 +113,7 @@ class Trip(TimestampMixin, Base):
 class TripInvoice(Base):
     __tablename__ = "trip_invoices"
     __table_args__ = (
-        CheckConstraint("volumes > 0", name="ck_trip_invoice_positive_volumes"),
+        CheckConstraint("(is_address_stop = true AND volumes = 0) OR (is_address_stop = false AND volumes > 0)", name="ck_trip_invoice_positive_volumes"),
         Index("ix_trip_invoice_position", "trip_id", "position"),
         UniqueConstraint("trip_id", "numero_nota", name="uq_trip_invoice_number"),
     )
@@ -121,6 +121,7 @@ class TripInvoice(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     trip_id: Mapped[int] = mapped_column(ForeignKey("trips.id", ondelete="CASCADE"), index=True, nullable=False)
     position: Mapped[int] = mapped_column(Integer, default=0, server_default="0", nullable=False)
+    is_address_stop: Mapped[bool] = mapped_column(Boolean, default=False, server_default="0", nullable=False)
     numero_nota: Mapped[str] = mapped_column(String(80), nullable=False)
     volumes: Mapped[int] = mapped_column(Integer, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)

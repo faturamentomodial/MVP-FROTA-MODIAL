@@ -28,3 +28,5 @@ from app.models.route_plans import RoutePlan, RoutePlanVersion
 from app.models.tasks import Task, TaskStatus
 
 from app.models.pickups import Pickup
+
+from app.models.route_templates import RouteTemplate, RouteExecution

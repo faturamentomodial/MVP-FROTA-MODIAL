@@ -50,7 +50,7 @@ def transition(db, trip, invoice_id, user, action, payload=None):
         occurrence = Occurrence(invoice_id=invoice_id, trip_id=trip.id, driver_id=trip.driver_id,
             vehicle_id=trip.vehicle_id,
             tipo=OccurrenceType.CLIENTE_AUSENTE if payload.motivo == "CLIENTE_AUSENTE" else OccurrenceType.PROBLEMA_ENTREGA,
-            descricao=f"NF {invoice.numero_nota}: {REASONS[payload.motivo]}" + (f" · {payload.observacao}" if payload.observacao else ""),
+            descricao=("" if invoice.is_address_stop else "NF ") + f"{invoice.numero_nota}: {REASONS[payload.motivo]}" + (f" · {payload.observacao}" if payload.observacao else ""),
             data_hora=now)
         db.add(occurrence)
     audit(db, user, {"start": "INICIAR_ENTREGA", "finish": "FINALIZAR_ENTREGA", "occurrence": "REGISTRAR_OCORRENCIA_ENTREGA"}[action],

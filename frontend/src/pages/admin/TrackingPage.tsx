@@ -1,6 +1,6 @@
 import { useAuth } from '../../hooks/useAuth'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { MapPin, RefreshCw } from 'lucide-react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -16,8 +16,10 @@ const date = (value:string) => new Date(value).toLocaleString('pt-BR', {timeZone
 
 export function TrackingPage() {
   const { user } = useAuth()
+  const [params] = useSearchParams()
+  const linkedVehicle = Number(params.get('vehicle_id')) || undefined
   const [fleet,setFleet]=useState<Fleet>(); const [error,setError]=useState(''); const [loading,setLoading]=useState(false)
-  const [filter,setFilter]=useState('TODOS'); const [search,setSearch]=useState(''); const [selected,setSelected]=useState<number>()
+  const [filter,setFilter]=useState('TODOS'); const [search,setSearch]=useState(''); const [selected,setSelected]=useState<number | undefined>(linkedVehicle)
   const [history,setHistory]=useState<Position[]>([]); const [historyMessage,setHistoryMessage]=useState(''); const [historyLoading,setHistoryLoading]=useState(false)
   const historyRequest=useRef(0); const refreshRequest=useRef(false)
   const container=useRef<HTMLDivElement>(null); const map=useRef<L.Map>(); const layer=useRef<L.LayerGroup>()
@@ -31,6 +33,7 @@ export function TrackingPage() {
     const observer=new ResizeObserver(()=>instance.invalidateSize());observer.observe(container.current)
     return()=>{observer.disconnect();instance.remove();map.current=undefined}
   },[])
+  useEffect(()=>{if(linkedVehicle)setSelected(linkedVehicle)},[linkedVehicle])
   const vehicles=(fleet?.items||[]).filter(v=>(filter==='TODOS'||(filter==='EM_VIAGEM'?v.trip_id!==null:v.status===filter))&&`${v.placa} ${v.driver_name||''}`.toLowerCase().includes(search.toLowerCase()))
   const current=fleet?.items.find(v=>v.vehicle_id===selected)
   useEffect(()=>{

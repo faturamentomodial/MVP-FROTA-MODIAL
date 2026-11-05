@@ -41,7 +41,7 @@ def trip_dict(trip: Trip) -> dict:
         "checklist_id": trip.checklist.id if trip.checklist else None,
         "occurrence_count": len(trip.occurrences) if trip.occurrences is not None else 0,
         "notas": trip.invoices,
-        "total_volumes": sum(invoice.volumes for invoice in trip.invoices),
+        "total_volumes": sum(invoice.volumes for invoice in trip.invoices if not invoice.is_address_stop),
     }
 
 

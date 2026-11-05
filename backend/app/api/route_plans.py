@@ -37,6 +37,9 @@ def validate_vehicle(db, data):
 
 
 def save(db, plan, revision, data, user, status='RASCUNHO'):
+    from app.services.route_scheduling import is_execution_plan
+    if is_execution_plan(db, plan.id):
+        raise HTTPException(409, 'Use a programação semanal para alterar esta execução')
     result = db.execute(update(RoutePlan).where(RoutePlan.id == plan.id, RoutePlan.revision == revision, RoutePlan.status == 'RASCUNHO').values(revision=revision+1, data=data, status=status), execution_options={'synchronize_session': False})
     if result.rowcount != 1:
         db.rollback()
@@ -49,7 +52,8 @@ def save(db, plan, revision, data, user, status='RASCUNHO'):
 
 @router.get('')
 def list_plans(db: Session = Depends(get_db), limit: int = Query(50, ge=1, le=100), offset: int = Query(0, ge=0)):
-    return [output(p) for p in db.scalars(select(RoutePlan).order_by(RoutePlan.id.desc()).offset(offset).limit(limit))]
+    from app.models.route_templates import RouteExecution
+    return [output(p) for p in db.scalars(select(RoutePlan).where(~RoutePlan.id.in_(select(RouteExecution.plan_id))).order_by(RoutePlan.id.desc()).offset(offset).limit(limit))]
 
 
 @router.get('/providers')

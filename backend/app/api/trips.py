@@ -28,7 +28,9 @@ def planned(db: Session = Depends(get_db), user: User = Depends(require_driver))
         RoutePlan.data['driver_id'].as_integer() == driver.id,
         RoutePlan.data['trip_id'].as_integer().is_(None),
     ).order_by(RoutePlan.id))
-    return [{'id': p.id, **p.data, 'vehicle_plate': db.get(Vehicle, p.data['vehicle_id']).placa} for p in plans]
+    from app.services.route_scheduling import today
+    return [{'id': p.id, **p.data, 'vehicle_plate': db.get(Vehicle, p.data['vehicle_id']).placa} for p in plans
+            if not p.data.get('execution_date') or p.data['execution_date'] == today().isoformat()]
 
 
 def ensure_trip_access(trip: Trip, user: User, db: Session) -> None:
@@ -96,6 +98,7 @@ def update_cargo(trip_id: int, payload: TripCargoUpdate, db: Session = Depends(g
     db.scalar(select(Trip.id).where(Trip.id == trip_id).with_for_update())
     trip = load_trip(db, trip_id)
     ensure_trip_access(trip, user, db)
+    protect_execution_snapshot(db, trip)
     if trip.status != TripStatus.ABERTA:
         raise HTTPException(status_code=400, detail="A carga só pode ser alterada antes do início da viagem")
     claim_revision(db, trip, trip.delivery_revision)
@@ -159,6 +162,15 @@ def delivery_occurrence(trip_id: int, invoice_id: int, payload: DeliveryOccurren
 @router.put("/{trip_id}/delivery-order", response_model=TripOut)
 def update_delivery_order(trip_id: int, payload: DeliveryOrderIn, db: Session = Depends(get_db), user: User = Depends(require_admin)):
     trip = delivery_trip(db, trip_id, user, True)
+    protect_execution_snapshot(db, trip)
     reorder(db, trip, payload, user)
     db.expire_all()
     return trip_dict(load_trip(db, trip_id))
+
+
+def protect_execution_snapshot(db, trip):
+    from app.models.route_templates import RouteExecution
+    from app.models.route_plans import RoutePlan
+    if db.scalar(select(RouteExecution.id).join(RoutePlan, RoutePlan.id == RouteExecution.plan_id)
+                 .where(RoutePlan.data['trip_id'].as_integer() == trip.id)):
+        raise HTTPException(409, 'O percurso programado é uma cópia fixa; edite a rota para as próximas saídas')

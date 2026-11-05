@@ -211,6 +211,7 @@ class DeliveryOccurrenceIn(BaseModel):
 
 
 class TripInvoiceOut(ORMModel):
+    is_address_stop: bool = False
     position: int
     id: int
     numero_nota: str
