@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from app.api.dependencies import require_admin
 from app.core.database import get_db
-from app.models import Driver, Vehicle
+from app.models import Driver, Vehicle, Pickup
 from app.models.route_plans import RoutePlan, RoutePlanVersion
 from app.models.route_templates import RouteTemplate, RouteExecution
 from app.schemas.route_templates import TemplateInput, ExecutionInput
@@ -93,6 +93,7 @@ def delete_template(id: int, revision: int = Query(..., ge=0), db: Session = Dep
     if claimed.rowcount != 1:
         db.rollback()
         raise HTTPException(409, 'Rota alterada. Recarregue antes de excluir')
+    db.execute(update(Pickup).where(Pickup.route_template_id == id).values(route_template_id=None))
     for execution in list(db.scalars(select(RouteExecution).where(RouteExecution.template_id == id))):
         remove_unstarted_execution(db, execution)
     # Started trips still reference their template; retain only that required parent.

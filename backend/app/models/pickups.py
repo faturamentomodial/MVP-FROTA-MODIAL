@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, String, true
+from sqlalchemy import Boolean, ForeignKey, String, true
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
@@ -16,3 +16,4 @@ class Pickup(TimestampMixin, Base):
     ativo: Mapped[bool] = mapped_column(Boolean, default=True, server_default=true(), nullable=False)
 
     tipo: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    route_template_id: Mapped[int | None] = mapped_column(ForeignKey('route_templates.id', name='fk_pickups_route_template', ondelete='SET NULL'), nullable=True, index=True)

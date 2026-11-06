@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from app.api.dependencies import require_admin
 from app.core.database import get_db
 from app.models import Pickup, User
+from app.models.route_templates import RouteTemplate
 from app.services.audit import audit
 from app.schemas import ActiveUpdate
 
@@ -18,6 +19,7 @@ class PickupInput(BaseModel):
     telefone: str = Field(min_length=1, max_length=40)
     endereco: str = Field(min_length=1, max_length=500)
     tipo: Literal["COSTUREIRA", "FLORISTA", "FORNECEDOR"] | None = None
+    route_template_id: int | None = Field(default=None, gt=0)
 
 
 class PickupOut(PickupInput):
@@ -29,6 +31,14 @@ class PickupOut(PickupInput):
 router = APIRouter(prefix="/pickups", tags=["Coletas"])
 
 
+def validate_route(db: Session, route_id: int | None):
+    if route_id is None:
+        return
+    route = db.get(RouteTemplate, route_id)
+    if not route or route.data.get('deleted', False):
+        raise HTTPException(422, "Selecione uma rota estabelecida existente")
+
+
 @router.get("", response_model=list[PickupOut])
 def list_pickups(db: Session = Depends(get_db), _: User = Depends(require_admin)):
     return db.scalars(select(Pickup).order_by(Pickup.nome, Pickup.id)).all()
@@ -36,6 +46,7 @@ def list_pickups(db: Session = Depends(get_db), _: User = Depends(require_admin)
 
 @router.post("", response_model=PickupOut, status_code=201)
 def create_pickup(payload: PickupInput, db: Session = Depends(get_db), user: User = Depends(require_admin)):
+    validate_route(db, payload.route_template_id)
     item = Pickup(**payload.model_dump())
     db.add(item)
     db.flush()
@@ -50,6 +61,8 @@ def update_pickup(pickup_id: int, payload: PickupInput, db: Session = Depends(ge
     item = db.get(Pickup, pickup_id)
     if not item:
         raise HTTPException(404, "Coleta n\u00e3o encontrada")
+    if 'route_template_id' in payload.model_fields_set:
+        validate_route(db, payload.route_template_id)
     for key, value in payload.model_dump(exclude_unset=True).items():
         setattr(item, key, value)
     audit(db, user, "ALTERAR", "PICKUP", item.id)

@@ -64,3 +64,23 @@ def test_pickup_types(client, admin_headers):
     for invalid in ("OUTRO", "", "costureira"):
         assert client.post("/api/pickups", headers=admin_headers, json={**data, "tipo": invalid}).status_code == 422
     assert client.post("/api/pickups", headers=admin_headers, json=data).json()["tipo"] is None
+
+
+def test_pickup_established_route_link(client, admin_headers):
+    route = client.post('/api/route-templates', headers=admin_headers, json={'name': 'Rota de coletas'}).json()
+    data = {'nome': 'Fornecedor A', 'telefone': '123', 'endereco': 'Rua A', 'tipo': 'FORNECEDOR', 'route_template_id': route['id']}
+    response = client.post('/api/pickups', headers=admin_headers, json=data)
+    assert response.status_code == 201, response.text
+    assert response.json()['route_template_id'] == route['id']
+    url = f"/api/pickups/{response.json()['id']}"
+    assert client.get('/api/pickups', headers=admin_headers).json()[0]['route_template_id'] == route['id']
+    without_link = {key: value for key, value in data.items() if key != 'route_template_id'}
+    assert client.put(url, headers=admin_headers, json=without_link).json()['route_template_id'] == route['id']
+    assert client.put(url, headers=admin_headers, json={**data, 'route_template_id': None}).json()['route_template_id'] is None
+    for invalid in (0, -1, 99999):
+        invalid_data = {**data, 'route_template_id': invalid}
+        assert client.post('/api/pickups', headers=admin_headers, json=invalid_data).status_code == 422
+        assert client.put(url, headers=admin_headers, json=invalid_data).status_code == 422
+    assert client.put(url, headers=admin_headers, json=data).status_code == 200
+    assert client.delete(f"/api/route-templates/{route['id']}?revision=0", headers=admin_headers).status_code == 204
+    assert client.get('/api/pickups', headers=admin_headers).json()[0]['route_template_id'] is None
