@@ -232,3 +232,31 @@ def test_incremental_migration_preserves_existing_records():
         assert 'route_templates' in inspect(conn).get_table_names()
         migration.downgrade()
         assert conn.execute(text('SELECT volumes FROM trip_invoices')).scalar() == 3
+
+
+def test_delete_template_preserves_executions(client, admin_headers, driver_headers, monkeypatch):
+    route = template(client, admin_headers, monkeypatch)
+    execution = schedule(client, admin_headers, booking(route)).json()
+    url = f"/api/route-templates/{route['id']}"
+    assert client.delete(url, params={'revision': route['revision']}, headers=driver_headers).status_code == 403
+    assert client.delete(url, params={'revision': 0}, headers=admin_headers).status_code == 409
+    assert client.get(url, headers=admin_headers).status_code == 200
+    assert client.delete(url, params={'revision': route['revision']}, headers=admin_headers).status_code == 204
+    assert client.get('/api/route-templates', headers=admin_headers).json() == []
+    assert client.get(url, headers=admin_headers).status_code == 404
+    assert client.post(url+'/duplicate', headers=admin_headers).status_code == 404
+    assert client.put(url, headers=admin_headers, json={**template_body(), 'revision': route['revision']+1}).status_code == 404
+    assert schedule(client, admin_headers, booking(route, today()+timedelta(days=1))).status_code == 404
+    saved = client.get(f"/api/route-executions/{execution['id']}", headers=admin_headers)
+    assert saved.status_code == 200
+    assert saved.json()['snapshot'] == execution['snapshot']
+    assert client.post(f"/api/route-executions/{execution['id']}/cancel", headers=admin_headers,
+                       json={'revision': 0}).status_code == 200
+
+
+def test_delete_template_without_executions(client, admin_headers):
+    route = client.post('/api/route-templates', headers=admin_headers, json=template_body()).json()
+    url = f"/api/route-templates/{route['id']}"
+    assert client.delete(url, params={'revision': 0}, headers=admin_headers).status_code == 204
+    assert client.delete(url, params={'revision': 0}, headers=admin_headers).status_code == 404
+    assert client.get('/api/route-templates', headers=admin_headers).json() == []

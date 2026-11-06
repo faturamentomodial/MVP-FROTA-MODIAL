@@ -1,7 +1,7 @@
 from copy import deepcopy
 from datetime import date, datetime, time, timedelta
 from math import isfinite
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -21,7 +21,7 @@ router = APIRouter(tags=['Rotas estabelecidas'], dependencies=[Depends(require_a
 
 def load(db, model, id):
     item = db.get(model, id)
-    if not item:
+    if not item or (model is RouteTemplate and item.data.get('deleted', False)):
         raise HTTPException(404, 'Rota ou programação não encontrada')
     return item
 
@@ -43,7 +43,7 @@ def write_template(db, item, revision, data):
 
 @router.get('/route-templates')
 def list_templates(db: Session = Depends(get_db), limit: int = Query(100, ge=1, le=100), offset: int = Query(0, ge=0)):
-    return [output(item) for item in db.scalars(select(RouteTemplate).order_by(RouteTemplate.id.desc()).limit(limit).offset(offset))]
+    return [output(item) for item in db.scalars(select(RouteTemplate).where(RouteTemplate.data['deleted'].as_boolean().is_not(True)).order_by(RouteTemplate.id.desc()).limit(limit).offset(offset))]
 
 
 @router.post('/route-templates', status_code=201)
@@ -63,6 +63,14 @@ def detail(id: int, db: Session = Depends(get_db)):
 def edit(id: int, payload: TemplateInput, db: Session = Depends(get_db)):
     return write_template(db, load(db, RouteTemplate, id), payload.revision,
                           {**payload.model_dump(mode='json', exclude={'revision'}), 'stops': [], 'result': None})
+
+
+@router.delete('/route-templates/{id}', status_code=204)
+def delete_template(id: int, revision: int = Query(..., ge=0), db: Session = Depends(get_db)):
+    item = load(db, RouteTemplate, id)
+    # Keep the referenced template so existing executions and their history survive.
+    write_template(db, item, revision, {**item.data, 'active': False, 'deleted': True})
+    return Response(status_code=204)
 
 
 @router.post('/route-templates/{id}/duplicate', status_code=201)
