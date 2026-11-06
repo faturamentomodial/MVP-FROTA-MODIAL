@@ -40,7 +40,7 @@ def require_role(*roles: UserRole) -> Callable:
     return dependency
 
 
-require_admin = require_role(UserRole.ADMIN)
+require_admin = require_role(UserRole.ADMIN, UserRole.MASTER)
 require_driver = require_role(UserRole.MOTORISTA)
-require_operations = require_role(UserRole.ADMIN, UserRole.COMPRAS)
+require_operations = require_role(UserRole.ADMIN, UserRole.COMPRAS, UserRole.MASTER)
 

@@ -23,7 +23,7 @@ class ManagerFields(BaseModel):
     nome: str = Field(min_length=2, max_length=160)
     email: EmailStr
     ativo: bool = True
-    role: Literal[UserRole.ADMIN, UserRole.COMPRAS] = UserRole.ADMIN
+    role: Literal[UserRole.ADMIN, UserRole.COMPRAS, UserRole.MASTER] = UserRole.ADMIN
 
     @field_validator("nome", mode="before")
     @classmethod
@@ -36,11 +36,11 @@ class ManagerCreate(ManagerFields):
     senha: str = Field(min_length=8, max_length=128)
 
 class ManagerUpdate(ManagerFields):
-    role: Literal[UserRole.ADMIN, UserRole.COMPRAS] | None = None
+    role: Literal[UserRole.ADMIN, UserRole.COMPRAS, UserRole.MASTER] | None = None
     senha: str | None = Field(default=None, min_length=8, max_length=128)
 
 def manager_or_404(db: Session, user_id: int) -> User:
-    account = db.scalar(select(User).where(User.id == user_id, User.role.in_([UserRole.ADMIN, UserRole.COMPRAS])))
+    account = db.scalar(select(User).where(User.id == user_id, User.role.in_([UserRole.ADMIN, UserRole.COMPRAS, UserRole.MASTER])))
     if not account:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
     return account
@@ -69,7 +69,7 @@ def check_status(account: User, active: bool, actor: User) -> None:
 
 @router.get("", response_model=list[UserOut])
 def list_managers(db: Session = Depends(get_db), _: User = Depends(require_admin)):
-    return list(db.scalars(select(User).where(User.role.in_([UserRole.ADMIN, UserRole.COMPRAS])).order_by(User.nome, User.id)))
+    return list(db.scalars(select(User).where(User.role.in_([UserRole.ADMIN, UserRole.COMPRAS, UserRole.MASTER])).order_by(User.nome, User.id)))
 
 
 @router.post("", response_model=UserOut, status_code=201)

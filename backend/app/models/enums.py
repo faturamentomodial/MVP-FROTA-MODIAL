@@ -2,6 +2,7 @@ from enum import StrEnum
 
 
 class UserRole(StrEnum):
+    MASTER = "MASTER"
     ADMIN = "ADMIN"
     COMPRAS = "COMPRAS"
     MOTORISTA = "MOTORISTA"

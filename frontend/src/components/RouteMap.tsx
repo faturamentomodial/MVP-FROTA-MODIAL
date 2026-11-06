@@ -3,7 +3,7 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import type { Plan, Point } from '../types/routePlans'
 
-export type PickupMarker = Point & { id: number; nome: string; tipo: 'COSTUREIRA' | 'FLORISTA' | null }
+export type PickupMarker = Point & { id: number; nome: string; tipo: 'COSTUREIRA' | 'FLORISTA' | 'FORNECEDOR' | null }
 const noPickups: PickupMarker[] = []
 
 export function RouteMap({plan, pickups = noPickups}:{plan:Plan|null; pickups?:PickupMarker[]}) {
@@ -16,7 +16,7 @@ export function RouteMap({plan, pickups = noPickups}:{plan:Plan|null; pickups?:P
       const point: L.LatLngTuple = [pickup.latitude, pickup.longitude]
       points.push(point)
       const text = document.createElement('span')
-      const kind = pickup.tipo === 'COSTUREIRA' ? 'Costureira' : pickup.tipo === 'FLORISTA' ? 'Florista' : 'Coleta'
+      const kind = pickup.tipo === 'COSTUREIRA' ? 'Costureira' : pickup.tipo === 'FLORISTA' ? 'Florista' : pickup.tipo === 'FORNECEDOR' ? 'Fornecedor' : 'Coleta'
       text.textContent = `${kind} · ${pickup.nome} · ${pickup.address} · Localização aproximada`
       L.marker(point, {title: pickup.nome, icon: L.divIcon({className: 'tracking-marker', html: '<span style="border-color:#2563eb;color:#2563eb;font-size:16px">C</span>', iconSize: [36,36], iconAnchor: [18,18]})}).bindPopup(text).addTo(map)
     }

@@ -3,8 +3,8 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Alert, Button, Empty, Modal, StatusBadge } from '../../components/UI'
 import { api } from '../../services/api'
 
-type PickupType = 'COSTUREIRA' | 'FLORISTA'
-const typeLabels = { COSTUREIRA: 'Costureira', FLORISTA: 'Florista' }
+type PickupType = 'COSTUREIRA' | 'FLORISTA' | 'FORNECEDOR'
+const typeLabels = { COSTUREIRA: 'Costureira', FLORISTA: 'Florista', FORNECEDOR: 'Fornecedor' }
 type Pickup = { tipo: PickupType | null; id: number; ativo: boolean; nome: string; telefone: string; endereco: string }
 const empty = { tipo: '' as PickupType | '', nome: '', telefone: '', endereco: '' }
 
@@ -72,7 +72,7 @@ export function PickupsPage() {
 
   const visible = items.filter(item => `${item.tipo ? typeLabels[item.tipo] : ''} ${item.nome} ${item.telefone} ${item.endereco}`.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
   return <div className="admin-page">
-    <header className="page-heading"><div><p className="eyebrow">CADASTROS</p><h1>Coletas</h1><p>Cadastre os contatos e endereços fixos de costureiras e floristas.</p></div><Button onClick={() => show()}><Plus size={20}/> Nova coleta</Button></header>
+    <header className="page-heading"><div><p className="eyebrow">CADASTROS</p><h1>Coletas</h1><p>Cadastre os contatos e endereços fixos de costureiras, floristas e fornecedores.</p></div><Button onClick={() => show()}><Plus size={20}/> Nova coleta</Button></header>
     {error && !open && !action && <Alert>{error}</Alert>}
     {success && <Alert tone="success">{success}</Alert>}
     <section className="panel manager-panel" aria-labelledby="pickups-title">
@@ -83,7 +83,7 @@ export function PickupsPage() {
     <Modal open={open} title={editing ? 'Editar coleta' : 'Nova coleta'} onClose={close}>
       {error && <Alert>{error}</Alert>}
       <form className="modal-form" onSubmit={save}>
-        <label>Tipo<select required value={form.tipo} onChange={e => setForm({ ...form, tipo: e.target.value as PickupType | '' })}><option value="" disabled>Selecione o tipo</option><option value="COSTUREIRA">Costureira</option><option value="FLORISTA">Florista</option></select></label>
+        <label>Tipo<select required value={form.tipo} onChange={e => setForm({ ...form, tipo: e.target.value as PickupType | '' })}><option value="" disabled>Selecione o tipo</option><option value="COSTUREIRA">Costureira</option><option value="FLORISTA">Florista</option><option value="FORNECEDOR">Fornecedor</option></select></label>
         <label>Nome<input autoComplete="name" required minLength={2} maxLength={160} value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })}/></label>
         <label>Telefone<input type="tel" autoComplete="tel" required maxLength={40} value={form.telefone} onChange={e => setForm({ ...form, telefone: e.target.value })}/></label>
         <label>Endereço<input autoComplete="street-address" required maxLength={500} placeholder="Rua, número, complemento, bairro, cidade e UF" value={form.endereco} onChange={e => setForm({ ...form, endereco: e.target.value })}/></label>

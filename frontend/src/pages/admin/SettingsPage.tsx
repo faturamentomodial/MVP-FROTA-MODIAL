@@ -8,7 +8,7 @@ import type { User } from '../../types'
 
 import { roleLabels } from '../../utils/access'
 
-const empty = { nome: '', email: '', senha: '', confirmar: '', ativo: true, role: 'ADMIN' as 'ADMIN' | 'COMPRAS' }
+const empty = { nome: '', email: '', senha: '', confirmar: '', ativo: true, role: 'ADMIN' as 'ADMIN' | 'COMPRAS' | 'MASTER' }
 
 export function SettingsPage() {
   const { user, updateUser } = useAuth()
@@ -33,7 +33,7 @@ export function SettingsPage() {
 
   function show(item?: User) {
     setEditing(item)
-    setForm(item ? { nome: item.nome, email: item.email, senha: '', confirmar: '', ativo: item.ativo, role: item.role as 'ADMIN' | 'COMPRAS' } : empty)
+    setForm(item ? { nome: item.nome, email: item.email, senha: '', confirmar: '', ativo: item.ativo, role: item.role as 'ADMIN' | 'COMPRAS' | 'MASTER' } : empty)
     setError(''); setSuccess(''); setOpen(true)
   }
 
@@ -89,8 +89,8 @@ export function SettingsPage() {
     <Modal open={open} onClose={() => { if (!saving) { setOpen(false); setError('') } }} title={editing ? 'Editar usuário' : 'Novo usuário'}>
       {error && <Alert>{error}</Alert>}
       <form className="modal-form" onSubmit={save}>
-        <label>Perfil<select value={form.role} disabled={editing?.id === user?.id} onChange={e => setForm({ ...form, role: e.target.value as 'ADMIN' | 'COMPRAS' })}><option value="ADMIN">Gestor</option><option value="COMPRAS">Compras</option></select></label>
-        <p>{form.role === 'COMPRAS' ? 'Acesso à Central de Tarefas, Rastreamento e Viagens.' : 'Acesso completo aos cadastros, viagens, ocorrências e configurações.'}</p>
+        <label>Perfil<select value={form.role} disabled={editing?.id === user?.id} onChange={e => setForm({ ...form, role: e.target.value as 'ADMIN' | 'COMPRAS' | 'MASTER' })}><option value="MASTER">Master</option><option value="ADMIN">Gestor</option><option value="COMPRAS">Compras</option></select></label>
+        <p>{form.role === 'MASTER' ? 'Acesso completo a todas as áreas e configurações do sistema.' : form.role === 'COMPRAS' ? 'Acesso à Central de Tarefas, Rastreamento e Viagens.' : 'Acesso completo aos cadastros, viagens, ocorrências e configurações.'}</p>
         <label>Nome completo<input autoComplete="name" value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })} required minLength={2} maxLength={160}/></label>
         <label>E-mail de acesso<input type="email" autoComplete="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required maxLength={255}/></label>
         <label>{editing ? 'Nova senha' : 'Senha'}{editing && <small>Deixe em branco para manter a senha atual.</small>}<input type="password" autoComplete="new-password" value={form.senha} onChange={e => setForm({ ...form, senha: e.target.value })} required={!editing} minLength={8} maxLength={128}/></label>

@@ -51,8 +51,16 @@ def test_pickup_types(client, admin_headers):
     data["tipo"] = "FLORISTA"
     assert client.put(url, headers=admin_headers, json=data).json()["tipo"] == "FLORISTA"
     assert client.get("/api/pickups", headers=admin_headers).json()[0]["tipo"] == "FLORISTA"
+    data["tipo"] = "FORNECEDOR"
+    response = client.put(url, headers=admin_headers, json=data)
+    assert response.status_code == 200
+    assert response.json()["tipo"] == "FORNECEDOR"
+    assert client.get("/api/pickups", headers=admin_headers).json()[0]["tipo"] == "FORNECEDOR"
+    response = client.post("/api/pickups", headers=admin_headers, json=data)
+    assert response.status_code == 201
+    assert response.json()["tipo"] == "FORNECEDOR"
     data.pop("tipo")
-    assert client.put(url, headers=admin_headers, json=data).json()["tipo"] == "FLORISTA"
+    assert client.put(url, headers=admin_headers, json=data).json()["tipo"] == "FORNECEDOR"
     for invalid in ("OUTRO", "", "costureira"):
         assert client.post("/api/pickups", headers=admin_headers, json={**data, "tipo": invalid}).status_code == 422
     assert client.post("/api/pickups", headers=admin_headers, json=data).json()["tipo"] is None

@@ -5,6 +5,7 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.pytest-tmp-*/
 test_fleet.db
 *.db
 *.db-shm

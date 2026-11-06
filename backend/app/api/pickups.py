@@ -17,7 +17,7 @@ class PickupInput(BaseModel):
     nome: str = Field(min_length=2, max_length=160)
     telefone: str = Field(min_length=1, max_length=40)
     endereco: str = Field(min_length=1, max_length=500)
-    tipo: Literal["COSTUREIRA", "FLORISTA"] | None = None
+    tipo: Literal["COSTUREIRA", "FLORISTA", "FORNECEDOR"] | None = None
 
 
 class PickupOut(PickupInput):

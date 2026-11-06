@@ -42,7 +42,7 @@ export function PickupStopPicker({ onAdd, disabled }: { onAdd: (point: Point) =>
 
   const matches = items.filter(item => normalize(item.nome).includes(normalize(query.trim())))
   return <div>
-    <label>Pesquisar coleta pelo nome<input value={query} placeholder="Ex.: Lais florista" onChange={e => { setQuery(e.target.value); setSelected(null); setCandidates([]); setLocating(false); setError('') }}/></label>
+    <label>Pesquisar coleta pelo nome<input value={query} onChange={e => { setQuery(e.target.value); setSelected(null); setCandidates([]); setLocating(false); setError('') }}/></label>
     <Button variant="secondary" loading={loading} onClick={() => setRefresh(value => value + 1)}>Atualizar coletas</Button>
     {error && <Alert>{error}</Alert>}
     {!loading && query.trim() && !selected && <div>

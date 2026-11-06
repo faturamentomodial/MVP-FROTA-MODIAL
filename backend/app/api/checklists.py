@@ -23,7 +23,7 @@ router = APIRouter(tags=["Checklist"])
 
 
 @router.get("/checklist-items", response_model=list[ChecklistItemOut])
-def list_items(active_only: bool = True, db: Session = Depends(get_db), _: User = Depends(require_role(UserRole.ADMIN, UserRole.MOTORISTA))):
+def list_items(active_only: bool = True, db: Session = Depends(get_db), _: User = Depends(require_role(UserRole.ADMIN, UserRole.MOTORISTA, UserRole.MASTER))):
     stmt = select(ChecklistItem).where(ChecklistItem.excluido.is_(False)).order_by(ChecklistItem.ordem, ChecklistItem.nome)
     if active_only:
         stmt = stmt.where(ChecklistItem.ativo.is_(True))
