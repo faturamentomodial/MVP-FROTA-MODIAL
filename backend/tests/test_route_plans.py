@@ -2,6 +2,50 @@ from fastapi import HTTPException
 from app.services import route_planning as provider
 from app.models.route_plans import RoutePlan
 from app.core.database import SessionLocal
+from app.models.route_plans import RoutePlanVersion
+from sqlalchemy import select
+
+
+def test_delete_plan_access_conflict_and_versions(client, admin_headers, driver_headers):
+    plan = client.post('/api/route-plans', headers=admin_headers, json=payload()).json()
+    url = f"/api/route-plans/{plan['id']}"
+    assert client.delete(url + '?revision=0').status_code == 401
+    assert client.delete(url + '?revision=0', headers=driver_headers).status_code == 403
+    assert client.delete(url + '?revision=1', headers=admin_headers).status_code == 409
+    assert client.get(url, headers=admin_headers).status_code == 200
+    assert client.delete(url + '?revision=0', headers=admin_headers).status_code == 204
+    assert client.get(url, headers=admin_headers).status_code == 404
+    assert client.get(url + '/versions', headers=admin_headers).status_code == 404
+    assert client.get('/api/route-plans', headers=admin_headers).json() == []
+    with SessionLocal() as db:
+        assert db.scalar(select(RoutePlanVersion.id).where(RoutePlanVersion.plan_id == plan['id'])) is None
+    assert client.delete(url + '?revision=0', headers=admin_headers).status_code == 404
+
+
+def test_delete_confirmed_plan_preserves_trip(client, admin_headers, driver_headers):
+    from conftest import assigned_plan
+    plan_id = assigned_plan()
+    response = client.post('/api/trips', headers=driver_headers, json={'vehicle_id': 1, 'km_inicial': 1000, 'route_plan_id': plan_id})
+    assert response.status_code == 201, response.text
+    trip = response.json()
+    url = f'/api/route-plans/{plan_id}'
+    revision = client.get(url, headers=admin_headers).json()['revision']
+    assert client.delete(url + f'?revision={revision}', headers=admin_headers).status_code == 204
+    response = client.get(f"/api/trips/{trip['id']}", headers=driver_headers)
+    assert response.status_code == 200
+    preserved = response.json()
+    assert preserved['route_plan'].pop('deleted') is True
+    assert preserved == trip
+    assert client.get(url, headers=admin_headers).status_code == 404
+    assert client.get('/api/route-plans', headers=admin_headers).json() == []
+
+
+def test_delete_confirmed_unused_plan(client, admin_headers, driver_headers):
+    from conftest import assigned_plan
+    plan_id = assigned_plan()
+    assert len(client.get('/api/trips/planned', headers=driver_headers).json()) == 1
+    assert client.delete(f'/api/route-plans/{plan_id}?revision=0', headers=admin_headers).status_code == 204
+    assert client.get('/api/trips/planned', headers=driver_headers).json() == []
 
 
 def payload():

@@ -5,6 +5,7 @@ export function homeFor(role: Role) {
   return role === 'MOTORISTA' ? '/motorista' : role === 'COMPRAS' ? '/admin/tarefas' : '/admin'
 }
 export function canAccess(role: Role, path: string) {
+  if (path === '/admin/configuracoes' || path === '/motorista/configuracoes') return true
   if (role === 'ADMIN' || role === 'MASTER') return true
-  return role === 'COMPRAS' && ['/admin/tarefas', '/admin/rastreamento', '/admin/viagens'].some(base => path === base || path.startsWith(`${base}/`))
+  return role === 'COMPRAS' && ['/admin/tarefas', '/admin/mapa-rotas', '/admin/rastreamento', '/admin/viagens'].some(base => path === base || path.startsWith(`${base}/`))
 }

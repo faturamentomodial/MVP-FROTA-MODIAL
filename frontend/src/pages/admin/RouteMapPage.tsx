@@ -3,11 +3,14 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { RouteMap, type PickupMarker } from '../../components/RouteMap'
 import { Alert, Button } from '../../components/UI'
 import { api } from '../../services/api'
+import { useAuth } from '../../hooks/useAuth'
+import { canAccess } from '../../utils/access'
 import type { Plan, Point } from '../../types/routePlans'
 
 type Pickup = { id: number; nome: string; endereco: string; ativo: boolean; tipo: PickupMarker['tipo'] }
 
 export function RouteMapPage() {
+  const { user } = useAuth()
   const [params, setParams] = useSearchParams()
   const selectedId = Number(params.get('planejamento'))
   const templateId = Number(params.get('rota'))
@@ -114,7 +117,7 @@ export function RouteMapPage() {
       {failed.length > 0 && <Alert tone="info">Consulta pendente para: {failed.join(', ')}. Use Atualizar mapa para tentar novamente.</Alert>}
       {pickupError && <Alert>Não foi possível localizar todas as coletas: {pickupError}</Alert>}
       {unlocated.length > 0 && <Alert tone="info">Confira os endereços das coletas sem localização: {unlocated.join(', ')}.</Alert>}
-      {!locating && pickups.length === 0 && !pickupError && unlocated.length === 0 && <p>Nenhuma coleta ativa cadastrada. <Link to="/admin/coletas">Cadastrar coleta</Link></p>}
+      {!locating && pickups.length === 0 && !pickupError && unlocated.length === 0 && <p>Nenhuma coleta ativa cadastrada. {user && canAccess(user.role, '/admin/coletas') && <Link to="/admin/coletas">Cadastrar coleta</Link>}</p>}
 
     </>}
   </div>

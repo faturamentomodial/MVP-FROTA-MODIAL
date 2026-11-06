@@ -1,22 +1,23 @@
 ﻿from copy import deepcopy
-from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import select, update
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
+from sqlalchemy import select, update, delete
 from sqlalchemy.orm import Session
-from app.api.dependencies import require_admin
+from app.api.dependencies import require_admin, require_operations
 from app.core.database import get_db
 from app.models import Vehicle, Driver
 from app.models.route_plans import RoutePlan, RoutePlanVersion
 from app.schemas.route_plans import PlanInput, CalculateInput, RevisionInput
 from app.services import route_planning as provider
 from app.services import sankhya
+from app.services.audit import audit
 
-router = APIRouter(prefix='/route-plans', tags=['Planejamento de rotas'], dependencies=[Depends(require_admin)])
+router = APIRouter(prefix='/route-plans', tags=['Planejamento de rotas'], dependencies=[Depends(require_operations)])
 WARNING = 'OSRM driving não considera altura, peso, eixos ou restrições legais de caminhões. Revisão humana obrigatória antes da operação.'
 
 
 def load(db, plan_id):
     plan = db.get(RoutePlan, plan_id)
-    if not plan:
+    if not plan or plan.data.get('deleted', False):
         raise HTTPException(404, 'Planejamento não encontrado')
     return plan
 
@@ -53,10 +54,10 @@ def save(db, plan, revision, data, user, status='RASCUNHO'):
 @router.get('')
 def list_plans(db: Session = Depends(get_db), limit: int = Query(50, ge=1, le=100), offset: int = Query(0, ge=0)):
     from app.models.route_templates import RouteExecution
-    return [output(p) for p in db.scalars(select(RoutePlan).where(~RoutePlan.id.in_(select(RouteExecution.plan_id))).order_by(RoutePlan.id.desc()).offset(offset).limit(limit))]
+    return [output(p) for p in db.scalars(select(RoutePlan).where(~RoutePlan.id.in_(select(RouteExecution.plan_id)), RoutePlan.data['deleted'].as_boolean().is_not(True)).order_by(RoutePlan.id.desc()).offset(offset).limit(limit))]
 
 
-@router.get('/providers')
+@router.get('/providers', dependencies=[Depends(require_admin)])
 def providers():
     return {'geocoder': provider.settings.routes_geocoder_provider, 'router': 'osrm', 'truck_restrictions_supported': False, 'warning': WARNING, 'max_invoices': 10, 'return_to_origin': True}
 
@@ -66,12 +67,12 @@ def geocode(address: str = Query(min_length=5, max_length=500)):
     return provider.geocode(address)
 
 
-@router.get('/invoice-lookup')
+@router.get('/invoice-lookup', dependencies=[Depends(require_admin)])
 def invoice_lookup(number: str = Query(pattern=r"^[0-9]{1,18}$")):
     return {'invoices': sankhya.lookup_invoice(number)}
 
 
-@router.post('', status_code=201)
+@router.post('', status_code=201, dependencies=[Depends(require_admin)])
 def create(payload: PlanInput, db: Session = Depends(get_db), user=Depends(require_admin)):
     validate_vehicle(db, payload)
     data = payload.model_dump(exclude={'revision'})
@@ -89,13 +90,34 @@ def detail(plan_id: int, db: Session = Depends(get_db)):
     return output(load(db, plan_id))
 
 
-@router.get('/{plan_id}/versions')
+@router.get('/{plan_id}/versions', dependencies=[Depends(require_admin)])
 def versions(plan_id: int, db: Session = Depends(get_db)):
     load(db, plan_id)
     return [{'revision': v.revision, 'data': v.data} for v in db.scalars(select(RoutePlanVersion).where(RoutePlanVersion.plan_id == plan_id).order_by(RoutePlanVersion.revision))]
 
 
-@router.put('/{plan_id}')
+@router.delete('/{plan_id}', status_code=204, dependencies=[Depends(require_admin)])
+def delete_plan(plan_id: int, revision: int = Query(..., ge=0), db: Session = Depends(get_db), user=Depends(require_admin)):
+    from app.services.route_scheduling import is_execution_plan
+    plan = load(db, plan_id)
+    if is_execution_plan(db, plan_id):
+        raise HTTPException(409, 'Use a programação semanal para cancelar esta execução')
+    trip_id = plan.data.get('trip_id')
+    trip_matches = RoutePlan.data['trip_id'].as_integer() == trip_id if trip_id else RoutePlan.data['trip_id'].as_integer().is_(None)
+    claimed = db.execute(update(RoutePlan).where(RoutePlan.id == plan_id, RoutePlan.revision == revision, trip_matches)
+                         .values(revision=revision+1, data={**plan.data, 'deleted': True}), execution_options={'synchronize_session': False})
+    if claimed.rowcount != 1:
+        db.rollback()
+        raise HTTPException(409, 'Planejamento alterado. Recarregue antes de excluir')
+    audit(db, user, 'EXCLUIR', 'ROUTE_PLAN', plan_id, {'name': plan.data.get('name'), 'trip_id': plan.data.get('trip_id')})
+    if not plan.data.get('trip_id'):
+        db.execute(delete(RoutePlanVersion).where(RoutePlanVersion.plan_id == plan_id))
+        db.execute(delete(RoutePlan).where(RoutePlan.id == plan_id))
+    db.commit()
+    return Response(status_code=204)
+
+
+@router.put('/{plan_id}', dependencies=[Depends(require_admin)])
 def edit(plan_id: int, payload: PlanInput, db: Session = Depends(get_db), user=Depends(require_admin)):
     validate_vehicle(db, payload)
     data = payload.model_dump(exclude={'revision'})
@@ -119,13 +141,13 @@ def points_and_stops(plan):
     return [data['origin']] + stops, stops
 
 
-@router.post('/{plan_id}/matrix')
+@router.post('/{plan_id}/matrix', dependencies=[Depends(require_admin)])
 def matrix(plan_id: int, db: Session = Depends(get_db)):
     points, stops = points_and_stops(load(db, plan_id))
     return {'stops': stops, 'provider': 'osrm', **provider.matrix(points)}
 
 
-@router.post('/{plan_id}/calculate')
+@router.post('/{plan_id}/calculate', dependencies=[Depends(require_admin)])
 def calculate(plan_id: int, payload: CalculateInput, db: Session = Depends(get_db), user=Depends(require_admin)):
     plan = load(db, plan_id)
     if plan.revision != payload.revision or plan.status != 'RASCUNHO':
@@ -142,7 +164,7 @@ def calculate(plan_id: int, payload: CalculateInput, db: Session = Depends(get_d
     return save(db, plan, payload.revision, data, user)
 
 
-@router.post('/{plan_id}/confirm')
+@router.post('/{plan_id}/confirm', dependencies=[Depends(require_admin)])
 def confirm(plan_id: int, payload: RevisionInput, db: Session = Depends(get_db), user=Depends(require_admin)):
     plan = load(db, plan_id)
     validate_vehicle(db, PlanInput.model_validate({k: v for k, v in plan.data.items() if k in PlanInput.model_fields}))

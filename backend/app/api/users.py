@@ -6,13 +6,16 @@ from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.dependencies import require_admin
+from app.api.dependencies import get_current_user, require_role
 from app.core.database import get_db
 from app.core.security import get_password_hash
 from app.models import User
 from app.models.enums import UserRole
 from app.schemas import ActiveUpdate, UserOut
 from app.services.audit import audit
+
+
+require_master = require_role(UserRole.MASTER)
 
 
 router = APIRouter(prefix="/users", tags=["Usuários"])
@@ -36,7 +39,7 @@ class ManagerCreate(ManagerFields):
     senha: str = Field(min_length=8, max_length=128)
 
 class ManagerUpdate(ManagerFields):
-    role: Literal[UserRole.ADMIN, UserRole.COMPRAS, UserRole.MASTER] | None = None
+    role: UserRole | None = None
     senha: str | None = Field(default=None, min_length=8, max_length=128)
 
 def manager_or_404(db: Session, user_id: int) -> User:
@@ -68,12 +71,14 @@ def check_status(account: User, active: bool, actor: User) -> None:
 
 
 @router.get("", response_model=list[UserOut])
-def list_managers(db: Session = Depends(get_db), _: User = Depends(require_admin)):
+def list_managers(db: Session = Depends(get_db), actor: User = Depends(get_current_user)):
+    if actor.role != UserRole.MASTER:
+        return [actor]
     return list(db.scalars(select(User).where(User.role.in_([UserRole.ADMIN, UserRole.COMPRAS, UserRole.MASTER])).order_by(User.nome, User.id)))
 
 
 @router.post("", response_model=UserOut, status_code=201)
-def create_manager(payload: ManagerCreate, db: Session = Depends(get_db), actor: User = Depends(require_admin)):
+def create_manager(payload: ManagerCreate, db: Session = Depends(get_db), actor: User = Depends(require_master)):
     check_email(db, str(payload.email))
     account = User(nome=payload.nome, email=str(payload.email).lower(), senha_hash=get_password_hash(payload.senha), role=payload.role, ativo=payload.ativo)
     db.add(account)
@@ -88,13 +93,22 @@ def create_manager(payload: ManagerCreate, db: Session = Depends(get_db), actor:
 
 
 @router.put("/{user_id}", response_model=UserOut)
-def update_manager(user_id: int, payload: ManagerUpdate, db: Session = Depends(get_db), actor: User = Depends(require_admin)):
-    account = manager_or_404(db, user_id)
+def update_manager(user_id: int, payload: ManagerUpdate, db: Session = Depends(get_db), actor: User = Depends(get_current_user)):
+    if actor.role != UserRole.MASTER:
+        if user_id != actor.id:
+            raise HTTPException(status_code=403, detail="Você só pode alterar seu próprio login")
+        if (payload.role is not None and payload.role != actor.role) or payload.ativo != actor.ativo:
+            raise HTTPException(status_code=403, detail="Somente o Master pode alterar perfil ou status")
+        account = actor
+    else:
+        account = manager_or_404(db, user_id)
     check_status(account, payload.ativo, actor)
     check_email(db, str(payload.email), account.id)
     role = payload.role if payload.role is not None else account.role
     if account.id == actor.id and role != account.role:
         raise HTTPException(status_code=400, detail="Você não pode alterar seu próprio perfil")
+    if role == UserRole.MOTORISTA and account.role != UserRole.MOTORISTA:
+        raise HTTPException(status_code=422, detail="Use o cadastro de motoristas para este perfil")
     account.role = role
     account.nome = payload.nome
     account.email = str(payload.email).lower()
@@ -107,7 +121,7 @@ def update_manager(user_id: int, payload: ManagerUpdate, db: Session = Depends(g
 
 
 @router.patch("/{user_id}/status", response_model=UserOut)
-def set_manager_status(user_id: int, payload: ActiveUpdate, db: Session = Depends(get_db), actor: User = Depends(require_admin)):
+def set_manager_status(user_id: int, payload: ActiveUpdate, db: Session = Depends(get_db), actor: User = Depends(require_master)):
     account = manager_or_404(db, user_id)
     check_status(account, payload.ativo, actor)
     account.ativo = payload.ativo

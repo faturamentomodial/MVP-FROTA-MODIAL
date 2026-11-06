@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.api.dependencies import require_admin
+from app.api.dependencies import require_admin, require_operations
 from app.core.database import get_db
 from app.models import Pickup, User
 from app.models.route_templates import RouteTemplate
@@ -40,7 +40,7 @@ def validate_route(db: Session, route_id: int | None):
 
 
 @router.get("", response_model=list[PickupOut])
-def list_pickups(db: Session = Depends(get_db), _: User = Depends(require_admin)):
+def list_pickups(db: Session = Depends(get_db), _: User = Depends(require_operations)):
     return db.scalars(select(Pickup).order_by(Pickup.nome, Pickup.id)).all()
 
 

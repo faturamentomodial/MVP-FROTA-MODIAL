@@ -8,10 +8,11 @@ import type { User } from '../../types'
 
 import { roleLabels } from '../../utils/access'
 
-const empty = { nome: '', email: '', senha: '', confirmar: '', ativo: true, role: 'ADMIN' as 'ADMIN' | 'COMPRAS' | 'MASTER' }
+const empty = { nome: '', email: '', senha: '', confirmar: '', ativo: true, role: 'ADMIN' as User['role'] }
 
 export function SettingsPage() {
   const { user, updateUser } = useAuth()
+  const isMaster = user?.role === 'MASTER'
   const [items, setItems] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -33,7 +34,7 @@ export function SettingsPage() {
 
   function show(item?: User) {
     setEditing(item)
-    setForm(item ? { nome: item.nome, email: item.email, senha: '', confirmar: '', ativo: item.ativo, role: item.role as 'ADMIN' | 'COMPRAS' | 'MASTER' } : empty)
+    setForm(item ? { nome: item.nome, email: item.email, senha: '', confirmar: '', ativo: item.ativo, role: item.role } : empty)
     setError(''); setSuccess(''); setOpen(true)
   }
 
@@ -66,11 +67,11 @@ export function SettingsPage() {
 
   const visible = items.filter(item => `${item.nome} ${item.email}`.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
   return <div className="admin-page">
-    <header className="page-heading"><div><p className="eyebrow">ADMINISTRAÇÃO</p><h1>Configurações</h1><p>Gerencie os acessos de usuários e as configurações da operação.</p></div><Button onClick={() => show()}><Plus size={20}/> Novo usuário</Button></header>
+    <header className="page-heading"><div><p className="eyebrow">ADMINISTRAÇÃO</p><h1>Configurações</h1><p>{isMaster ? 'Gerencie os acessos e as configura\u00e7\u00f5es da opera\u00e7\u00e3o.' : 'Gerencie seus dados de acesso e sua senha.'}</p></div>{isMaster && <Button onClick={() => show()}><Plus size={20}/> Novo usuário</Button>}</header>
     {error && !open && !statusTarget && <Alert>{error}</Alert>}
     {success && <Alert tone="success">{success}</Alert>}
 
-    <section className="panel manager-panel" aria-labelledby="managers-title">
+    {isMaster && <section className="panel manager-panel" aria-labelledby="managers-title">
       <div className="manager-heading"><div><h2 id="managers-title"><ShieldCheck size={22}/> Usuários</h2><p>Cada usuário tem seu próprio login e acesso conforme o perfil.</p></div><span className="manager-count">{items.filter(item => item.ativo).length} ativos / {items.length} cadastrados</span></div>
       <label className="manager-search"><Search size={18}/><span className="sr-only">Buscar usuário por nome ou e-mail</span><input type="search" placeholder="Buscar por nome ou e-mail" value={search} onChange={e => setSearch(e.target.value)}/></label>
       {loading ? <p className="loading-page" role="status">Carregando usuários…</p> : visible.length ? <div className="table-wrap"><table><thead><tr><th>Nome</th><th>E-mail de acesso</th><th>Perfil</th><th>Status</th><th aria-label="Ações"/></tr></thead><tbody>{visible.map(item => <tr key={item.id}>
@@ -78,25 +79,25 @@ export function SettingsPage() {
         <td className="row-actions"><button onClick={() => show(item)} aria-label={`Editar ${item.nome}`} title="Editar dados ou trocar senha"><Pencil/></button><button disabled={item.id === user?.id} onClick={() => { setStatusTarget(item); setError(''); setSuccess('') }} aria-label={`${item.ativo ? 'Desativar' : 'Ativar'} ${item.nome}`} title={item.id === user?.id ? 'Seu próprio acesso não pode ser desativado' : item.ativo ? 'Desativar acesso' : 'Ativar acesso'}><Power/></button></td>
       </tr>)}</tbody></table></div> : <Empty title={search ? 'Nenhum usuário encontrado' : 'Nenhum usuário cadastrado'} description={search ? 'Tente outro nome ou e-mail.' : 'Crie um usuário para dar acesso ao painel.'}/>}
       <p className="manager-note">Contas inativas não podem acessar o sistema. Seu próprio acesso não pode ser desativado.</p>
-    </section>
+    </section>}
 
     <div className="settings-shortcuts">
-      <section className="panel settings-shortcut"><ClipboardCheck/><h2>Itens do checklist</h2><p>Defina as verificações, a ordem e os itens obrigatórios antes de cada viagem.</p><Link to="/admin/checklist">Configurar checklist <ArrowRight size={18}/></Link></section>
-      <section className="panel settings-shortcut"><Users/><h2>Acessos de motoristas</h2><p>Cadastre motoristas e gerencie seus dados, senhas e acesso ao fluxo de viagens.</p><Link to="/admin/motoristas">Gerenciar motoristas <ArrowRight size={18}/></Link></section>
+      {isMaster && <><section className="panel settings-shortcut"><ClipboardCheck/><h2>Itens do checklist</h2><p>Defina as verificações, a ordem e os itens obrigatórios antes de cada viagem.</p><Link to="/admin/checklist">Configurar checklist <ArrowRight size={18}/></Link></section>
+      <section className="panel settings-shortcut"><Users/><h2>Acessos de motoristas</h2><p>Cadastre motoristas e gerencie seus dados, senhas e acesso ao fluxo de viagens.</p><Link to="/admin/motoristas">Gerenciar motoristas <ArrowRight size={18}/></Link></section></>}
       <section className="panel settings-shortcut"><ShieldCheck/><h2>Minha conta</h2><p>{user?.nome}<br/>{user?.email}</p><button className="text-button" onClick={() => show(user || undefined)}>Editar meus dados e senha <ArrowRight size={18}/></button></section>
     </div>
 
     <Modal open={open} onClose={() => { if (!saving) { setOpen(false); setError('') } }} title={editing ? 'Editar usuário' : 'Novo usuário'}>
       {error && <Alert>{error}</Alert>}
       <form className="modal-form" onSubmit={save}>
-        <label>Perfil<select value={form.role} disabled={editing?.id === user?.id} onChange={e => setForm({ ...form, role: e.target.value as 'ADMIN' | 'COMPRAS' | 'MASTER' })}><option value="MASTER">Master</option><option value="ADMIN">Gestor</option><option value="COMPRAS">Compras</option></select></label>
-        <p>{form.role === 'MASTER' ? 'Acesso completo a todas as áreas e configurações do sistema.' : form.role === 'COMPRAS' ? 'Acesso à Central de Tarefas, Rastreamento e Viagens.' : 'Acesso completo aos cadastros, viagens, ocorrências e configurações.'}</p>
+        {isMaster && <><label>Perfil<select value={form.role} disabled={editing?.id === user?.id} onChange={e => setForm({ ...form, role: e.target.value as 'ADMIN' | 'COMPRAS' | 'MASTER' })}><option value="MASTER">Master</option><option value="ADMIN">Gestor</option><option value="COMPRAS">Compras</option></select></label>
+        <p>{form.role === 'MASTER' ? 'Acesso completo a todas as áreas e configurações do sistema.' : form.role === 'COMPRAS' ? 'Acesso à Central de Tarefas, Rastreamento e Viagens.' : 'Acesso completo aos cadastros, viagens, ocorrências e configurações.'}</p></>}
         <label>Nome completo<input autoComplete="name" value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })} required minLength={2} maxLength={160}/></label>
         <label>E-mail de acesso<input type="email" autoComplete="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required maxLength={255}/></label>
         <label>{editing ? 'Nova senha' : 'Senha'}{editing && <small>Deixe em branco para manter a senha atual.</small>}<input type="password" autoComplete="new-password" value={form.senha} onChange={e => setForm({ ...form, senha: e.target.value })} required={!editing} minLength={8} maxLength={128}/></label>
         <label>Confirmar senha<input type="password" autoComplete="new-password" value={form.confirmar} onChange={e => setForm({ ...form, confirmar: e.target.value })} required={!editing || !!form.senha} maxLength={128}/></label>
         <small>Use pelo menos 8 caracteres. Informe a senha ao usuário para o primeiro acesso.</small>
-        <label className="switch"><input type="checkbox" checked={form.ativo} disabled={editing?.id === user?.id} onChange={e => setForm({ ...form, ativo: e.target.checked })}/><span/>Acesso ativo</label>
+        {isMaster && <label className="switch"><input type="checkbox" checked={form.ativo} disabled={editing?.id === user?.id} onChange={e => setForm({ ...form, ativo: e.target.checked })}/><span/>Acesso ativo</label>}
         <footer><Button type="button" variant="ghost" disabled={saving} onClick={() => { setOpen(false); setError('') }}>Cancelar</Button><Button type="submit" loading={saving}>Salvar usuário</Button></footer>
       </form>
     </Modal>

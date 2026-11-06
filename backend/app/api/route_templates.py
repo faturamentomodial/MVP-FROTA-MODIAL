@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from sqlalchemy import select, update, delete
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from app.api.dependencies import require_admin
+from app.api.dependencies import require_admin, require_operations
 from app.core.database import get_db
 from app.models import Driver, Vehicle, Pickup
 from app.models.route_plans import RoutePlan, RoutePlanVersion
@@ -16,7 +16,7 @@ from app.services import route_planning as provider
 from app.services.route_scheduling import LOCAL, today, execution_status, check_conflicts
 from app.api.route_plans import WARNING
 
-router = APIRouter(tags=['Rotas estabelecidas'], dependencies=[Depends(require_admin)])
+router = APIRouter(tags=['Rotas estabelecidas'], dependencies=[Depends(require_operations)])
 
 
 def load(db, model, id):
@@ -46,7 +46,7 @@ def list_templates(db: Session = Depends(get_db), limit: int = Query(100, ge=1, 
     return [output(item) for item in db.scalars(select(RouteTemplate).where(RouteTemplate.data['deleted'].as_boolean().is_not(True)).order_by(RouteTemplate.id.desc()).limit(limit).offset(offset))]
 
 
-@router.post('/route-templates', status_code=201)
+@router.post('/route-templates', status_code=201, dependencies=[Depends(require_admin)])
 def create(payload: TemplateInput, db: Session = Depends(get_db), user=Depends(require_admin)):
     item = RouteTemplate(data={**payload.model_dump(mode='json', exclude={'revision'}), 'stops': [], 'result': None}, created_by=user.id)
     db.add(item)
@@ -59,7 +59,7 @@ def detail(id: int, db: Session = Depends(get_db)):
     return output(load(db, RouteTemplate, id))
 
 
-@router.put('/route-templates/{id}')
+@router.put('/route-templates/{id}', dependencies=[Depends(require_admin)])
 def edit(id: int, payload: TemplateInput, db: Session = Depends(get_db)):
     return write_template(db, load(db, RouteTemplate, id), payload.revision,
                           {**payload.model_dump(mode='json', exclude={'revision'}), 'stops': [], 'result': None})
@@ -83,7 +83,7 @@ def remove_unstarted_execution(db, item):
     return True
 
 
-@router.delete('/route-templates/{id}', status_code=204)
+@router.delete('/route-templates/{id}', status_code=204, dependencies=[Depends(require_admin)])
 def delete_template(id: int, revision: int = Query(..., ge=0), db: Session = Depends(get_db)):
     item = load(db, RouteTemplate, id)
     claimed = db.execute(update(RouteTemplate).where(
@@ -103,7 +103,7 @@ def delete_template(id: int, revision: int = Query(..., ge=0), db: Session = Dep
     return Response(status_code=204)
 
 
-@router.post('/route-templates/{id}/duplicate', status_code=201)
+@router.post('/route-templates/{id}/duplicate', status_code=201, dependencies=[Depends(require_admin)])
 def duplicate(id: int, db: Session = Depends(get_db), user=Depends(require_admin)):
     data = deepcopy(load(db, RouteTemplate, id).data)
     data['name'] = (data['name'][:150] + ' (cópia)')
@@ -113,7 +113,7 @@ def duplicate(id: int, db: Session = Depends(get_db), user=Depends(require_admin
     return output(item)
 
 
-@router.post('/route-templates/{id}/calculate')
+@router.post('/route-templates/{id}/calculate', dependencies=[Depends(require_admin)])
 def calculate(id: int, payload: CalculateInput, db: Session = Depends(get_db)):
     item = load(db, RouteTemplate, id)
     if item.revision != payload.revision:
@@ -172,7 +172,7 @@ def execution_output(db, item):
             'snapshot': deepcopy(plan.data), 'request_key': item.request_key}
 
 
-@router.get('/route-executions')
+@router.get('/route-executions', dependencies=[Depends(require_admin)])
 def list_executions(date_from: date, date_to: date, driver_id: int | None = None,
                     vehicle_id: int | None = None, status: str | None = None, db: Session = Depends(get_db)):
     if date_to < date_from or (date_to-date_from).days > 90:
@@ -194,12 +194,12 @@ def list_executions(date_from: date, date_to: date, driver_id: int | None = None
     return [row for row in rows if status is None or row['status'] == status]
 
 
-@router.get('/route-executions/{id}')
+@router.get('/route-executions/{id}', dependencies=[Depends(require_admin)])
 def execution_detail(id: int, db: Session = Depends(get_db)):
     return execution_output(db, load(db, RouteExecution, id))
 
 
-@router.post('/route-executions', status_code=201)
+@router.post('/route-executions', status_code=201, dependencies=[Depends(require_admin)])
 def schedule(payload: ExecutionInput, db: Session = Depends(get_db), user=Depends(require_admin)):
     existing = db.scalar(select(RouteExecution).where(RouteExecution.request_key == payload.request_key))
     if existing:
@@ -241,7 +241,7 @@ def schedule(payload: ExecutionInput, db: Session = Depends(get_db), user=Depend
     return execution_output(db, execution)
 
 
-@router.put('/route-executions/{id}')
+@router.put('/route-executions/{id}', dependencies=[Depends(require_admin)])
 def reschedule(id: int, payload: ExecutionInput, db: Session = Depends(get_db)):
     item = load(db, RouteExecution, id)
     plan = load(db, RoutePlan, item.plan_id)
@@ -273,7 +273,7 @@ def reschedule(id: int, payload: ExecutionInput, db: Session = Depends(get_db)):
     return execution_output(db, item)
 
 
-@router.post('/route-executions/{id}/cancel')
+@router.post('/route-executions/{id}/cancel', dependencies=[Depends(require_admin)])
 def cancel(id: int, payload: RevisionInput, db: Session = Depends(get_db)):
     item = load(db, RouteExecution, id)
     plan = load(db, RoutePlan, item.plan_id)

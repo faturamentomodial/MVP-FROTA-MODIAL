@@ -74,6 +74,7 @@ def test_week_dates_idempotency_history_filters_reschedule_cancel(client, admin_
     first = schedule(client, admin_headers, first_body)
     assert first.status_code == 201, first.text
     first = first.json()
+    assert client.delete(f"/api/route-plans/{first['plan_id']}?revision=0", headers=admin_headers).status_code == 409
     assert schedule(client, admin_headers, first_body).json()['id'] == first['id']
     assert schedule(client, admin_headers, {**first_body, 'notes':'changed'}).status_code == 409
     later_body = booking(route, today()+timedelta(days=7))
