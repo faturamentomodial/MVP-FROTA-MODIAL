@@ -10,7 +10,7 @@ from alembic.operations import Operations
 from app.core.database import SessionLocal
 from app.models import Driver, User, Vehicle, Trip
 from app.models.enums import UserRole
-from app.models.route_plans import RoutePlan
+from app.models.route_plans import RoutePlan, RoutePlanVersion
 from app.models.route_templates import RouteTemplate, RouteExecution
 from app.services import route_planning as provider
 from app.services.route_scheduling import today
@@ -98,6 +98,15 @@ def test_week_dates_idempotency_history_filters_reschedule_cancel(client, admin_
     assert client.put(f"/api/route-executions/{first['id']}",headers=admin_headers,json=first_body).status_code == 409
     cancel = f"/api/route-executions/{first['id']}/cancel"
     assert client.post(cancel,headers=admin_headers,json={'revision':1}).json()['status'] == 'CANCELADA'
+    moved_listing = f"/api/route-executions?date_from={today()+timedelta(days=1)}&date_to={today()+timedelta(days=1)}"
+    assert client.get(moved_listing, headers=admin_headers).json() == []
+    cancelled = client.get(moved_listing+'&status=CANCELADA', headers=admin_headers).json()
+    assert cancelled == []
+    assert client.get(f"/api/route-executions/{first['id']}", headers=admin_headers).status_code == 404
+    with SessionLocal() as db:
+        assert db.get(RoutePlan, first['plan_id']) is None
+        assert db.scalar(select(RoutePlanVersion.id).where(RoutePlanVersion.plan_id == first['plan_id'])) is None
+
     assert client.get('/api/route-plans',headers=admin_headers).json() == []
 
 
@@ -234,7 +243,7 @@ def test_incremental_migration_preserves_existing_records():
         assert conn.execute(text('SELECT volumes FROM trip_invoices')).scalar() == 3
 
 
-def test_delete_template_preserves_executions(client, admin_headers, driver_headers, monkeypatch):
+def test_delete_template_removes_unstarted_executions(client, admin_headers, driver_headers, monkeypatch):
     route = template(client, admin_headers, monkeypatch)
     execution = schedule(client, admin_headers, booking(route)).json()
     url = f"/api/route-templates/{route['id']}"
@@ -243,15 +252,20 @@ def test_delete_template_preserves_executions(client, admin_headers, driver_head
     assert client.get(url, headers=admin_headers).status_code == 200
     assert client.delete(url, params={'revision': route['revision']}, headers=admin_headers).status_code == 204
     assert client.get('/api/route-templates', headers=admin_headers).json() == []
+    listing = f"/api/route-executions?date_from={today()}&date_to={today()}"
+    assert client.get(listing, headers=admin_headers).json() == []
+    assert client.get(listing+'&status=PROGRAMADA', headers=admin_headers).json() == []
     assert client.get(url, headers=admin_headers).status_code == 404
     assert client.post(url+'/duplicate', headers=admin_headers).status_code == 404
     assert client.put(url, headers=admin_headers, json={**template_body(), 'revision': route['revision']+1}).status_code == 404
     assert schedule(client, admin_headers, booking(route, today()+timedelta(days=1))).status_code == 404
     saved = client.get(f"/api/route-executions/{execution['id']}", headers=admin_headers)
-    assert saved.status_code == 200
-    assert saved.json()['snapshot'] == execution['snapshot']
-    assert client.post(f"/api/route-executions/{execution['id']}/cancel", headers=admin_headers,
-                       json={'revision': 0}).status_code == 200
+    assert saved.status_code == 404
+    with SessionLocal() as db:
+        assert db.get(RouteTemplate, route['id']) is None
+        assert db.get(RouteExecution, execution['id']) is None
+        assert db.get(RoutePlan, execution['plan_id']) is None
+        assert db.scalar(select(RoutePlanVersion.id).where(RoutePlanVersion.plan_id == execution['plan_id'])) is None
 
 
 def test_delete_template_without_executions(client, admin_headers):
@@ -260,3 +274,20 @@ def test_delete_template_without_executions(client, admin_headers):
     assert client.delete(url, params={'revision': 0}, headers=admin_headers).status_code == 204
     assert client.delete(url, params={'revision': 0}, headers=admin_headers).status_code == 404
     assert client.get('/api/route-templates', headers=admin_headers).json() == []
+
+
+def test_delete_template_keeps_started_trip(client, admin_headers, driver_headers, monkeypatch):
+    route = template(client, admin_headers, monkeypatch)
+    execution = schedule(client, admin_headers, booking(route)).json()
+    trip = client.post('/api/trips', headers=driver_headers, json={
+        'route_plan_id': execution['plan_id'], 'vehicle_id': 1, 'km_inicial': 1000})
+    assert trip.status_code == 201
+    future = schedule(client, admin_headers, booking(route, today()+timedelta(days=1))).json()
+    url = f"/api/route-templates/{route['id']}"
+    assert client.delete(url, params={'revision': route['revision']}, headers=admin_headers).status_code == 204
+    assert client.get(f"/api/route-executions/{execution['id']}", headers=admin_headers).status_code == 200
+    assert client.get(f"/api/route-executions/{future['id']}", headers=admin_headers).status_code == 404
+    with SessionLocal() as db:
+        assert db.get(Trip, trip.json()['id']) is not None
+        assert db.get(RoutePlan, execution['plan_id']) is not None
+        assert db.get(RoutePlan, future['plan_id']) is None

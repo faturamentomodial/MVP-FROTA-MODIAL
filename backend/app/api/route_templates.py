@@ -2,7 +2,7 @@ from copy import deepcopy
 from datetime import date, datetime, time, timedelta
 from math import isfinite
 from fastapi import APIRouter, Depends, HTTPException, Query, Response
-from sqlalchemy import select, update
+from sqlalchemy import select, update, delete
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from app.api.dependencies import require_admin
@@ -65,11 +65,40 @@ def edit(id: int, payload: TemplateInput, db: Session = Depends(get_db)):
                           {**payload.model_dump(mode='json', exclude={'revision'}), 'stops': [], 'result': None})
 
 
+def remove_unstarted_execution(db, item):
+    plan = load(db, RoutePlan, item.plan_id)
+    if plan.data.get('trip_id'):
+        return False
+    # Claim the same plan row as trip creation before removing its children.
+    claimed = db.execute(update(RoutePlan).where(
+        RoutePlan.id == plan.id, RoutePlan.revision == plan.revision,
+        RoutePlan.data['trip_id'].as_integer().is_(None)
+    ).values(revision=plan.revision+1), execution_options={'synchronize_session': False})
+    if claimed.rowcount != 1:
+        db.rollback()
+        raise HTTPException(409, 'Programacao alterada ou iniciada. Recarregue')
+    db.execute(delete(RoutePlanVersion).where(RoutePlanVersion.plan_id == plan.id))
+    db.execute(delete(RouteExecution).where(RouteExecution.id == item.id))
+    db.execute(delete(RoutePlan).where(RoutePlan.id == plan.id))
+    return True
+
+
 @router.delete('/route-templates/{id}', status_code=204)
 def delete_template(id: int, revision: int = Query(..., ge=0), db: Session = Depends(get_db)):
     item = load(db, RouteTemplate, id)
-    # Keep the referenced template so existing executions and their history survive.
-    write_template(db, item, revision, {**item.data, 'active': False, 'deleted': True})
+    claimed = db.execute(update(RouteTemplate).where(
+        RouteTemplate.id == id, RouteTemplate.revision == revision
+    ).values(data={**item.data, 'active': False, 'deleted': True}, revision=revision+1),
+        execution_options={'synchronize_session': False})
+    if claimed.rowcount != 1:
+        db.rollback()
+        raise HTTPException(409, 'Rota alterada. Recarregue antes de excluir')
+    for execution in list(db.scalars(select(RouteExecution).where(RouteExecution.template_id == id))):
+        remove_unstarted_execution(db, execution)
+    # Started trips still reference their template; retain only that required parent.
+    if db.scalar(select(RouteExecution.id).where(RouteExecution.template_id == id).limit(1)) is None:
+        db.execute(delete(RouteTemplate).where(RouteTemplate.id == id))
+    db.commit()
     return Response(status_code=204)
 
 
@@ -156,6 +185,10 @@ def list_executions(date_from: date, date_to: date, driver_id: int | None = None
         stmt = stmt.where(RouteExecution.driver_id == driver_id)
     if vehicle_id:
         stmt = stmt.where(RouteExecution.vehicle_id == vehicle_id)
+    stmt = stmt.join(RouteTemplate, RouteExecution.template_id == RouteTemplate.id).where(
+        RouteTemplate.data['deleted'].as_boolean().is_not(True))
+    if status is None:
+        stmt = stmt.where(RouteExecution.status != 'CANCELADA')
     rows = [execution_output(db, item) for item in db.scalars(stmt.order_by(RouteExecution.starts_at, RouteExecution.id))]
     return [row for row in rows if status is None or row['status'] == status]
 
@@ -245,13 +278,8 @@ def cancel(id: int, payload: RevisionInput, db: Session = Depends(get_db)):
     plan = load(db, RoutePlan, item.plan_id)
     if execution_status(db, item) != 'PROGRAMADA' or item.revision != payload.revision:
         raise HTTPException(409, 'Somente execuções ainda não iniciadas podem ser canceladas')
-    claim = db.execute(update(RoutePlan).where(RoutePlan.id == plan.id, RoutePlan.status == 'CONFIRMADO',
-        RoutePlan.data['trip_id'].as_integer().is_(None)).values(status='CANCELADO'))
-    changed = db.execute(update(RouteExecution).where(RouteExecution.id == id, RouteExecution.revision == payload.revision,
-        RouteExecution.status == 'PROGRAMADA').values(status='CANCELADA', revision=payload.revision+1))
-    if claim.rowcount != 1 or changed.rowcount != 1:
-        db.rollback()
-        raise HTTPException(409, 'Programação alterada ou iniciada')
+    result = execution_output(db, item)
+    if not remove_unstarted_execution(db, item):
+        raise HTTPException(409, 'Viagem ja iniciada. A programacao nao pode ser excluida')
     db.commit()
-    db.refresh(item)
-    return execution_output(db, item)
+    return {**result, 'status': 'CANCELADA'}
