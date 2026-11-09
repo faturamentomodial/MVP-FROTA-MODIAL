@@ -1,0 +1,753 @@
+[
+  {
+    "id": 34,
+    "name": "M. AUXILIADORA",
+    "research_query": "Rua A, 68, Jardim Ponte Alta I, Guarulhos, SP, 07179-065",
+    "applied": false,
+    "manual_confirmed": false,
+    "result": {
+      "provider": "geoapify",
+      "candidates": [
+        {
+          "address": "Rua A 68, Bonsucesso, Guarulhos - Sudeste, 07170-550, Brasil",
+          "latitude": -23.401782,
+          "longitude": -46.421488,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 1,
+            "confidence_street_level": 1,
+            "confidence_building_level": 1,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua A",
+            "number": "68",
+            "city": "Guarulhos",
+            "neighborhood": "Bonsucesso",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        },
+        {
+          "address": "Rua A 68, Bonsucesso, Guarulhos - SP, 07170-550, Brasil",
+          "latitude": -23.40181,
+          "longitude": -46.421528,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 1,
+            "confidence_street_level": 1,
+            "confidence_building_level": 1,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua A",
+            "number": "68",
+            "city": "Guarulhos",
+            "neighborhood": "Bonsucesso",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        },
+        {
+          "address": "Rua Alagoas 68, Mato das Cobras, Distrito-sede de Guarulhos, Guarulhos - SP, 07170-550, Brasil",
+          "latitude": -23.399115,
+          "longitude": -46.42355,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 1,
+            "confidence_street_level": 1,
+            "confidence_building_level": 1,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Alagoas",
+            "number": "68",
+            "city": "Guarulhos",
+            "neighborhood": "Mato das Cobras",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        },
+        {
+          "address": "Rua Abaira 68, São João, Distrito-sede de Guarulhos, Guarulhos - SP, 07160-170, Brasil",
+          "latitude": -23.399811,
+          "longitude": -46.431503,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 1,
+            "confidence_street_level": 1,
+            "confidence_building_level": 1,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Abaira",
+            "number": "68",
+            "city": "Guarulhos",
+            "neighborhood": "São João",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        },
+        {
+          "address": "Rua Algarve 68, Lavras, Distrito-sede de Guarulhos, Guarulhos - SP, 07161-070, Brasil",
+          "latitude": -23.395269,
+          "longitude": -46.431847,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 1,
+            "confidence_street_level": 1,
+            "confidence_building_level": 1,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Algarve",
+            "number": "68",
+            "city": "Guarulhos",
+            "neighborhood": "Lavras",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        }
+      ]
+    },
+    "current_saved_location": {
+      "id": 34,
+      "name": "M. AUXILIADORA",
+      "address": "Rua José Damiani Filho, 68 - Jardim Pres. Dutra, Guarulhos - SP",
+      "location": {
+        "address": "Rua José Damiani Filho, 68 - Jardim Pres. Dutra, Guarulhos - SP",
+        "latitude": -23.421109,
+        "longitude": -46.4226017,
+        "provider": "reference",
+        "precision": "street",
+        "status": "approximate",
+        "manual_confirmed": false,
+        "house_number_found": false,
+        "source": "https://cepdarua.net/cep/07174330",
+        "review_reason": "Ponto de referencia do logradouro e CEP 07174-330. Numero 68 nao confirmado; resultados para Rua Jose Damiani sem Filho rejeitados.",
+        "attribution": "Geoapify | © OpenStreetMap contributors"
+      }
+    },
+    "application_note": "Corrected user address applied; original research result is historical and was not directly adopted."
+  },
+  {
+    "id": 58,
+    "name": "M. FERREIRA",
+    "research_query": "Rua Arthur de Azevedo, 6, Jardim América, Guarulhos, SP, 07194-090",
+    "applied": false,
+    "manual_confirmed": false,
+    "result": {
+      "provider": "geoapify",
+      "candidates": [
+        {
+          "address": "Rua Arthur De Azevedo 6, Vila Gopoúva, Guarulhos - Sudeste, 07194-090, Brasil",
+          "latitude": -23.442225,
+          "longitude": -46.513113,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 1,
+            "confidence_street_level": 1,
+            "confidence_building_level": 1,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Arthur De Azevedo",
+            "number": "6",
+            "city": "Guarulhos",
+            "neighborhood": "Vila Gopoúva",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        }
+      ]
+    },
+    "current_saved_location": {
+      "id": 58,
+      "name": "M. FERREIRA",
+      "address": "Rua Arthur de Azevedo, 6 - Jardim America, Guarulhos - SP, 07194-090",
+      "location": {
+        "address": "Rua Arthur de Azevedo, 6 - Jardim America, Guarulhos - SP, 07194-090",
+        "latitude": -23.442225,
+        "longitude": -46.513113,
+        "provider": "geoapify",
+        "precision": "street",
+        "status": "approximate",
+        "manual_confirmed": false,
+        "house_number_found": false,
+        "source": "https://diocesedeguarulhos.org.br/wp-content/uploads/2024/01/Anuario-Diocesano-2024-WEB.pdf",
+        "review_reason": "Endereco e CEP corrigidos pelo usuario. Provedor identifica area Vila Gopouva; manter aproximado ate confirmacao do ponto.",
+        "attribution": "Geoapify | © OpenStreetMap contributors"
+      }
+    },
+    "application_note": "Corrected user address applied; original research result is historical and was not directly adopted."
+  },
+  {
+    "id": 81,
+    "name": "MERCIA",
+    "research_query": "Avenida Josino Vieira de Goes, 275, São Paulo, SP, 02319-000",
+    "applied": false,
+    "manual_confirmed": false,
+    "result": {
+      "provider": "geoapify",
+      "candidates": [
+        {
+          "address": "Avenida Josino Vieira de Goes 275, Bortolândia, São Paulo - SP, 02319-000, Brasil",
+          "latitude": -23.450899,
+          "longitude": -46.597046,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 1,
+            "confidence_street_level": 1,
+            "confidence_building_level": 1,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Avenida Josino Vieira de Goes",
+            "number": "275",
+            "city": "São Paulo",
+            "neighborhood": "Bortolândia",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        }
+      ]
+    }
+  },
+  {
+    "id": 77,
+    "name": "SUELY LIMA",
+    "research_query": "Rua Palmira D'Oeste, 5, Jardim Betel, Guarulhos, SP, 07083-340",
+    "applied": false,
+    "manual_confirmed": false,
+    "result": {
+      "provider": "geoapify",
+      "candidates": [
+        {
+          "address": "Rua Palmira D'Oeste 5, Jacana, Guarulhos - Sudeste, 07083-340, Brasil",
+          "latitude": -23.435209,
+          "longitude": -46.548549,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.8333333333333334,
+            "confidence_street_level": 1,
+            "confidence_building_level": 1,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Palmira D'Oeste",
+            "number": "5",
+            "city": "Guarulhos",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        },
+        {
+          "address": "Rua Palmira D'Oeste 4, Jacana, Guarulhos - Sudeste, 07083-340, Brasil",
+          "latitude": -23.435127,
+          "longitude": -46.548582,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.5416666666666667,
+            "confidence_street_level": 1,
+            "confidence_building_level": 0.65,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Palmira D'Oeste",
+            "number": "4",
+            "city": "Guarulhos",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        },
+        {
+          "address": "Rua Palmira D'Oeste 10, Jacana, Guarulhos - Sudeste, 07083-340, Brasil",
+          "latitude": -23.435155,
+          "longitude": -46.548632,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.5416666666666667,
+            "confidence_street_level": 1,
+            "confidence_building_level": 0.65,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Palmira D'Oeste",
+            "number": "10",
+            "city": "Guarulhos",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        },
+        {
+          "address": "Rua Palmira D'Oeste 17, Jacana, Guarulhos - Sudeste, 07083-340, Brasil",
+          "latitude": -23.435236,
+          "longitude": -46.54867,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.4166666666666667,
+            "confidence_street_level": 1,
+            "confidence_building_level": 0.5,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Palmira D'Oeste",
+            "number": "17",
+            "city": "Guarulhos",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        }
+      ]
+    },
+    "current_saved_location": {
+      "id": 77,
+      "name": "SUELY LIMA",
+      "address": "R. Palmira D'oeste, 5 - Jardim Betel, Guarulhos - SP, 07083-340",
+      "location": {
+        "address": "R. Palmira D'oeste, 5 - Jardim Betel, Guarulhos - SP, 07083-340",
+        "latitude": -23.435209,
+        "longitude": -46.548549,
+        "provider": "geoapify",
+        "precision": "street",
+        "status": "approximate",
+        "manual_confirmed": false,
+        "house_number_found": false,
+        "source": "https://diariooficial.guarulhos.sp.gov.br/uploads/pdf/1958373357.pdf",
+        "review_reason": "Rua e CEP corrigidos pelo usuario; confidence 0.8333 e bairro amplo Jacana no provedor. Ponto aproximado, sem confirmacao do imovel.",
+        "attribution": "Geoapify | © OpenStreetMap contributors"
+      }
+    },
+    "application_note": "Corrected user address applied; original research result is historical and was not directly adopted."
+  },
+  {
+    "id": 15,
+    "name": "VILMA",
+    "research_query": "Viela Projetada, Recreio São Jorge, Guarulhos, SP, 07144-546",
+    "applied": false,
+    "manual_confirmed": true,
+    "result": {
+      "provider": "geoapify",
+      "candidates": [
+        {
+          "address": "Viela, Jacana, Guarulhos - Sudeste, 07082-030, Brasil",
+          "latitude": -23.441966,
+          "longitude": -46.54848,
+          "provider": "geoapify",
+          "result_type": "street",
+          "rank": {
+            "confidence": 0.9,
+            "confidence_street_level": 0.9,
+            "confidence_building_level": null,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Viela",
+            "number": "",
+            "city": "Guarulhos",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": false,
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        },
+        {
+          "address": "Viela, Guarulhos - Sudeste, 07052-162, Brasil",
+          "latitude": -23.397261,
+          "longitude": -46.434368,
+          "provider": "geoapify",
+          "result_type": "street",
+          "rank": {
+            "confidence": 0.9,
+            "confidence_street_level": 0.9,
+            "confidence_building_level": null,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Viela",
+            "number": "",
+            "city": "Guarulhos",
+            "neighborhood": "",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": false,
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        },
+        {
+          "address": "Viela Viela Poa, Guarulhos - Sudeste, 07031-230, Brasil",
+          "latitude": -23.40397,
+          "longitude": -46.462798,
+          "provider": "geoapify",
+          "result_type": "street",
+          "rank": {
+            "confidence": 0,
+            "confidence_street_level": 0,
+            "confidence_building_level": null,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Viela Viela Poa",
+            "number": "",
+            "city": "Guarulhos",
+            "neighborhood": "",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": false,
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        }
+      ]
+    },
+    "clarified_address": "Viela Projetada, 3, Recreio São Jorge, Guarulhos, SP, 07144-546",
+    "clarification_source": "User confirmed that 3 is the house number.",
+    "clarified_result": {
+      "provider": "geoapify",
+      "candidates": [
+        {
+          "address": "Viela, Jacana, Guarulhos - Sudeste, 07082-030, Brasil",
+          "latitude": -23.441966,
+          "longitude": -46.54848,
+          "provider": "geoapify",
+          "result_type": "street",
+          "rank": {
+            "confidence": 0.9,
+            "confidence_street_level": 0.9,
+            "confidence_building_level": null,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Viela",
+            "number": "",
+            "city": "Guarulhos",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": false,
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        },
+        {
+          "address": "Viela, Guarulhos - Sudeste, 07052-162, Brasil",
+          "latitude": -23.397261,
+          "longitude": -46.434368,
+          "provider": "geoapify",
+          "result_type": "street",
+          "rank": {
+            "confidence": 0.9,
+            "confidence_street_level": 0.9,
+            "confidence_building_level": null,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Viela",
+            "number": "",
+            "city": "Guarulhos",
+            "neighborhood": "",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": false,
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        },
+        {
+          "address": "Viela Viela Poa, Guarulhos - Sudeste, 07031-230, Brasil",
+          "latitude": -23.40397,
+          "longitude": -46.462798,
+          "provider": "geoapify",
+          "result_type": "street",
+          "rank": {
+            "confidence": 0,
+            "confidence_street_level": 0,
+            "confidence_building_level": null,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Viela Viela Poa",
+            "number": "",
+            "city": "Guarulhos",
+            "neighborhood": "",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": false,
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        }
+      ]
+    },
+    "clarified_decision": {
+      "candidates": [
+        {
+          "address": "Viela, Jacana, Guarulhos - Sudeste, 07082-030, Brasil",
+          "latitude": -23.441966,
+          "longitude": -46.54848,
+          "provider": "geoapify",
+          "result_type": "street",
+          "rank": {
+            "confidence": 0.9,
+            "confidence_street_level": 0.9,
+            "confidence_building_level": null,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Viela",
+            "number": "",
+            "city": "Guarulhos",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": false,
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Viela, Guarulhos - Sudeste, 07052-162, Brasil",
+          "latitude": -23.397261,
+          "longitude": -46.434368,
+          "provider": "geoapify",
+          "result_type": "street",
+          "rank": {
+            "confidence": 0.9,
+            "confidence_street_level": 0.9,
+            "confidence_building_level": null,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Viela",
+            "number": "",
+            "city": "Guarulhos",
+            "neighborhood": "",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": false,
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Viela Viela Poa, Guarulhos - Sudeste, 07031-230, Brasil",
+          "latitude": -23.40397,
+          "longitude": -46.462798,
+          "provider": "geoapify",
+          "result_type": "street",
+          "rank": {
+            "confidence": 0,
+            "confidence_street_level": 0,
+            "confidence_building_level": null,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Viela Viela Poa",
+            "number": "",
+            "city": "Guarulhos",
+            "neighborhood": "",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": false,
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        }
+      ],
+      "selected": null,
+      "selection_required": true,
+      "provider": null,
+      "status": "needs_confirmation",
+      "precision": "unverified",
+      "approximate": true,
+      "original_address": "Viela Projetada, 3, Recreio São Jorge, Guarulhos, SP, 07144-546",
+      "manual_confirmed": false,
+      "verified_at": 1794238896.0096207,
+      "errors": [],
+      "attribution": "Geoapify | © OpenStreetMap contributors",
+      "schema_version": 2
+    },
+    "confirmation_source": "User explicitly confirmed the map candidate in chat.",
+    "confirmed_location": {
+      "address": "Viela Projetada 3 - Recreio São Jorge, Guarulhos - SP",
+      "latitude": -23.402618,
+      "longitude": -46.517677
+    },
+    "current_saved_location": {
+      "id": 15,
+      "name": "VILMA",
+      "address": "Viela Projetada, 3 - Recreio São Jorge, Guarulhos - SP, 07144-546",
+      "location": {
+        "address": "Viela Projetada, 3 - Recreio São Jorge, Guarulhos - SP, 07144-546",
+        "latitude": -23.402618,
+        "longitude": -46.517677,
+        "provider": "manual",
+        "precision": "confirmed",
+        "status": "confirmed",
+        "manual_confirmed": true,
+        "house_number_found": true,
+        "source": "user_in_chat",
+        "review_reason": "Usuario confirmou explicitamente a coordenada apresentada no mapa e esclareceu o numero 3.",
+        "attribution": "Geoapify | © OpenStreetMap contributors"
+      }
+    },
+    "application_note": "Corrected user address applied; original research result is historical and was not directly adopted."
+  }
+]

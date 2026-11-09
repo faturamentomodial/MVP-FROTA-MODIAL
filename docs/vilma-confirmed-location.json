@@ -1,0 +1,16 @@
+{
+  "pickup_id": 15,
+  "pickup_name": "VILMA",
+  "original_address": "Viela Projetada 3 - Recreio São Jorge, Guarulhos - SP",
+  "clarified_address": "Viela Projetada, 3 - Recreio São Jorge, Guarulhos - SP",
+  "confirmation_source": "user_in_chat",
+  "confirmed_on": "2026-11-09",
+  "manual_confirmed": true,
+  "applied_to_production": true,
+  "endpoint": "POST /api/route-plans/geocode/confirm",
+  "payload": {
+    "address": "Viela Projetada, 3 - Recreio São Jorge, Guarulhos - SP, 07144-546",
+    "latitude": -23.402618,
+    "longitude": -46.517677
+  }
+}

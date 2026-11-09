@@ -11,6 +11,7 @@ from app.models import Pickup, User
 from app.models.geocoding import GeocodedAddress
 from app.models.route_templates import RouteTemplate
 from app.services.audit import audit
+from app.services.pickup_locations import location_for_map
 from app.schemas import ActiveUpdate
 
 
@@ -45,9 +46,9 @@ def validate_route(db: Session, route_id: int | None):
 def list_pickups(db: Session = Depends(get_db), _: User = Depends(require_operations)):
     items = db.scalars(select(Pickup).order_by(Pickup.nome, Pickup.id)).all()
     addresses = {item.endereco for item in items}
-    locations = {row.address: (row.result.get('selected') if row.result.get('schema_version') == 2 else row.result['candidates'][0])
+    locations = {row.address: location_for_map(row.result)
                  for row in db.scalars(select(GeocodedAddress).where(GeocodedAddress.address.in_(addresses)))
-                 if row.result.get('candidates')}
+                 }
     return [PickupOut.model_validate(item).model_copy(update={'location': locations.get(item.endereco)}) for item in items]
 
 

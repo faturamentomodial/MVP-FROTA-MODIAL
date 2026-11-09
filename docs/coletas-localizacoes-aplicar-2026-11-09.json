@@ -1,0 +1,200 @@
+[
+  {
+    "id": 34,
+    "name": "M. AUXILIADORA",
+    "previous_address": "R. José Damiani Filho, 68 - Jardim Pres. Dutra, Guarulhos - SP",
+    "address": "Rua José Damiani Filho, 68 - Jardim Pres. Dutra, Guarulhos - SP",
+    "latitude": -23.421109,
+    "longitude": -46.4226017,
+    "precision": "street",
+    "provider": "reference",
+    "source": "https://cepdarua.net/cep/07174330",
+    "reason": "Ponto de referencia do logradouro e CEP 07174-330. Numero 68 nao confirmado; resultados para Rua Jose Damiani sem Filho rejeitados."
+  },
+  {
+    "id": 58,
+    "name": "M. FERREIRA",
+    "previous_address": "Rua Arthur de Azevedo, 6 - Jardim Bela Vista, Guarulhos - SP",
+    "address": "Rua Arthur de Azevedo, 6 - Jardim America, Guarulhos - SP, 07194-090",
+    "latitude": -23.442225,
+    "longitude": -46.513113,
+    "precision": "street",
+    "provider": "geoapify",
+    "source": "https://diocesedeguarulhos.org.br/wp-content/uploads/2024/01/Anuario-Diocesano-2024-WEB.pdf",
+    "reason": "Endereco e CEP corrigidos pelo usuario. Provedor identifica area Vila Gopouva; manter aproximado ate confirmacao do ponto.",
+    "provider_result": {
+      "provider": "geoapify",
+      "candidates": [
+        {
+          "address": "Rua Arthur De Azevedo 6, Vila Gopoúva, Guarulhos - Sudeste, 07194-090, Brasil",
+          "latitude": -23.442225,
+          "longitude": -46.513113,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 1,
+            "confidence_street_level": 1,
+            "confidence_building_level": 1,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Arthur De Azevedo",
+            "number": "6",
+            "city": "Guarulhos",
+            "neighborhood": "Vila Gopoúva",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        }
+      ]
+    }
+  },
+  {
+    "id": 77,
+    "name": "SUELY LIMA",
+    "previous_address": "Rua Palmira D'Oeste, 5 - Jardim Betel, Guarulhos - SP",
+    "address": "R. Palmira D'oeste, 5 - Jardim Betel, Guarulhos - SP, 07083-340",
+    "latitude": -23.435209,
+    "longitude": -46.548549,
+    "precision": "street",
+    "provider": "geoapify",
+    "source": "https://diariooficial.guarulhos.sp.gov.br/uploads/pdf/1958373357.pdf",
+    "reason": "Rua e CEP corrigidos pelo usuario; confidence 0.8333 e bairro amplo Jacana no provedor. Ponto aproximado, sem confirmacao do imovel.",
+    "provider_result": {
+      "provider": "geoapify",
+      "candidates": [
+        {
+          "address": "Rua Palmira D'Oeste 5, Jacana, Guarulhos - Sudeste, 07083-340, Brasil",
+          "latitude": -23.435209,
+          "longitude": -46.548549,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.8333333333333334,
+            "confidence_street_level": 1,
+            "confidence_building_level": 1,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Palmira D'Oeste",
+            "number": "5",
+            "city": "Guarulhos",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        },
+        {
+          "address": "Rua Palmira D'Oeste 4, Jacana, Guarulhos - Sudeste, 07083-340, Brasil",
+          "latitude": -23.435127,
+          "longitude": -46.548582,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.5416666666666667,
+            "confidence_street_level": 1,
+            "confidence_building_level": 0.65,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Palmira D'Oeste",
+            "number": "4",
+            "city": "Guarulhos",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        },
+        {
+          "address": "Rua Palmira D'Oeste 10, Jacana, Guarulhos - Sudeste, 07083-340, Brasil",
+          "latitude": -23.435155,
+          "longitude": -46.548632,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.5416666666666667,
+            "confidence_street_level": 1,
+            "confidence_building_level": 0.65,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Palmira D'Oeste",
+            "number": "10",
+            "city": "Guarulhos",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        },
+        {
+          "address": "Rua Palmira D'Oeste 17, Jacana, Guarulhos - Sudeste, 07083-340, Brasil",
+          "latitude": -23.435236,
+          "longitude": -46.54867,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.4166666666666667,
+            "confidence_street_level": 1,
+            "confidence_building_level": 0.5,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Palmira D'Oeste",
+            "number": "17",
+            "city": "Guarulhos",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        }
+      ]
+    }
+  },
+  {
+    "id": 15,
+    "name": "VILMA",
+    "previous_address": "Viela Projetada 3 - Recreio São Jorge, Guarulhos - SP",
+    "address": "Viela Projetada, 3 - Recreio São Jorge, Guarulhos - SP, 07144-546",
+    "latitude": -23.402618,
+    "longitude": -46.517677,
+    "precision": "confirmed",
+    "provider": "geoapify",
+    "source": "user_in_chat",
+    "reason": "Usuario confirmou explicitamente a coordenada apresentada no mapa e esclareceu o numero 3."
+  }
+]

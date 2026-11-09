@@ -1,0 +1,309 @@
+{
+  "source": "user_corrected_addresses",
+  "applied": true,
+  "auxiliadora_query": "Rua José Damiani Filho, 68, Jardim Presidente Dutra, Guarulhos, SP",
+  "auxiliadora_result": {
+    "provider": "geoapify",
+    "candidates": [
+      {
+        "address": "Rua Jose Damiani 68, Vila Maria, Guarulhos - Sudeste, 07030-240, Brasil",
+        "latitude": -23.499237,
+        "longitude": -46.551933,
+        "provider": "geoapify",
+        "result_type": "building",
+        "rank": {
+          "confidence": 0.63,
+          "confidence_street_level": 0.63,
+          "confidence_building_level": 0.63,
+          "match_type": "full_match"
+        },
+        "components": {
+          "street": "Rua Jose Damiani",
+          "number": "68",
+          "city": "Guarulhos",
+          "neighborhood": "Vila Maria",
+          "country_code": "br"
+        },
+        "street_found": true,
+        "house_number_found": true,
+        "datasource": {
+          "sourcename": "openaddresses",
+          "attribution": "© OpenAddresses contributors",
+          "license": "BSD-3-Clause License"
+        },
+        "attribution": "Geoapify | © OpenStreetMap contributors"
+      },
+      {
+        "address": "Rua Jose Damiani 15, Vila Maria, Guarulhos - Sudeste, 07030-240, Brasil",
+        "latitude": -23.49924,
+        "longitude": -46.551399,
+        "provider": "geoapify",
+        "result_type": "building",
+        "rank": {
+          "confidence": 0.315,
+          "confidence_street_level": 0.63,
+          "confidence_building_level": 0.07132075471698113,
+          "match_type": "full_match"
+        },
+        "components": {
+          "street": "Rua Jose Damiani",
+          "number": "15",
+          "city": "Guarulhos",
+          "neighborhood": "Vila Maria",
+          "country_code": "br"
+        },
+        "street_found": true,
+        "house_number_found": true,
+        "datasource": {
+          "sourcename": "openaddresses",
+          "attribution": "© OpenAddresses contributors",
+          "license": "BSD-3-Clause License"
+        },
+        "attribution": "Geoapify | © OpenStreetMap contributors"
+      },
+      {
+        "address": "Rua Jose Damiani 30, Vila Maria, Guarulhos - Sudeste, 07030-240, Brasil",
+        "latitude": -23.499198,
+        "longitude": -46.551556,
+        "provider": "geoapify",
+        "result_type": "building",
+        "rank": {
+          "confidence": 0.315,
+          "confidence_street_level": 0.63,
+          "confidence_building_level": 0.09947368421052631,
+          "match_type": "full_match"
+        },
+        "components": {
+          "street": "Rua Jose Damiani",
+          "number": "30",
+          "city": "Guarulhos",
+          "neighborhood": "Vila Maria",
+          "country_code": "br"
+        },
+        "street_found": true,
+        "house_number_found": true,
+        "datasource": {
+          "sourcename": "openaddresses",
+          "attribution": "© OpenAddresses contributors",
+          "license": "BSD-3-Clause License"
+        },
+        "attribution": "Geoapify | © OpenStreetMap contributors"
+      },
+      {
+        "address": "Rua Jose Damiani 27, Vila Maria, Guarulhos - Sudeste, 07030-240, Brasil",
+        "latitude": -23.499253,
+        "longitude": -46.551535,
+        "provider": "geoapify",
+        "result_type": "building",
+        "rank": {
+          "confidence": 0.315,
+          "confidence_street_level": 0.63,
+          "confidence_building_level": 0.09219512195121951,
+          "match_type": "full_match"
+        },
+        "components": {
+          "street": "Rua Jose Damiani",
+          "number": "27",
+          "city": "Guarulhos",
+          "neighborhood": "Vila Maria",
+          "country_code": "br"
+        },
+        "street_found": true,
+        "house_number_found": true,
+        "datasource": {
+          "sourcename": "openaddresses",
+          "attribution": "© OpenAddresses contributors",
+          "license": "BSD-3-Clause License"
+        },
+        "attribution": "Geoapify | © OpenStreetMap contributors"
+      },
+      {
+        "address": "Rua Jose Damiani 47, Vila Maria, Guarulhos - Sudeste, 07030-240, Brasil",
+        "latitude": -23.49914,
+        "longitude": -46.551689,
+        "provider": "geoapify",
+        "result_type": "building",
+        "rank": {
+          "confidence": 0.315,
+          "confidence_street_level": 0.63,
+          "confidence_building_level": 0.18,
+          "match_type": "full_match"
+        },
+        "components": {
+          "street": "Rua Jose Damiani",
+          "number": "47",
+          "city": "Guarulhos",
+          "neighborhood": "Vila Maria",
+          "country_code": "br"
+        },
+        "street_found": true,
+        "house_number_found": true,
+        "datasource": {
+          "sourcename": "openaddresses",
+          "attribution": "© OpenAddresses contributors",
+          "license": "BSD-3-Clause License"
+        },
+        "attribution": "Geoapify | © OpenStreetMap contributors"
+      }
+    ]
+  },
+  "auxiliadora_with_postcode": {
+    "query": "Rua José Damiani Filho, 68, Guarulhos, SP, 07174-330",
+    "result": {
+      "provider": "geoapify",
+      "candidates": [
+        {
+          "address": "Rua Jose Damiani 68, Vila Maria, Guarulhos - Sudeste, 07030-240, Brasil",
+          "latitude": -23.499243,
+          "longitude": -46.551937,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.63,
+            "confidence_street_level": 0.63,
+            "confidence_building_level": 0.63,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Jose Damiani",
+            "number": "68",
+            "city": "Guarulhos",
+            "neighborhood": "Vila Maria",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        },
+        {
+          "address": "Rua Jose Damiani 242, Vila Maria, Guarulhos - Sudeste, 07030-240, Brasil",
+          "latitude": -23.499405,
+          "longitude": -46.553617,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.315,
+            "confidence_street_level": 0.63,
+            "confidence_building_level": 0.021724137931034483,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Jose Damiani",
+            "number": "242",
+            "city": "Guarulhos",
+            "neighborhood": "Vila Maria",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        },
+        {
+          "address": "Rua Jose Damiani 231, Vila Maria, Guarulhos - Sudeste, 07030-240, Brasil",
+          "latitude": -23.49945,
+          "longitude": -46.553506,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.315,
+            "confidence_street_level": 0.63,
+            "confidence_building_level": 0.023190184049079757,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Jose Damiani",
+            "number": "231",
+            "city": "Guarulhos",
+            "neighborhood": "Vila Maria",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        },
+        {
+          "address": "Rua Jose Damiani 228, Vila Maria, Guarulhos - Sudeste, 07030-240, Brasil",
+          "latitude": -23.499437,
+          "longitude": -46.55352,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.315,
+            "confidence_street_level": 0.63,
+            "confidence_building_level": 0.023625,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Jose Damiani",
+            "number": "228",
+            "city": "Guarulhos",
+            "neighborhood": "Vila Maria",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        },
+        {
+          "address": "Rua Jose Damiani 236, Vila Maria, Guarulhos - Sudeste, 07030-240, Brasil",
+          "latitude": -23.499399,
+          "longitude": -46.553565,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.315,
+            "confidence_street_level": 0.63,
+            "confidence_building_level": 0.0225,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Jose Damiani",
+            "number": "236",
+            "city": "Guarulhos",
+            "neighborhood": "Vila Maria",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors"
+        }
+      ]
+    }
+  },
+  "auxiliadora_nominatim": {
+    "query": "Rua José Damiani Filho, 68, Jardim Presidente Dutra, Guarulhos, SP",
+    "result": {
+      "candidates": [],
+      "selection_required": true,
+      "provider": "nominatim",
+      "attribution": "OpenStreetMap contributors"
+    }
+  },
+  "application_results": "coletas-aplicadas-20261109.json",
+  "auxiliadora_rejection_reason": "Provider returned Rua Jose Damiani without Filho, in another area; rejected. Street reference from cepdarua.net/cep/07174330 was used with approximate precision."
+}

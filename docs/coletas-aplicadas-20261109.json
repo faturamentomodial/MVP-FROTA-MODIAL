@@ -1,0 +1,74 @@
+[
+  {
+    "id": 34,
+    "name": "M. AUXILIADORA",
+    "address": "Rua José Damiani Filho, 68 - Jardim Pres. Dutra, Guarulhos - SP",
+    "location": {
+      "address": "Rua José Damiani Filho, 68 - Jardim Pres. Dutra, Guarulhos - SP",
+      "latitude": -23.421109,
+      "longitude": -46.4226017,
+      "provider": "reference",
+      "precision": "street",
+      "status": "approximate",
+      "manual_confirmed": false,
+      "house_number_found": false,
+      "source": "https://cepdarua.net/cep/07174330",
+      "review_reason": "Ponto de referencia do logradouro e CEP 07174-330. Numero 68 nao confirmado; resultados para Rua Jose Damiani sem Filho rejeitados.",
+      "attribution": "Geoapify | © OpenStreetMap contributors"
+    }
+  },
+  {
+    "id": 58,
+    "name": "M. FERREIRA",
+    "address": "Rua Arthur de Azevedo, 6 - Jardim America, Guarulhos - SP, 07194-090",
+    "location": {
+      "address": "Rua Arthur de Azevedo, 6 - Jardim America, Guarulhos - SP, 07194-090",
+      "latitude": -23.442225,
+      "longitude": -46.513113,
+      "provider": "geoapify",
+      "precision": "street",
+      "status": "approximate",
+      "manual_confirmed": false,
+      "house_number_found": false,
+      "source": "https://diocesedeguarulhos.org.br/wp-content/uploads/2024/01/Anuario-Diocesano-2024-WEB.pdf",
+      "review_reason": "Endereco e CEP corrigidos pelo usuario. Provedor identifica area Vila Gopouva; manter aproximado ate confirmacao do ponto.",
+      "attribution": "Geoapify | © OpenStreetMap contributors"
+    }
+  },
+  {
+    "id": 77,
+    "name": "SUELY LIMA",
+    "address": "R. Palmira D'oeste, 5 - Jardim Betel, Guarulhos - SP, 07083-340",
+    "location": {
+      "address": "R. Palmira D'oeste, 5 - Jardim Betel, Guarulhos - SP, 07083-340",
+      "latitude": -23.435209,
+      "longitude": -46.548549,
+      "provider": "geoapify",
+      "precision": "street",
+      "status": "approximate",
+      "manual_confirmed": false,
+      "house_number_found": false,
+      "source": "https://diariooficial.guarulhos.sp.gov.br/uploads/pdf/1958373357.pdf",
+      "review_reason": "Rua e CEP corrigidos pelo usuario; confidence 0.8333 e bairro amplo Jacana no provedor. Ponto aproximado, sem confirmacao do imovel.",
+      "attribution": "Geoapify | © OpenStreetMap contributors"
+    }
+  },
+  {
+    "id": 15,
+    "name": "VILMA",
+    "address": "Viela Projetada, 3 - Recreio São Jorge, Guarulhos - SP, 07144-546",
+    "location": {
+      "address": "Viela Projetada, 3 - Recreio São Jorge, Guarulhos - SP, 07144-546",
+      "latitude": -23.402618,
+      "longitude": -46.517677,
+      "provider": "manual",
+      "precision": "confirmed",
+      "status": "confirmed",
+      "manual_confirmed": true,
+      "house_number_found": true,
+      "source": "user_in_chat",
+      "review_reason": "Usuario confirmou explicitamente a coordenada apresentada no mapa e esclareceu o numero 3.",
+      "attribution": "Geoapify | © OpenStreetMap contributors"
+    }
+  }
+]

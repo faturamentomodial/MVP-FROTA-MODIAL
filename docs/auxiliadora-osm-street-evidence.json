@@ -1,0 +1,24 @@
+{
+  "url": "https://api.openstreetmap.org/api/0.6/map?bbox=-46.424,-23.404,-46.419,-23.399",
+  "ways": [
+    {
+      "id": "228880359",
+      "tags": {
+        "highway": "residential",
+        "name": "Rua A",
+        "source": "bing"
+      },
+      "geometry": [
+        [
+          -23.4004959,
+          -46.4213301
+        ],
+        [
+          -23.4023718,
+          -46.4215976
+        ]
+      ]
+    }
+  ],
+  "decision": "Rejected old Rua A candidate: its connections do not match Rua Altemar Dutra in municipal decree 34746/2018."
+}
