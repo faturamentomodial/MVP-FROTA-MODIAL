@@ -132,6 +132,8 @@ class TripInvoice(Base):
     occurrence_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     occurrence_reason: Mapped[str | None] = mapped_column(String(80))
     occurrence_note: Mapped[str | None] = mapped_column(Text)
+    pickup_volume: Mapped[int | None] = mapped_column(Integer)
+    pickup_description: Mapped[str | None] = mapped_column(Text)
 
     trip: Mapped[Trip] = relationship(back_populates="invoices")
 

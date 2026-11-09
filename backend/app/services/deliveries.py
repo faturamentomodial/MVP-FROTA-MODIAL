@@ -32,8 +32,10 @@ def transition(db, trip, invoice_id, user, action, payload=None):
     now = utcnow()
     values = {"status": target}
     values[{"start": "started_at", "finish": "delivered_at", "occurrence": "occurrence_at"}[action]] = (invoice.started_at or now) if action == "start" else now
-    if payload:
+    if action == "occurrence" and payload:
         values.update(occurrence_reason=payload.motivo, occurrence_note=payload.observacao)
+    if action == "finish" and payload:
+        values.update(pickup_volume=payload.pickup_volume, pickup_description=payload.pickup_description)
     earlier = aliased(TripInvoice)
     # Conditional update protects against retries/concurrent requests, including SQLite.
     result = db.execute(update(TripInvoice).where(
@@ -46,7 +48,7 @@ def transition(db, trip, invoice_id, user, action, payload=None):
     if result.rowcount != 1:
         db.rollback()
         raise HTTPException(409, "Resolva a entrega atual antes de continuar ou atualize a rota")
-    if payload:
+    if action == "occurrence" and payload:
         occurrence = Occurrence(invoice_id=invoice_id, trip_id=trip.id, driver_id=trip.driver_id,
             vehicle_id=trip.vehicle_id,
             tipo=OccurrenceType.CLIENTE_AUSENTE if payload.motivo == "CLIENTE_AUSENTE" else OccurrenceType.PROBLEMA_ENTREGA,

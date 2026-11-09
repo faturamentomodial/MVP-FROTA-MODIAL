@@ -10,7 +10,7 @@ from app.core.database import get_db
 from app.models import Checklist, Trip, TripInvoice, User, Vehicle
 from app.models.enums import TripStatus, UserRole
 from app.repositories.pagination import paginate
-from app.schemas import DeliveryOrderIn, DeliveryOccurrenceIn, TripInvoiceOut, Page, TripCargoUpdate, TripCreate, TripFinish, TripOut
+from app.schemas import DeliveryFinishIn, DeliveryOrderIn, DeliveryOccurrenceIn, TripInvoiceOut, Page, TripCargoUpdate, TripCreate, TripFinish, TripOut
 from app.services.audit import audit
 from app.services.deliveries import claim_revision, reorder, transition
 from app.services.trips import create_trip, finish_trip, get_active_trip, get_driver_for_user, load_trip, start_trip
@@ -150,8 +150,8 @@ def start_delivery(trip_id: int, invoice_id: int, db: Session = Depends(get_db),
 
 
 @router.post("/{trip_id}/deliveries/{invoice_id}/finish", response_model=TripInvoiceOut)
-def finish_delivery(trip_id: int, invoice_id: int, db: Session = Depends(get_db), user: User = Depends(require_driver)):
-    return transition(db, delivery_trip(db, trip_id, user, True), invoice_id, user, "finish")
+def finish_delivery(trip_id: int, invoice_id: int, payload: DeliveryFinishIn | None = None, db: Session = Depends(get_db), user: User = Depends(require_driver)):
+    return transition(db, delivery_trip(db, trip_id, user, True), invoice_id, user, "finish", payload)
 
 
 @router.post("/{trip_id}/deliveries/{invoice_id}/occurrence", response_model=TripInvoiceOut)

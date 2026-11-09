@@ -210,6 +210,16 @@ class DeliveryOccurrenceIn(BaseModel):
         return self
 
 
+class DeliveryFinishIn(BaseModel):
+    pickup_volume: int | None = Field(default=None, ge=1, le=1000000)
+    pickup_description: str | None = Field(default=None, max_length=4000)
+
+    @model_validator(mode="after")
+    def clean_pickup(self):
+        self.pickup_description = (self.pickup_description or "").strip() or None
+        return self
+
+
 class TripInvoiceOut(ORMModel):
     is_address_stop: bool = False
     position: int
@@ -222,6 +232,8 @@ class TripInvoiceOut(ORMModel):
     occurrence_at: datetime | None
     occurrence_reason: str | None
     occurrence_note: str | None
+    pickup_volume: int | None = None
+    pickup_description: str | None = None
 
 
 class TripOut(ORMModel):

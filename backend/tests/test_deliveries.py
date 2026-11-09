@@ -169,3 +169,21 @@ def test_invoice_from_another_trip_cannot_be_operated(client,driver_headers):
     for action in ("start","finish","occurrence"):
         payload={"motivo":"CLIENTE_FECHADO"} if action == "occurrence" else {}
         assert client.post(f"/api/trips/{second}/deliveries/{notes[0]['id']}/{action}",headers=driver_headers,json=payload).status_code == 404
+
+
+@pytest.mark.parametrize("payload", [
+    {},
+    {"pickup_volume": 3, "pickup_description": "  Caixas de papel  "},
+    {"pickup_description": "Material avulso"},
+])
+def test_optional_pickup_details_persist(client, driver_headers, admin_headers, payload):
+    tid, notes = prepare(client, driver_headers)
+    url = f"/api/trips/{tid}/deliveries/{notes[0]['id']}"
+    assert client.post(url + "/start", headers=driver_headers).status_code == 200
+    for invalid in (0, -1, 1.5, 1000001):
+        assert client.post(url + "/finish", headers=driver_headers, json={"pickup_volume": invalid}).status_code == 422
+    response = client.post(url + "/finish", headers=driver_headers, json=payload)
+    assert response.status_code == 200, response.text
+    saved = client.get(f"/api/trips/{tid}", headers=admin_headers).json()["notas"][0]
+    assert saved["pickup_volume"] == payload.get("pickup_volume")
+    assert saved["pickup_description"] == (payload.get("pickup_description", "").strip() or None)
