@@ -113,8 +113,10 @@ def lookup(db, address):
             interval = max(
                 settings.routes_min_interval_seconds,
                 1.1 if urlsplit(settings.routes_geocoder_url).hostname == 'nominatim.openstreetmap.org' else 0)
-            reserve(db, bucket, interval)
-            result = route_planning._geocode_exact(address)
+            def fetch(query):
+                reserve(db, bucket, interval)
+                return route_planning._geocode_exact(query)
+            result = route_planning.geocode(address, fetch=fetch)
             results.append({**result, 'provider': name})
         except HTTPException as exc:
             seconds = settings.geocoding_failure_cache_seconds

@@ -43,13 +43,13 @@ def request(base, path):
         raise HTTPException(503, "Provedor indisponível ou resposta inválida; nenhum resultado estimado foi utilizado.") from exc
 
 
-def geocode(address):
+def geocode(address, fetch=None):
     variants = geocoding_address_variants(address)
     for index, query in enumerate(variants):
         if index:
             # Additional attempts share the same provider quota as the first one.
             sleep(max(settings.routes_min_interval_seconds, 1.1))
-        result = _geocode_exact(query)
+        result = (fetch or _geocode_exact)(query)
         if index:
             # A neighborhood or city centroid is not a street location.
             result = {**result, 'candidates': [p for p in result['candidates'] if p.get('street_found')]}

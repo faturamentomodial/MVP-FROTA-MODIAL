@@ -5,7 +5,7 @@ import { Alert, Button } from './UI'
 import { api } from '../services/api'
 import type { Point } from '../types/routePlans'
 
-type GeocodingCandidate = Point & { provider?: string; precision?: string; datasource?: { attribution?: string; license?: string } }
+type GeocodingCandidate = Point & { provider?: string; precision?: string; street_found?: boolean; datasource?: { attribution?: string; license?: string } }
 export type GeocodingResult = {
   candidates: GeocodingCandidate[]; suggestions?: GeocodingCandidate[]
   selected?: Point | null; status?: string; errors?: { provider: string; status: string | number }[]
