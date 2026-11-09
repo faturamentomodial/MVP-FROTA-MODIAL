@@ -108,6 +108,11 @@ def test_provider_failure_atomicity_and_geocoding(client,admin_headers,monkeypat
     assert client.get(url,headers=admin_headers).json()['revision']==0
     monkeypatch.setattr(provider,'request',lambda *a:{'features':[]})
     assert client.get('/api/route-plans/geocode?address=Rua+inexistente',headers=admin_headers).json()['candidates']==[]
+    # A new explicit search shares the provider quota across all addresses.
+    from app.services.dual_geocoding import cooldown
+    from app.core.database import SessionLocal
+    with SessionLocal() as db:
+        cooldown(db, 'provider:photon', 0)
     monkeypatch.setattr(provider,'request',lambda *a:{'features':[{'geometry':{'coordinates':[-46,-23]},'properties':{'name':'Rua A'}},{'geometry':{'coordinates':[-47,-24]},'properties':{'name':'Rua B'}}]})
     assert len(client.get('/api/route-plans/geocode?address=Rua+ambigua',headers=admin_headers).json()['candidates'])==2
     monkeypatch.setattr(provider, 'matrix', original_matrix)

@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from app.api.dependencies import require_admin, require_operations
 from app.core.database import get_db
 from app.models import Pickup, User
+from app.models.geocoding import GeocodedAddress
 from app.models.route_templates import RouteTemplate
 from app.services.audit import audit
 from app.schemas import ActiveUpdate
@@ -26,6 +27,7 @@ class PickupOut(PickupInput):
     model_config = ConfigDict(from_attributes=True, str_strip_whitespace=True)
     id: int
     ativo: bool
+    location: dict | None = None
 
 
 router = APIRouter(prefix="/pickups", tags=["Coletas"])
@@ -41,7 +43,12 @@ def validate_route(db: Session, route_id: int | None):
 
 @router.get("", response_model=list[PickupOut])
 def list_pickups(db: Session = Depends(get_db), _: User = Depends(require_operations)):
-    return db.scalars(select(Pickup).order_by(Pickup.nome, Pickup.id)).all()
+    items = db.scalars(select(Pickup).order_by(Pickup.nome, Pickup.id)).all()
+    addresses = {item.endereco for item in items}
+    locations = {row.address: (row.result.get('selected') if row.result.get('schema_version') == 2 else row.result['candidates'][0])
+                 for row in db.scalars(select(GeocodedAddress).where(GeocodedAddress.address.in_(addresses)))
+                 if row.result.get('candidates')}
+    return [PickupOut.model_validate(item).model_copy(update={'location': locations.get(item.endereco)}) for item in items]
 
 
 @router.post("", response_model=PickupOut, status_code=201)

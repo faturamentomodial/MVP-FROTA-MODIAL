@@ -1,0 +1,1233 @@
+[
+  {
+    "id": 15,
+    "address": "Viela Projetada 3 - Recreio São Jorge, Guarulhos - SP",
+    "queried_at": 1794233566.8837082,
+    "providers": [
+      {
+        "candidates": [],
+        "selection_required": true,
+        "provider": "nominatim",
+        "attribution": "OpenStreetMap contributors"
+      },
+      {
+        "provider": "geoapify",
+        "candidates": [
+          {
+            "address": "Viela Projetada 3, Guarulhos - Sudeste, 07144-546, Brasil",
+            "latitude": -23.402618,
+            "longitude": -46.517677,
+            "provider": "geoapify",
+            "result_type": "building",
+            "rank": {
+              "confidence": 0.9,
+              "confidence_street_level": 0.9,
+              "confidence_building_level": null,
+              "match_type": "inner_part"
+            },
+            "components": {
+              "street": "Viela Projetada",
+              "number": "3",
+              "city": "Guarulhos",
+              "neighborhood": "",
+              "country_code": "br"
+            },
+            "street_found": true,
+            "house_number_found": true,
+            "datasource": {
+              "sourcename": "openaddresses",
+              "attribution": "© OpenAddresses contributors",
+              "license": "BSD-3-Clause License"
+            },
+            "attribution": "Geoapify | © OpenStreetMap contributors"
+          },
+          {
+            "address": "Viela Projetada 40, Guarulhos - Sudeste, 07144-546, Brasil",
+            "latitude": -23.402369,
+            "longitude": -46.517033,
+            "provider": "geoapify",
+            "result_type": "building",
+            "rank": {
+              "confidence": 0.9,
+              "confidence_street_level": 0.9,
+              "confidence_building_level": null,
+              "match_type": "inner_part"
+            },
+            "components": {
+              "street": "Viela Projetada",
+              "number": "40",
+              "city": "Guarulhos",
+              "neighborhood": "",
+              "country_code": "br"
+            },
+            "street_found": true,
+            "house_number_found": true,
+            "datasource": {
+              "sourcename": "openaddresses",
+              "attribution": "© OpenAddresses contributors",
+              "license": "BSD-3-Clause License"
+            },
+            "attribution": "Geoapify | © OpenStreetMap contributors"
+          },
+          {
+            "address": "Viela Projetada 28, Guarulhos - Sudeste, 07144-546, Brasil",
+            "latitude": -23.402243,
+            "longitude": -46.517078,
+            "provider": "geoapify",
+            "result_type": "building",
+            "rank": {
+              "confidence": 0.9,
+              "confidence_street_level": 0.9,
+              "confidence_building_level": null,
+              "match_type": "inner_part"
+            },
+            "components": {
+              "street": "Viela Projetada",
+              "number": "28",
+              "city": "Guarulhos",
+              "neighborhood": "",
+              "country_code": "br"
+            },
+            "street_found": true,
+            "house_number_found": true,
+            "datasource": {
+              "sourcename": "openaddresses",
+              "attribution": "© OpenAddresses contributors",
+              "license": "BSD-3-Clause License"
+            },
+            "attribution": "Geoapify | © OpenStreetMap contributors"
+          },
+          {
+            "address": "Viela Projetada 17, Guarulhos - Sudeste, 07144-546, Brasil",
+            "latitude": -23.402367,
+            "longitude": -46.517273,
+            "provider": "geoapify",
+            "result_type": "building",
+            "rank": {
+              "confidence": 0.9,
+              "confidence_street_level": 0.9,
+              "confidence_building_level": null,
+              "match_type": "inner_part"
+            },
+            "components": {
+              "street": "Viela Projetada",
+              "number": "17",
+              "city": "Guarulhos",
+              "neighborhood": "",
+              "country_code": "br"
+            },
+            "street_found": true,
+            "house_number_found": true,
+            "datasource": {
+              "sourcename": "openaddresses",
+              "attribution": "© OpenAddresses contributors",
+              "license": "BSD-3-Clause License"
+            },
+            "attribution": "Geoapify | © OpenStreetMap contributors"
+          },
+          {
+            "address": "Viela Projetada 19, Guarulhos - Sudeste, 07144-546, Brasil",
+            "latitude": -23.402863,
+            "longitude": -46.517307,
+            "provider": "geoapify",
+            "result_type": "building",
+            "rank": {
+              "confidence": 0.9,
+              "confidence_street_level": 0.9,
+              "confidence_building_level": null,
+              "match_type": "inner_part"
+            },
+            "components": {
+              "street": "Viela Projetada",
+              "number": "19",
+              "city": "Guarulhos",
+              "neighborhood": "",
+              "country_code": "br"
+            },
+            "street_found": true,
+            "house_number_found": true,
+            "datasource": {
+              "sourcename": "openaddresses",
+              "attribution": "© OpenAddresses contributors",
+              "license": "BSD-3-Clause License"
+            },
+            "attribution": "Geoapify | © OpenStreetMap contributors"
+          }
+        ]
+      }
+    ],
+    "decision": {
+      "candidates": [
+        {
+          "address": "Viela Projetada 3, Guarulhos - Sudeste, 07144-546, Brasil",
+          "latitude": -23.402618,
+          "longitude": -46.517677,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.9,
+            "confidence_street_level": 0.9,
+            "confidence_building_level": null,
+            "match_type": "inner_part"
+          },
+          "components": {
+            "street": "Viela Projetada",
+            "number": "3",
+            "city": "Guarulhos",
+            "neighborhood": "",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Viela Projetada 40, Guarulhos - Sudeste, 07144-546, Brasil",
+          "latitude": -23.402369,
+          "longitude": -46.517033,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.9,
+            "confidence_street_level": 0.9,
+            "confidence_building_level": null,
+            "match_type": "inner_part"
+          },
+          "components": {
+            "street": "Viela Projetada",
+            "number": "40",
+            "city": "Guarulhos",
+            "neighborhood": "",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Viela Projetada 28, Guarulhos - Sudeste, 07144-546, Brasil",
+          "latitude": -23.402243,
+          "longitude": -46.517078,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.9,
+            "confidence_street_level": 0.9,
+            "confidence_building_level": null,
+            "match_type": "inner_part"
+          },
+          "components": {
+            "street": "Viela Projetada",
+            "number": "28",
+            "city": "Guarulhos",
+            "neighborhood": "",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Viela Projetada 17, Guarulhos - Sudeste, 07144-546, Brasil",
+          "latitude": -23.402367,
+          "longitude": -46.517273,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.9,
+            "confidence_street_level": 0.9,
+            "confidence_building_level": null,
+            "match_type": "inner_part"
+          },
+          "components": {
+            "street": "Viela Projetada",
+            "number": "17",
+            "city": "Guarulhos",
+            "neighborhood": "",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Viela Projetada 19, Guarulhos - Sudeste, 07144-546, Brasil",
+          "latitude": -23.402863,
+          "longitude": -46.517307,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.9,
+            "confidence_street_level": 0.9,
+            "confidence_building_level": null,
+            "match_type": "inner_part"
+          },
+          "components": {
+            "street": "Viela Projetada",
+            "number": "19",
+            "city": "Guarulhos",
+            "neighborhood": "",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        }
+      ],
+      "selected": null,
+      "selection_required": true,
+      "provider": null,
+      "status": "needs_confirmation",
+      "precision": "unverified",
+      "approximate": true,
+      "original_address": "Viela Projetada 3 - Recreio São Jorge, Guarulhos - SP",
+      "manual_confirmed": false,
+      "verified_at": 1794233737.365981,
+      "errors": [],
+      "attribution": "Geoapify | © OpenStreetMap contributors",
+      "schema_version": 2
+    },
+    "policy": {
+      "require_neighborhood_match": true,
+      "confidence": 0.95,
+      "street_confidence": 0.95,
+      "building_confidence": 0.95,
+      "conflict_meters": 200
+    }
+  },
+  {
+    "id": 34,
+    "address": "Rua A, 68 - Ponte Alta, Guarulhos - SP",
+    "queried_at": 1794233570.1044326,
+    "providers": [
+      {
+        "candidates": [],
+        "selection_required": true,
+        "provider": "nominatim",
+        "attribution": "OpenStreetMap contributors"
+      },
+      {
+        "provider": "geoapify",
+        "candidates": [
+          {
+            "address": "Rua A 68, Bonsucesso, Guarulhos - SP, 07170-550, Brasil",
+            "latitude": -23.40181,
+            "longitude": -46.421528,
+            "provider": "geoapify",
+            "result_type": "building",
+            "rank": {
+              "confidence": 1,
+              "confidence_street_level": 1,
+              "confidence_building_level": 1,
+              "match_type": "full_match"
+            },
+            "components": {
+              "street": "Rua A",
+              "number": "68",
+              "city": "Guarulhos",
+              "neighborhood": "Bonsucesso",
+              "country_code": "br"
+            },
+            "street_found": true,
+            "house_number_found": true,
+            "datasource": {
+              "sourcename": "openstreetmap",
+              "attribution": "© OpenStreetMap contributors",
+              "license": "Open Database License",
+              "url": "https://www.openstreetmap.org/copyright"
+            },
+            "attribution": "Geoapify | © OpenStreetMap contributors"
+          }
+        ]
+      }
+    ],
+    "decision": {
+      "candidates": [
+        {
+          "address": "Rua A 68, Bonsucesso, Guarulhos - SP, 07170-550, Brasil",
+          "latitude": -23.40181,
+          "longitude": -46.421528,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 1,
+            "confidence_street_level": 1,
+            "confidence_building_level": 1,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua A",
+            "number": "68",
+            "city": "Guarulhos",
+            "neighborhood": "Bonsucesso",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": true
+        }
+      ],
+      "selected": null,
+      "selection_required": true,
+      "provider": null,
+      "status": "needs_confirmation",
+      "precision": "unverified",
+      "approximate": true,
+      "original_address": "Rua A, 68 - Ponte Alta, Guarulhos - SP",
+      "manual_confirmed": false,
+      "verified_at": 1794233737.365981,
+      "errors": [],
+      "attribution": "Geoapify | © OpenStreetMap contributors",
+      "schema_version": 2
+    },
+    "policy": {
+      "require_neighborhood_match": true,
+      "confidence": 0.95,
+      "street_confidence": 0.95,
+      "building_confidence": 0.95,
+      "conflict_meters": 200
+    }
+  },
+  {
+    "id": 58,
+    "address": "Rua Arthur de Azevedo, 6 - Jardim Bela Vista, Guarulhos - SP",
+    "queried_at": 1794233575.5057135,
+    "providers": [
+      {
+        "candidates": [],
+        "selection_required": true,
+        "provider": "nominatim",
+        "attribution": "OpenStreetMap contributors"
+      },
+      {
+        "provider": "geoapify",
+        "candidates": [
+          {
+            "address": "Rua Arthur De Azevedo 6, Vila Gopoúva, Guarulhos - Sudeste, 07194-190, Brasil",
+            "latitude": -23.441406,
+            "longitude": -46.511879,
+            "provider": "geoapify",
+            "result_type": "building",
+            "rank": {
+              "confidence": 1,
+              "confidence_street_level": 1,
+              "confidence_building_level": 1,
+              "match_type": "full_match"
+            },
+            "components": {
+              "street": "Rua Arthur De Azevedo",
+              "number": "6",
+              "city": "Guarulhos",
+              "neighborhood": "Vila Gopoúva",
+              "country_code": "br"
+            },
+            "street_found": true,
+            "house_number_found": true,
+            "datasource": {
+              "sourcename": "openaddresses",
+              "attribution": "© OpenAddresses contributors",
+              "license": "BSD-3-Clause License"
+            },
+            "attribution": "Geoapify | © OpenStreetMap contributors"
+          },
+          {
+            "address": "Rua Arthur De Azevedo 6, Vila Gopoúva, Guarulhos - Sudeste, 07194-090, Brasil",
+            "latitude": -23.442225,
+            "longitude": -46.513113,
+            "provider": "geoapify",
+            "result_type": "building",
+            "rank": {
+              "confidence": 1,
+              "confidence_street_level": 1,
+              "confidence_building_level": 1,
+              "match_type": "full_match"
+            },
+            "components": {
+              "street": "Rua Arthur De Azevedo",
+              "number": "6",
+              "city": "Guarulhos",
+              "neighborhood": "Vila Gopoúva",
+              "country_code": "br"
+            },
+            "street_found": true,
+            "house_number_found": true,
+            "datasource": {
+              "sourcename": "openaddresses",
+              "attribution": "© OpenAddresses contributors",
+              "license": "BSD-3-Clause License"
+            },
+            "attribution": "Geoapify | © OpenStreetMap contributors"
+          }
+        ]
+      }
+    ],
+    "decision": {
+      "candidates": [
+        {
+          "address": "Rua Arthur De Azevedo 6, Vila Gopoúva, Guarulhos - Sudeste, 07194-190, Brasil",
+          "latitude": -23.441406,
+          "longitude": -46.511879,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 1,
+            "confidence_street_level": 1,
+            "confidence_building_level": 1,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Arthur De Azevedo",
+            "number": "6",
+            "city": "Guarulhos",
+            "neighborhood": "Vila Gopoúva",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "precision": "street",
+          "status": "approximate",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Rua Arthur De Azevedo 6, Vila Gopoúva, Guarulhos - Sudeste, 07194-090, Brasil",
+          "latitude": -23.442225,
+          "longitude": -46.513113,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 1,
+            "confidence_street_level": 1,
+            "confidence_building_level": 1,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Arthur De Azevedo",
+            "number": "6",
+            "city": "Guarulhos",
+            "neighborhood": "Vila Gopoúva",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "precision": "street",
+          "status": "approximate",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        }
+      ],
+      "selected": null,
+      "selection_required": true,
+      "provider": null,
+      "status": "approximate",
+      "precision": "street",
+      "approximate": true,
+      "original_address": "Rua Arthur de Azevedo, 6 - Jardim Bela Vista, Guarulhos - SP",
+      "manual_confirmed": false,
+      "verified_at": 1794233737.3669915,
+      "errors": [],
+      "attribution": "Geoapify | © OpenStreetMap contributors",
+      "schema_version": 2
+    },
+    "policy": {
+      "require_neighborhood_match": true,
+      "confidence": 0.95,
+      "street_confidence": 0.95,
+      "building_confidence": 0.95,
+      "conflict_meters": 200
+    }
+  },
+  {
+    "id": 77,
+    "address": "Rua Palmira D'Oeste, 5 - Jardim Betel, Guarulhos - SP",
+    "queried_at": 1794233581.4847097,
+    "providers": [
+      {
+        "candidates": [],
+        "selection_required": true,
+        "provider": "nominatim",
+        "attribution": "OpenStreetMap contributors"
+      },
+      {
+        "provider": "geoapify",
+        "candidates": [
+          {
+            "address": "Rua Palmira D'Oeste 5, Jacana, Guarulhos - Sudeste, 07083-340, Brasil",
+            "latitude": -23.435209,
+            "longitude": -46.548549,
+            "provider": "geoapify",
+            "result_type": "building",
+            "rank": {
+              "confidence": 0.6938775510204082,
+              "confidence_street_level": 1,
+              "confidence_building_level": 1,
+              "match_type": "full_match"
+            },
+            "components": {
+              "street": "Rua Palmira D'Oeste",
+              "number": "5",
+              "city": "Guarulhos",
+              "neighborhood": "Jacana",
+              "country_code": "br"
+            },
+            "street_found": true,
+            "house_number_found": true,
+            "datasource": {
+              "sourcename": "openaddresses",
+              "attribution": "© OpenAddresses contributors",
+              "license": "BSD-3-Clause License"
+            },
+            "attribution": "Geoapify | © OpenStreetMap contributors"
+          },
+          {
+            "address": "Rua Palmira D'Oeste 4, Jacana, Guarulhos - Sudeste, 07083-340, Brasil",
+            "latitude": -23.435127,
+            "longitude": -46.548582,
+            "provider": "geoapify",
+            "result_type": "building",
+            "rank": {
+              "confidence": 0.45102040816326533,
+              "confidence_street_level": 1,
+              "confidence_building_level": 0.65,
+              "match_type": "full_match"
+            },
+            "components": {
+              "street": "Rua Palmira D'Oeste",
+              "number": "4",
+              "city": "Guarulhos",
+              "neighborhood": "Jacana",
+              "country_code": "br"
+            },
+            "street_found": true,
+            "house_number_found": true,
+            "datasource": {
+              "sourcename": "openaddresses",
+              "attribution": "© OpenAddresses contributors",
+              "license": "BSD-3-Clause License"
+            },
+            "attribution": "Geoapify | © OpenStreetMap contributors"
+          },
+          {
+            "address": "Rua Palmira D'Oeste 10, Jacana, Guarulhos - Sudeste, 07083-340, Brasil",
+            "latitude": -23.435155,
+            "longitude": -46.548632,
+            "provider": "geoapify",
+            "result_type": "building",
+            "rank": {
+              "confidence": 0.45102040816326533,
+              "confidence_street_level": 1,
+              "confidence_building_level": 0.65,
+              "match_type": "full_match"
+            },
+            "components": {
+              "street": "Rua Palmira D'Oeste",
+              "number": "10",
+              "city": "Guarulhos",
+              "neighborhood": "Jacana",
+              "country_code": "br"
+            },
+            "street_found": true,
+            "house_number_found": true,
+            "datasource": {
+              "sourcename": "openaddresses",
+              "attribution": "© OpenAddresses contributors",
+              "license": "BSD-3-Clause License"
+            },
+            "attribution": "Geoapify | © OpenStreetMap contributors"
+          },
+          {
+            "address": "Rua Palmira D'Oeste 16, Jacana, Guarulhos - Sudeste, 07083-340, Brasil",
+            "latitude": -23.435167,
+            "longitude": -46.548674,
+            "provider": "geoapify",
+            "result_type": "building",
+            "rank": {
+              "confidence": 0.3784786641929499,
+              "confidence_street_level": 1,
+              "confidence_building_level": 0.5454545454545454,
+              "match_type": "full_match"
+            },
+            "components": {
+              "street": "Rua Palmira D'Oeste",
+              "number": "16",
+              "city": "Guarulhos",
+              "neighborhood": "Jacana",
+              "country_code": "br"
+            },
+            "street_found": true,
+            "house_number_found": true,
+            "datasource": {
+              "sourcename": "openaddresses",
+              "attribution": "© OpenAddresses contributors",
+              "license": "BSD-3-Clause License"
+            },
+            "attribution": "Geoapify | © OpenStreetMap contributors"
+          }
+        ]
+      }
+    ],
+    "decision": {
+      "candidates": [
+        {
+          "address": "Rua Palmira D'Oeste 5, Jacana, Guarulhos - Sudeste, 07083-340, Brasil",
+          "latitude": -23.435209,
+          "longitude": -46.548549,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.6938775510204082,
+            "confidence_street_level": 1,
+            "confidence_building_level": 1,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Palmira D'Oeste",
+            "number": "5",
+            "city": "Guarulhos",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "precision": "street",
+          "status": "approximate",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Rua Palmira D'Oeste 4, Jacana, Guarulhos - Sudeste, 07083-340, Brasil",
+          "latitude": -23.435127,
+          "longitude": -46.548582,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.45102040816326533,
+            "confidence_street_level": 1,
+            "confidence_building_level": 0.65,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Palmira D'Oeste",
+            "number": "4",
+            "city": "Guarulhos",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "precision": "street",
+          "status": "approximate",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Rua Palmira D'Oeste 10, Jacana, Guarulhos - Sudeste, 07083-340, Brasil",
+          "latitude": -23.435155,
+          "longitude": -46.548632,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.45102040816326533,
+            "confidence_street_level": 1,
+            "confidence_building_level": 0.65,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Palmira D'Oeste",
+            "number": "10",
+            "city": "Guarulhos",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "precision": "street",
+          "status": "approximate",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Rua Palmira D'Oeste 16, Jacana, Guarulhos - Sudeste, 07083-340, Brasil",
+          "latitude": -23.435167,
+          "longitude": -46.548674,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.3784786641929499,
+            "confidence_street_level": 1,
+            "confidence_building_level": 0.5454545454545454,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Rua Palmira D'Oeste",
+            "number": "16",
+            "city": "Guarulhos",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "precision": "street",
+          "status": "approximate",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        }
+      ],
+      "selected": null,
+      "selection_required": true,
+      "provider": null,
+      "status": "approximate",
+      "precision": "street",
+      "approximate": true,
+      "original_address": "Rua Palmira D'Oeste, 5 - Jardim Betel, Guarulhos - SP",
+      "manual_confirmed": false,
+      "verified_at": 1794233737.3669915,
+      "errors": [],
+      "attribution": "Geoapify | © OpenStreetMap contributors",
+      "schema_version": 2
+    },
+    "policy": {
+      "require_neighborhood_match": true,
+      "confidence": 0.95,
+      "street_confidence": 0.95,
+      "building_confidence": 0.95,
+      "conflict_meters": 200
+    }
+  },
+  {
+    "id": 81,
+    "address": "Avenida Josino Vieira de Goes, 275 - Jardim Joamar, Guarulhos - SP",
+    "queried_at": 1794233589.0560546,
+    "providers": [
+      {
+        "candidates": [],
+        "selection_required": true,
+        "provider": "nominatim",
+        "attribution": "OpenStreetMap contributors"
+      },
+      {
+        "provider": "geoapify",
+        "candidates": [
+          {
+            "address": "Avenida Josino Vieira De Goes 1307, Jacana, São Paulo - Sudeste, 02319-000, Brasil",
+            "latitude": -23.444731,
+            "longitude": -46.590351,
+            "provider": "geoapify",
+            "result_type": "building",
+            "rank": {
+              "confidence": 0.027814717330686748,
+              "confidence_street_level": 0.44987281943545526,
+              "confidence_building_level": 0.002615539647880554,
+              "match_type": "full_match"
+            },
+            "components": {
+              "street": "Avenida Josino Vieira De Goes",
+              "number": "1307",
+              "city": "São Paulo",
+              "neighborhood": "Jacana",
+              "country_code": "br"
+            },
+            "street_found": true,
+            "house_number_found": true,
+            "datasource": {
+              "sourcename": "openaddresses",
+              "attribution": "© OpenAddresses contributors",
+              "license": "BSD-3-Clause License"
+            },
+            "attribution": "Geoapify | © OpenStreetMap contributors"
+          },
+          {
+            "address": "Avenida Josino Vieira De Goes 1301, Jacana, São Paulo - Sudeste, 02319-000, Brasil",
+            "latitude": -23.444729,
+            "longitude": -46.590378,
+            "provider": "geoapify",
+            "result_type": "building",
+            "rank": {
+              "confidence": 0.027813377277464194,
+              "confidence_street_level": 0.44985114553116,
+              "confidence_building_level": 0.0026307084533985963,
+              "match_type": "full_match"
+            },
+            "components": {
+              "street": "Avenida Josino Vieira De Goes",
+              "number": "1301",
+              "city": "São Paulo",
+              "neighborhood": "Jacana",
+              "country_code": "br"
+            },
+            "street_found": true,
+            "house_number_found": true,
+            "datasource": {
+              "sourcename": "openaddresses",
+              "attribution": "© OpenAddresses contributors",
+              "license": "BSD-3-Clause License"
+            },
+            "attribution": "Geoapify | © OpenStreetMap contributors"
+          },
+          {
+            "address": "Avenida Josino Vieira De Goes 1215, Jacana, São Paulo - Sudeste, 02319-000, Brasil",
+            "latitude": -23.444977,
+            "longitude": -46.590374,
+            "provider": "geoapify",
+            "result_type": "building",
+            "rank": {
+              "confidence": 0.02781872292298485,
+              "confidence_street_level": 0.4499376055369723,
+              "confidence_building_level": 0.0028719421630019506,
+              "match_type": "full_match"
+            },
+            "components": {
+              "street": "Avenida Josino Vieira De Goes",
+              "number": "1215",
+              "city": "São Paulo",
+              "neighborhood": "Jacana",
+              "country_code": "br"
+            },
+            "street_found": true,
+            "house_number_found": true,
+            "datasource": {
+              "sourcename": "openaddresses",
+              "attribution": "© OpenAddresses contributors",
+              "license": "BSD-3-Clause License"
+            },
+            "attribution": "Geoapify | © OpenStreetMap contributors"
+          },
+          {
+            "address": "Guarulhos, SP, Brasil",
+            "latitude": -23.4675941,
+            "longitude": -46.5277704,
+            "provider": "geoapify",
+            "result_type": "city",
+            "rank": {
+              "confidence": 0.043964620187304904,
+              "confidence_street_level": null,
+              "confidence_building_level": null,
+              "match_type": "full_match"
+            },
+            "components": {
+              "street": "",
+              "number": "",
+              "city": "Guarulhos",
+              "neighborhood": "",
+              "country_code": "br"
+            },
+            "street_found": false,
+            "house_number_found": false,
+            "datasource": {
+              "sourcename": "openstreetmap",
+              "attribution": "© OpenStreetMap contributors",
+              "license": "Open Database License",
+              "url": "https://www.openstreetmap.org/copyright"
+            },
+            "attribution": "Geoapify | © OpenStreetMap contributors"
+          },
+          {
+            "address": "Avenida Josino Vieira de Goes 275, Jacana, São Paulo - Sudeste, 02319-010, Brasil",
+            "latitude": -23.450899,
+            "longitude": -46.597046,
+            "provider": "geoapify",
+            "result_type": "building",
+            "rank": {
+              "confidence": 0.055184420130163454,
+              "confidence_street_level": 0.44627400627001756,
+              "confidence_building_level": 0.44627400627001756,
+              "match_type": "full_match"
+            },
+            "components": {
+              "street": "Avenida Josino Vieira de Goes",
+              "number": "275",
+              "city": "São Paulo",
+              "neighborhood": "Jacana",
+              "country_code": "br"
+            },
+            "street_found": true,
+            "house_number_found": true,
+            "datasource": {
+              "sourcename": "openstreetmap",
+              "attribution": "© OpenStreetMap contributors",
+              "license": "Open Database License",
+              "url": "https://www.openstreetmap.org/copyright"
+            },
+            "attribution": "Geoapify | © OpenStreetMap contributors"
+          }
+        ]
+      }
+    ],
+    "decision": {
+      "candidates": [
+        {
+          "address": "Avenida Josino Vieira De Goes 1307, Jacana, São Paulo - Sudeste, 02319-000, Brasil",
+          "latitude": -23.444731,
+          "longitude": -46.590351,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.027814717330686748,
+            "confidence_street_level": 0.44987281943545526,
+            "confidence_building_level": 0.002615539647880554,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Avenida Josino Vieira De Goes",
+            "number": "1307",
+            "city": "São Paulo",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Avenida Josino Vieira De Goes 1301, Jacana, São Paulo - Sudeste, 02319-000, Brasil",
+          "latitude": -23.444729,
+          "longitude": -46.590378,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.027813377277464194,
+            "confidence_street_level": 0.44985114553116,
+            "confidence_building_level": 0.0026307084533985963,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Avenida Josino Vieira De Goes",
+            "number": "1301",
+            "city": "São Paulo",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Avenida Josino Vieira De Goes 1215, Jacana, São Paulo - Sudeste, 02319-000, Brasil",
+          "latitude": -23.444977,
+          "longitude": -46.590374,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.02781872292298485,
+            "confidence_street_level": 0.4499376055369723,
+            "confidence_building_level": 0.0028719421630019506,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Avenida Josino Vieira De Goes",
+            "number": "1215",
+            "city": "São Paulo",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Guarulhos, SP, Brasil",
+          "latitude": -23.4675941,
+          "longitude": -46.5277704,
+          "provider": "geoapify",
+          "result_type": "city",
+          "rank": {
+            "confidence": 0.043964620187304904,
+            "confidence_street_level": null,
+            "confidence_building_level": null,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "",
+            "number": "",
+            "city": "Guarulhos",
+            "neighborhood": "",
+            "country_code": "br"
+          },
+          "street_found": false,
+          "house_number_found": false,
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Avenida Josino Vieira de Goes 275, Jacana, São Paulo - Sudeste, 02319-010, Brasil",
+          "latitude": -23.450899,
+          "longitude": -46.597046,
+          "provider": "geoapify",
+          "result_type": "building",
+          "rank": {
+            "confidence": 0.055184420130163454,
+            "confidence_street_level": 0.44627400627001756,
+            "confidence_building_level": 0.44627400627001756,
+            "match_type": "full_match"
+          },
+          "components": {
+            "street": "Avenida Josino Vieira de Goes",
+            "number": "275",
+            "city": "São Paulo",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        }
+      ],
+      "selected": null,
+      "selection_required": true,
+      "provider": null,
+      "status": "needs_confirmation",
+      "precision": "unverified",
+      "approximate": true,
+      "original_address": "Avenida Josino Vieira de Goes, 275 - Jardim Joamar, Guarulhos - SP",
+      "manual_confirmed": false,
+      "verified_at": 1794233737.3679898,
+      "errors": [],
+      "attribution": "Geoapify | © OpenStreetMap contributors",
+      "schema_version": 2
+    },
+    "policy": {
+      "require_neighborhood_match": true,
+      "confidence": 0.95,
+      "street_confidence": 0.95,
+      "building_confidence": 0.95,
+      "conflict_meters": 200
+    }
+  }
+]

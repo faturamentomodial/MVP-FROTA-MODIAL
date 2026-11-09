@@ -1,6 +1,7 @@
-import { Pencil, Plus, Power, Search, Trash2 } from 'lucide-react'
+import { MapPin, Pencil, Plus, Power, Search, Trash2 } from 'lucide-react'
 import { useEffect, useState, type FormEvent } from 'react'
 import { Alert, Button, Empty, Modal, StatusBadge } from '../../components/UI'
+import { AddressPicker } from '../../components/AddressPicker'
 import { api } from '../../services/api'
 import type { RouteTemplate } from '../../types/routePlans'
 
@@ -10,6 +11,7 @@ type Pickup = { route_template_id: number | null; tipo: PickupType | null; id: n
 const empty = { route_template_id: '', tipo: '' as PickupType | '', nome: '', telefone: '', endereco: '' }
 
 export function PickupsPage() {
+  const [correcting, setCorrecting] = useState<Pickup | null>(null)
   const [items, setItems] = useState<Pickup[]>([])
   const [routes, setRoutes] = useState<RouteTemplate[]>([])
   const [routesLoading, setRoutesLoading] = useState(true)
@@ -100,8 +102,11 @@ export function PickupsPage() {
     <section className="panel manager-panel" aria-labelledby="pickups-title">
       <div className="manager-heading"><div><h2 id="pickups-title">Locais de coleta</h2><p>Consulte e mantenha os dados dos locais de coleta.</p></div><span className="manager-count">{items.filter(item => item.ativo).length} ativos / {items.length} cadastrados</span></div>
       <label className="manager-search"><Search size={18}/><span className="sr-only">Buscar por nome, telefone ou endereço</span><input type="search" placeholder="Buscar por nome, telefone ou endereço" value={search} onChange={e => setSearch(e.target.value)}/></label>
-      {loading ? <p className="loading-page" role="status">Carregando coletas…</p> : visible.length ? <div className="table-wrap"><table><thead><tr><th>Nome</th><th>Tipo</th><th>Telefone</th><th>Endereço</th><th>Rota estabelecida</th><th>Status</th><th aria-label="Ações"/></tr></thead><tbody>{visible.map(item => <tr key={item.id}><td><strong>{item.nome}</strong></td><td>{item.tipo ? typeLabels[item.tipo] : 'Não informado'}</td><td>{item.telefone}</td><td style={{ whiteSpace: 'normal', overflowWrap: 'anywhere' }}>{item.endereco}</td><td>{item.route_template_id ? routes.find(route => route.id === item.route_template_id)?.name || 'Rota indisponível' : 'Sem vínculo'}</td><td><StatusBadge value={item.ativo ? 'ATIVO' : 'INATIVO'}/></td><td className="row-actions"><button onClick={() => show(item)} aria-label={`Editar ${item.nome}`} title="Editar coleta"><Pencil/></button><button onClick={() => ask(item, 'status')} aria-label={`${item.ativo ? 'Desativar' : 'Ativar'} ${item.nome}`} title={item.ativo ? 'Desativar coleta' : 'Ativar coleta'}><Power/></button><button onClick={() => ask(item, 'delete')} aria-label={`Excluir ${item.nome}`} title="Excluir coleta"><Trash2/></button></td></tr>)}</tbody></table></div> : <Empty title={search ? 'Nenhuma coleta encontrada' : 'Nenhuma coleta cadastrada'} description={search ? 'Tente outro nome, telefone ou endereço.' : 'Cadastre o primeiro local de coleta.'}/>}
+      {loading ? <p className="loading-page" role="status">Carregando coletas…</p> : visible.length ? <div className="table-wrap"><table><thead><tr><th>Nome</th><th>Tipo</th><th>Telefone</th><th>Endereço</th><th>Rota estabelecida</th><th>Status</th><th aria-label="Ações"/></tr></thead><tbody>{visible.map(item => <tr key={item.id}><td><strong>{item.nome}</strong></td><td>{item.tipo ? typeLabels[item.tipo] : 'Não informado'}</td><td>{item.telefone}</td><td style={{ whiteSpace: 'normal', overflowWrap: 'anywhere' }}>{item.endereco}</td><td>{item.route_template_id ? routes.find(route => route.id === item.route_template_id)?.name || 'Rota indisponível' : 'Sem vínculo'}</td><td><StatusBadge value={item.ativo ? 'ATIVO' : 'INATIVO'}/></td><td className="row-actions"><button onClick={() => setCorrecting(item)} aria-label={`Corrigir localização de ${item.nome}`} title="Corrigir localização"><MapPin/></button><button onClick={() => show(item)} aria-label={`Editar ${item.nome}`} title="Editar coleta"><Pencil/></button><button onClick={() => ask(item, 'status')} aria-label={`${item.ativo ? 'Desativar' : 'Ativar'} ${item.nome}`} title={item.ativo ? 'Desativar coleta' : 'Ativar coleta'}><Power/></button><button onClick={() => ask(item, 'delete')} aria-label={`Excluir ${item.nome}`} title="Excluir coleta"><Trash2/></button></td></tr>)}</tbody></table></div> : <Empty title={search ? 'Nenhuma coleta encontrada' : 'Nenhuma coleta cadastrada'} description={search ? 'Tente outro nome, telefone ou endereço.' : 'Cadastre o primeiro local de coleta.'}/>}
     </section>
+    <Modal open={!!correcting} title="Corrigir localização da coleta" onClose={() => setCorrecting(null)}>
+      {correcting && <AddressPicker key={correcting.id} label={correcting.nome} initialAddress={correcting.endereco} onSelect={() => { setSuccess('Localização salva. Disponível para futuras roteirizações.'); void load() }} />}
+    </Modal>
     <Modal open={open} title={editing ? 'Editar coleta' : 'Nova coleta'} onClose={close}>
       {error && <Alert>{error}</Alert>}
       <form className="modal-form" onSubmit={save}>

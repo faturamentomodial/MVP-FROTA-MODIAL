@@ -115,7 +115,18 @@ def geocoding_address_variants(address):
     street_only = re.sub(r',\s*(?:(?:n[º°o]?\.?|numero)\s*)?\d+[A-Za-z]?(?:-[A-Za-z])?(?=\s*(?:,|$))', '', clean, flags=re.IGNORECASE)
     street_only = re.sub(r'^((?:\S+\s+)+\S*[^\W\d_])\s+\d+[A-Za-z]?(?=,|$)', r'\1', street_only)
     without_type = re.sub(r'^(?:Rua|Avenida|Travessa|Praca|Praça|Estrada|Rodovia)\s+', '', street_only, flags=re.IGNORECASE)
-    return list(dict.fromkeys(q for q in (normalized, clean, street_only, without_type) if len(q) >= 5))
+    # A neighborhood or stale postcode can prevent a valid street from matching.
+    # Keep the explicit municipality and state; never fall back to a city alone.
+    locality = re.search(r',\s*([^,]+),\s*([A-Z]{2})(?:\s*,|\s*$)', clean)
+    simplified = []
+    if locality:
+        street = clean.split(',')[0].strip()
+        number = re.match(r'^\s*(\d+[A-Za-z]?)\b', clean.split(',')[1]) if ',' in clean else None
+        city_state = f'{locality[1].strip()}, {locality[2]}'
+        if number:
+            simplified.append(f'{street}, {number[1]}, {city_state}')
+        simplified.append(f'{street}, {city_state}')
+    return list(dict.fromkeys(q for q in (normalized, clean, street_only, without_type, *simplified) if len(q) >= 5))
 
 
 def nominatim_geocode(address):
@@ -143,11 +154,17 @@ def _nominatim_geocode(address, base, cache_period):
                 raise ValueError()
             details = row.get('address', {})
             candidates.append({'address': row['display_name'], 'latitude': lat, 'longitude': lon,
+                               'components': {'street': details.get('road', ''),
+                                              'city': details.get('city') or details.get('town') or details.get('municipality', ''),
+                                              'number': details.get('house_number', ''),
+                                              'neighborhood': details.get('suburb') or details.get('neighbourhood', ''),
+                                              'country_code': details.get('country_code', '')},
+                               'result_type': row.get('addresstype', row.get('type', '')),
                                'house_number_found': bool(details.get('house_number')),
                                'street_found': bool(details.get('road') or row.get('class') == 'highway' or row.get('category') == 'highway')})
         return {'candidates': candidates, 'selection_required': True, 'provider': 'nominatim',
                 'attribution': 'OpenStreetMap contributors'}
-    except (KeyError, TypeError, ValueError) as exc:
+    except (KeyError, TypeError, ValueError, AttributeError) as exc:
         raise HTTPException(503, 'Resposta de geocodifica\u00e7\u00e3o Nominatim inv\u00e1lida.') from exc
 
 

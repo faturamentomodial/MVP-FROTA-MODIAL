@@ -3,6 +3,10 @@ import os
 os.environ["DATABASE_URL"] = "sqlite+pysqlite:///./test_fleet.db"
 os.environ["SECRET_KEY"] = "test-secret-key-with-more-than-thirty-two-characters"
 os.environ["ENVIRONMENT"] = "test"
+# Never inherit live provider credentials from a developer's backend/.env.
+os.environ["GEOAPIFY_API_KEY"] = ""
+os.environ["POSITRON_LOGIN"] = ""
+os.environ["POSITRON_PASSWORD"] = ""
 
 import pytest
 from fastapi.testclient import TestClient

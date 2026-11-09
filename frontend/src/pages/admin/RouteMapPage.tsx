@@ -7,7 +7,7 @@ import { useAuth } from '../../hooks/useAuth'
 import { canAccess } from '../../utils/access'
 import type { Plan, Point } from '../../types/routePlans'
 
-type Pickup = { id: number; nome: string; endereco: string; ativo: boolean; tipo: PickupMarker['tipo'] }
+type Pickup = { id: number; nome: string; endereco: string; ativo: boolean; tipo: PickupMarker['tipo']; location?: Point | null }
 
 export function RouteMapPage() {
   const { user } = useAuth()
@@ -33,21 +33,8 @@ export function RouteMapPage() {
     setLocationProgress({ completed: 0, total: 0 })
     async function loadPickups() {
       const items = await api<Pickup[]>('/pickups', { signal })
-      let cacheKey = 'fleet_pickup_locations_v1:'
-      try { cacheKey += localStorage.getItem('fleet_user') || '' } catch { /* Storage may be disabled. */ }
-      const cache = new Map<string, Point | null>()
-      try {
-        const stored: unknown = JSON.parse(localStorage.getItem(cacheKey) || '[]')
-        if (Array.isArray(stored)) for (const entry of stored) {
-          if (!Array.isArray(entry) || typeof entry[0] !== 'string') continue
-          const point = entry[1]
-          if (point === null || (point && typeof point.address === 'string' && Number.isFinite(point.latitude) && Math.abs(point.latitude) <= 90 && Number.isFinite(point.longitude) && Math.abs(point.longitude) <= 180)) {
-            if (point !== null) cache.set(entry[0], point)
-          }
-        }
-      } catch { /* A missing or invalid browser cache can be rebuilt. */ }
-      const addresses = new Set(items.map(item => item.endereco))
-      for (const address of cache.keys()) if (!addresses.has(address)) cache.delete(address)
+      const cache = new Map<string, Point>()
+      for (const item of items) if (item.location) cache.set(item.endereco, item.location)
       const markers: PickupMarker[] = []
       const missing: string[] = []
       const failures: string[] = []
@@ -60,18 +47,6 @@ export function RouteMapPage() {
       for (const [index, item] of orderedItems.entries()) {
         if (signal.aborted) return
         try {
-          if (!cache.has(item.endereco)) {
-            // Space requests to respect the shared geocoding provider's rate limit.
-            await new Promise<void>(resolve => {
-              const timer = window.setTimeout(done, 1100)
-              function done() { window.clearTimeout(timer); signal.removeEventListener('abort', done); resolve() }
-              signal.addEventListener('abort', done, { once: true })
-            })
-            if (signal.aborted) return
-            const result = await api<{ candidates: Point[] }>(`/route-plans/geocode?address=${encodeURIComponent(item.endereco)}`, { signal })
-            cache.set(item.endereco, result.candidates[0] ?? null)
-            try { localStorage.setItem(cacheKey, JSON.stringify([...cache])) } catch { /* Keep the map usable if browser storage is full or disabled. */ }
-          }
           const point = cache.get(item.endereco)
           if (signal.aborted) return
           if (point) markers.push({ ...point, id: item.id, nome: item.nome, tipo: item.tipo, address: item.endereco })
@@ -127,11 +102,11 @@ export function RouteMapPage() {
     {error && <Alert>{error}</Alert>}
     {loading ? <p role="status">Carregando rotas...</p> : !error && <>
         <div className="route-map-toolbar"><label>Rota<select value={selected ? `${templateId?'rota':'planejamento'}:${selected.id}` : ''} onChange={e => {const [kind,id]=e.target.value.split(':');setParams(id?{[kind]:id}:{})}}><option value="">Somente locais de coleta</option>{templates.map(plan => <option key={`rota:${plan.id}`} value={`rota:${plan.id}`}>{plan.name} - {plan.status}</option>)}{plans.map(plan => <option key={plan.id} value={`planejamento:${plan.id}`}>{plan.name} · {plan.status}</option>)}</select></label>{selected && <p>{selected.addresses?.length||0} paradas por endereço - {selected.invoices.length} notas · {selected.result ? `${(selected.result.distance / 1000).toFixed(1)} km · ${Math.round(selected.result.duration / 60)} min estimados` : 'Percurso ainda não calculado'}</p>}</div>
-        <section className="route-map-view" aria-label="Mapa das entregas"><RouteMap plan={selected} pickups={pickups}/>{!selected && <p className="route-map-notice">Os locais de coleta ativos aparecem em azul (C), com localização aproximada pelo endereço. Selecione um planejamento para visualizar também as entregas.</p>}{selected && !selected.origin && selected.invoices.length === 0 && <p className="route-map-notice">Adicione a origem e as notas deste planejamento em Rotas.</p>}{selected && !selected.result && selected.invoices.length > 0 && <p className="route-map-notice">Os marcadores mostram os destinos cadastrados. Calcule e salve o percurso em Rotas para visualizar o trajeto.</p>}{selected?.result?.warning && <Alert tone="info">{selected.result.warning}</Alert>}</section>
+        <section className="route-map-view" aria-label="Mapa das entregas"><RouteMap plan={selected} pickups={pickups}/>{!selected && <p className="route-map-notice">Os locais de coleta ativos aparecem em azul (C), com as localizações salvas. Confira a precisão de cada marcador. Selecione um planejamento para visualizar também as entregas.</p>}{selected && !selected.origin && selected.invoices.length === 0 && <p className="route-map-notice">Adicione a origem e as notas deste planejamento em Rotas.</p>}{selected && !selected.result && selected.invoices.length > 0 && <p className="route-map-notice">Os marcadores mostram os destinos cadastrados. Calcule e salve o percurso em Rotas para visualizar o trajeto.</p>}{selected?.result?.warning && <Alert tone="info">{selected.result.warning}</Alert>}</section>
       {locating && <p role="status">Localizando coletas: {locationProgress.completed} de {locationProgress.total} consultadas - {pickups.length} no mapa...</p>}
-      {failed.length > 0 && <Alert tone="info">Consulta pendente para: {failed.join(', ')}. Use Atualizar mapa para tentar novamente.</Alert>}
+      {failed.length > 0 && <Alert tone="info">Consulta pendente para: {failed.join(', ')}. Confira a localização em Coletas.</Alert>}
       {pickupError && <Alert>Não foi possível localizar todas as coletas: {pickupError}</Alert>}
-      {unlocated.length > 0 && <Alert tone="info">Confira os endereços das coletas sem localização: {unlocated.join(', ')}.</Alert>}
+      {unlocated.length > 0 && <Alert tone="info">Confira os endereços das coletas sem localização: {unlocated.join(', ')}. Use Corrigir localização em Coletas.</Alert>}
       {!locating && pickups.length === 0 && !pickupError && unlocated.length === 0 && <p>Nenhuma coleta ativa cadastrada. {user && canAccess(user.role, '/admin/coletas') && <Link to="/admin/coletas">Cadastrar coleta</Link>}</p>}
 
     </>}

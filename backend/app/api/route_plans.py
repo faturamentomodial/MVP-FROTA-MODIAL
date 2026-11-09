@@ -10,6 +10,14 @@ from app.schemas.route_plans import PlanInput, CalculateInput, RevisionInput
 from app.services import route_planning as provider
 from app.services import sankhya
 from app.services.audit import audit
+from pydantic import BaseModel, Field, ConfigDict
+
+
+class LocationConfirmation(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True, extra='forbid')
+    address: str = Field(min_length=5, max_length=500)
+    latitude: float = Field(ge=-90, le=90, allow_inf_nan=False)
+    longitude: float = Field(ge=-180, le=180, allow_inf_nan=False)
 
 router = APIRouter(prefix='/route-plans', tags=['Planejamento de rotas'], dependencies=[Depends(require_operations)])
 WARNING = 'OSRM driving não considera altura, peso, eixos ou restrições legais de caminhões. Revisão humana obrigatória antes da operação.'
@@ -63,13 +71,24 @@ def providers():
 
 
 @router.get('/geocode')
-def geocode(address: str = Query(min_length=5, max_length=500)):
-    return provider.geocode(address)
+def geocode(address: str = Query(min_length=5, max_length=500), db: Session = Depends(get_db)):
+    from app.services.geocoding_cache import geocode as cached_geocode
+    return cached_geocode(db, address)
 
 
 @router.get('/invoice-lookup', dependencies=[Depends(require_admin)])
 def invoice_lookup(number: str = Query(pattern=r"^[0-9]{1,18}$")):
     return {'invoices': sankhya.lookup_invoice(number)}
+
+
+@router.post('/geocode/confirm', dependencies=[Depends(require_admin)])
+def confirm_location(payload: LocationConfirmation, db: Session = Depends(get_db), user=Depends(require_admin)):
+    from app.services.geocoding_cache import confirm
+    result = confirm(db, payload.address, payload.latitude, payload.longitude, user.id)
+    audit(db, user, 'CONFIRMAR_LOCALIZACAO', 'GEOCODING', None,
+          {'address': payload.address, 'latitude': payload.latitude, 'longitude': payload.longitude})
+    db.commit()
+    return result
 
 
 @router.post('', status_code=201, dependencies=[Depends(require_admin)])
