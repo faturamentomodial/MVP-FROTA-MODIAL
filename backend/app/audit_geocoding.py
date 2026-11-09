@@ -32,26 +32,22 @@ def main():
                 continue
             address = row['Endereco cadastrado']
             results, errors = [], []
-            for provider in (geo.settings.routes_geocoder_provider, 'geoapify'):
+            for provider in (geo.settings.routes_geocoder_provider,):
                 try:
-                    geo.reserve(db, 'provider:' + provider, max(1.1, geo.settings.routes_min_interval_seconds,
-                                geo.settings.geoapify_min_interval_seconds))
-                    result = geo.geoapify(address) if provider == 'geoapify' else geo.route_planning._geocode_exact(address)
+                    geo.reserve(db, 'provider:' + provider, max(1.1, geo.settings.routes_min_interval_seconds))
+                    result = geo.route_planning._geocode_exact(address)
                     results.append({**result, 'provider': provider})
                 except HTTPException as exc:
                     errors.append({'provider': provider, 'status': exc.status_code})
             entry = {'id': int(row['ID']), 'address': address, 'queried_at': time.time(),
                      'providers': results, 'decision': geo.select_result(address, results, errors),
                      'policy': {'require_neighborhood_match': geo.settings.geocoding_require_neighborhood_match,
-                                'confidence': geo.settings.geocoding_min_confidence,
-                                'street_confidence': geo.settings.geocoding_min_street_confidence,
-                                'building_confidence': geo.settings.geocoding_min_building_confidence,
                                 'conflict_meters': geo.settings.geocoding_conflict_meters}}
             report.append(entry)
             output.parent.mkdir(parents=True, exist_ok=True)
             output.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
             print(f"ID {row['ID']}: {entry['decision']['status']}", flush=True)
-            time.sleep(max(1.2, geo.settings.routes_min_interval_seconds, geo.settings.geoapify_min_interval_seconds))
+            time.sleep(max(1.2, geo.settings.routes_min_interval_seconds))
 
 
 if __name__ == '__main__':

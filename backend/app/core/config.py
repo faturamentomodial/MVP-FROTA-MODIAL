@@ -30,14 +30,9 @@ class Settings(BaseSettings):
     routes_router_url: str = ''
     routes_timeout_seconds: float = Field(default=15, gt=0, le=60)
     routes_min_interval_seconds: float = Field(default=1, ge=0, le=60)
-    geoapify_api_key: SecretStr = SecretStr("")
-    geocoding_min_confidence: float = Field(default=.95, ge=0, le=1)
-    geocoding_min_street_confidence: float = Field(default=.95, ge=0, le=1)
-    geocoding_min_building_confidence: float = Field(default=.95, ge=0, le=1)
     geocoding_conflict_meters: float = Field(default=200, gt=0)
     geocoding_cache_seconds: int = Field(default=2592000, gt=0)
     geocoding_failure_cache_seconds: int = Field(default=300, gt=0)
-    geoapify_min_interval_seconds: float = Field(default=1, ge=0)
     geocoding_primary_enabled: bool = True
     geocoding_require_neighborhood_match: bool = True
     sankhya_base_url: str = "https://api.sankhya.com.br"

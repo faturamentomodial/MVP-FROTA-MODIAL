@@ -1,3 +1,5 @@
+> Atualizacao 2026-11-09: integracao Geoapify removida. Novas consultas usam somente ROUTES_GEOCODER_PROVIDER (Nominatim ou Photon); GEOAPIFY_API_KEY e GEOAPIFY_MIN_INTERVAL_SECONDS nao sao mais utilizados. Reinicie o backend para aplicar. Dados salvos e atribuicoes de resultados historicos foram preservados. O conteudo abaixo registra a implementacao anterior.
+
 # Geocodificação Nominatim + Geoapify
 
 Implementação na branch `feat/geocoding-dual-provider`, em 09/11/2026. Sem deploy, conexão ao banco configurado como produção ou execução de migrations nesse banco. Alterações locais anteriores foram preservadas.

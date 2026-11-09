@@ -24,7 +24,7 @@ export function AddressPicker({label,onSelect,initialAddress=''}:{label:string;o
     <Button type="button" variant="secondary" disabled={busy||query.trim().length<5} onClick={()=>setCorrecting(v=>!v)}>Corrigir localização</Button>
     {message&&<Alert tone="info">{message}</Alert>}
     {suggestions.length>0&&<ul>{suggestions.map((p,i)=><li key={i}>{p.provider}: {p.address} — {p.precision==='building'?'Número localizado':p.precision==='street'?'Rua aproximada':'Não verificado'} ({p.latitude.toFixed(5)}, {p.longitude.toFixed(5)}) {p.datasource?.attribution} {p.datasource?.license}</li>)}</ul>}
-    <small>Dados: <a href="https://www.geoapify.com/">Geoapify</a> | © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors (ODbL)</a>.</small>
+    <small>Dados: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors (ODbL)</a>.</small>
     {correcting&&<LocationEditor address={query} candidates={suggestions} currentPoint={result.selected} onConfirmed={p=>{onSelect(p);setCorrecting(false);setResult({...result,selected:p});setMessage('Localização confirmada e salva para futuras roteirizações.')}}/>}
   </div>
 }

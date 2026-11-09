@@ -51,7 +51,7 @@ def confirm(db, address, latitude, longitude, user_id):
                   provider='manual', precision='confirmed', status='confirmed', manual_confirmed=True,
                   confirmed_by=user_id, verified_at=time.time(), selection_required=False,
                   approximate=False, schema_version=2,
-                  attribution='Geoapify | © OpenStreetMap contributors')
+                  attribution='© OpenStreetMap contributors')
     row = db.get(GeocodedAddress, address)
     if row:
         result['suggestions'] = row.result.get('suggestions', row.result.get('candidates', []))

@@ -25,7 +25,7 @@ export function LocationEditor({ address, candidates, currentPoint, onConfirmed 
     const center = point || candidates[0]
     const map = L.map(container.current).setView(center ? [center.latitude, center.longitude] : [-14.2, -51.9], center ? 17 : 4)
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> | <a href="https://www.geoapify.com/">Geoapify</a>', maxZoom: 19,
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>', maxZoom: 19,
     }).addTo(map)
     const icon = (text: string) => L.divIcon({ className: 'tracking-marker', html: `<span>${text}</span>`, iconSize: [32, 32] })
     candidates.forEach((p, i) => {
