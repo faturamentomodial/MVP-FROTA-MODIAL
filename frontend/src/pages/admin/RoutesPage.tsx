@@ -1,3 +1,4 @@
+import { routePoint } from '../../utils/routePoint'
 import { AddressPicker } from '../../components/AddressPicker'
 import { EstablishedRoutes } from './EstablishedRoutes'
 import { VehicleRestriction } from '../../components/VehicleRestriction'
@@ -23,7 +24,7 @@ export function LegacyRoutes(){
   useEffect(()=>{Promise.all([list(),api<Page<Driver>>('/drivers?page_size=100').then(r=>setDrivers(r.items.filter(d=>d.ativo))),api<Page<Vehicle>>('/vehicles?page_size=100').then(r=>setVehicles(r.items.filter(v=>v.ativo)))]).catch(e=>setError(e.message))},[])
   function change(p:Plan){setPlan({...p,result:null,stops:[]});setDirty(true)}
   async function run(action:()=>Promise<void>){if(busy)return;setBusy(true);setError('');try{await action()}catch(e){setError((e as Error).message)}finally{setBusy(false)}}
-  async function save(){const {name,vehicle_id,driver_id,profile,origin,invoices,objective,revision}=plan;const saved=await api<Plan>(plan.id?`/route-plans/${plan.id}`:'/route-plans',{method:plan.id?'PUT':'POST',body:JSON.stringify({name,vehicle_id,driver_id,profile,origin,invoices,objective,revision})});setPlan(saved);setDirty(false);await list();return saved}
+  async function save(){const {name,vehicle_id,driver_id,profile,origin,invoices,objective,revision}=plan;const saved=await api<Plan>(plan.id?`/route-plans/${plan.id}`:'/route-plans',{method:plan.id?'PUT':'POST',body:JSON.stringify({name,vehicle_id,driver_id,profile,origin:routePoint(origin),invoices:invoices.map(note=>({...note,destination:routePoint(note.destination)})),objective,revision})});setPlan(saved);setDirty(false);await list();return saved}
   async function calculate(optimize:boolean){const saved=dirty||!plan.id?await save():plan;setPlan(await api<Plan>(`/route-plans/${saved.id}/calculate`,{method:'POST',body:JSON.stringify({revision:saved.revision,optimize})}));await list()}
   function addNote(){if(!destination||!number.trim()||volumes<1)return;if(plan.invoices.some((n,i)=>n.number===number.trim()&&i!==editing)){setError('Número de nota duplicado');return}const note:Note={number:number.trim(),volumes,destination,source:imported?'SANKHYA':'MANUAL',external_id:imported?.external_id??null};change({...plan,invoices:editing===null?[...plan.invoices,note]:plan.invoices.map((n,i)=>i===editing?note:n)});setNumber('');resetInvoice();setVolumes(1);setDestination(null);setEditing(null)}
   async function deletePlan(item:Plan){

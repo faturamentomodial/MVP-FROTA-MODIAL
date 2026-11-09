@@ -1,3 +1,4 @@
+import { routePoint } from '../../utils/routePoint'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowDown, ArrowUp, CalendarDays, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
@@ -39,7 +40,7 @@ export function EstablishedRoutes() {
   function edit(item:RouteTemplate){setRoute(structuredClone(item));setMode(item.invoices.length?'invoices':'addresses');setDirty(false);resetStop();setView(null);window.setTimeout(()=>editor.current?.scrollIntoView({behavior:'smooth'}),0)}
   function change(patch:Partial<RouteTemplate>){if(route){setRoute({...route,...patch,result:null,stops:[]});setDirty(true)}}
   function resetStop(){setNumber('');setVolumes(1);setDestination(null);setMatches([]);setImported(null);setInfo('')}
-  async function save(){if(!route)throw new Error('Selecione uma rota');const {name,description,notes,active,origin,return_point,weekdays,addresses,invoices,profile,objective,revision}=route;const saved=await api<RouteTemplate>(route.id?`/route-templates/${route.id}`:'/route-templates',{method:route.id?'PUT':'POST',body:JSON.stringify({name,description,notes,active,origin,return_point,weekdays,addresses,invoices,profile,objective,revision})});setRoute(saved);setDirty(false);setRefresh(v=>v+1);return saved}
+  async function save(){if(!route)throw new Error('Selecione uma rota');const {name,description,notes,active,origin,return_point,weekdays,addresses,invoices,profile,objective,revision}=route;const saved=await api<RouteTemplate>(route.id?`/route-templates/${route.id}`:'/route-templates',{method:route.id?'PUT':'POST',body:JSON.stringify({name,description,notes,active,origin:routePoint(origin),return_point:routePoint(return_point),weekdays,addresses:addresses.map(point=>routePoint(point)),invoices:invoices.map(note=>({...note,destination:routePoint(note.destination)})),profile,objective,revision})});setRoute(saved);setDirty(false);setRefresh(v=>v+1);return saved}
   async function calculate(optimize:boolean){const saved=dirty||!route?.id?await save():route;const calculated=await api<RouteTemplate>(`/route-templates/${saved.id}/calculate`,{method:'POST',body:JSON.stringify({revision:saved.revision,optimize})});setRoute(calculated);setRefresh(v=>v+1)}
   async function deleteRoute(item:RouteTemplate){
     if(!window.confirm(`Excluir a rota "${item.name}"? Ela será removida do cadastro. Programações sem viagem iniciada serão apagadas definitivamente. Viagens já iniciadas serão mantidas.`))return

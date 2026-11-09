@@ -14,7 +14,7 @@ export function AddressPicker({label,onSelect,initialAddress=''}:{label:string;o
       const found=await api<GeocodingResult>(`/route-plans/geocode?address=${encodeURIComponent(query)}`)
       const point=found.selected || found.candidates.find(p => p.precision === 'building' || p.precision === 'street') || found.candidates.find(p => p.street_found)
       if(point){
-        onSelect({...point,address:query})
+        onSelect({address:query,latitude:point.latitude,longitude:point.longitude})
         setMessage(point.manual_confirmed || point.precision === 'building' ? 'Localização carregada.' : 'Localização carregada pela rua. O provedor não identificou o número do imóvel.')
       } else if(found.errors?.length){
         setMessage('O provedor está indisponível ou aguardando limite de uso. Tente novamente em instantes.')
