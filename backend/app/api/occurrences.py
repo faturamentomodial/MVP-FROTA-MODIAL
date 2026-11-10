@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -50,6 +50,7 @@ def create(payload: OccurrenceCreate, db: Session = Depends(get_db), user: User 
         tipo=payload.tipo,
         descricao=payload.descricao,
         local=payload.local,
+        **payload.model_dump(include={"maintenance_type", "maintenance_km", "maintenance_cost", "maintenance_responsible"}),
     )
     db.add(occurrence)
     db.flush()
@@ -124,8 +125,13 @@ def update(occurrence_id: int, payload: OccurrenceUpdate, db: Session = Depends(
     item = db.scalar(occurrence_query().where(Occurrence.id == occurrence_id))
     if not item:
         raise HTTPException(status_code=404, detail="Ocorrência não encontrada")
+    old_status = item.status
     for key, value in payload.model_dump(exclude_unset=True).items():
         setattr(item, key, value)
+    if item.status == OccurrenceStatus.RESOLVIDA and old_status != item.status:
+        item.maintenance_completed_at = datetime.now(UTC)
+    elif item.status != OccurrenceStatus.RESOLVIDA:
+        item.maintenance_completed_at = None
     audit(db, user, "ALTERAR_STATUS", "OCCURRENCE", item.id, {"status": item.status.value})
     db.commit()
     db.refresh(item)

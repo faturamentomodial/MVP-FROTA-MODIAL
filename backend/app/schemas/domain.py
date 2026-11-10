@@ -1,4 +1,5 @@
 from datetime import UTC, datetime
+from decimal import Decimal
 from typing import Literal
 from typing import Generic, TypeVar
 
@@ -323,7 +324,14 @@ class ChecklistOut(ORMModel):
     answers: list[ChecklistAnswerOut]
 
 
-class OccurrenceCreate(BaseModel):
+class MaintenanceFields(BaseModel):
+    maintenance_type: str | None = Field(default=None, pattern="^(PREVENTIVA|CORRETIVA|EMERGENCIAL)$")
+    maintenance_km: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    maintenance_cost: Decimal | None = Field(default=None, ge=0, max_digits=12, decimal_places=2)
+    maintenance_responsible: str | None = Field(default=None, max_length=255)
+
+
+class OccurrenceCreate(MaintenanceFields):
     model_config = ConfigDict(extra="forbid")
     trip_id: int | None = None
     vehicle_id: int | None = Field(default=None, gt=0)
@@ -332,17 +340,27 @@ class OccurrenceCreate(BaseModel):
     local: str | None = Field(default=None, max_length=255)
 
 
-class OccurrenceUpdate(BaseModel):
+class OccurrenceUpdate(MaintenanceFields):
+    model_config = ConfigDict(extra="forbid")
+
+    @field_validator("status")
+    @classmethod
+    def non_null_status(cls, value):
+        if value is None:
+            raise ValueError("Status não pode ser nulo")
+        return value
+
     status: OccurrenceStatus | None = None
     observacao_gestor: str | None = Field(default=None, max_length=4000)
 
 
-class OccurrenceOut(ORMModel):
+class OccurrenceOut(ORMModel, MaintenanceFields):
+    maintenance_completed_at: datetime | None = None
     invoice_id: int | None = None
     id: int
     trip_id: int | None
     driver_id: int
-    vehicle_id: int
+    vehicle_id: int | None
     tipo: OccurrenceType
     descricao: str
     data_hora: datetime

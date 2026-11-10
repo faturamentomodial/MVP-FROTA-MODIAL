@@ -1,4 +1,6 @@
 from datetime import UTC, datetime
+from decimal import Decimal
+from sqlalchemy import Numeric
 from typing import Any
 
 from sqlalchemy import Boolean, CheckConstraint, DateTime, Enum, ForeignKey, Float, Index, Integer, JSON, String, Text, UniqueConstraint, text
@@ -185,6 +187,12 @@ class Occurrence(TimestampMixin, Base):
     __tablename__ = "occurrences"
 
     __table_args__ = (UniqueConstraint("invoice_id", name="uq_occurrence_invoice"),)
+
+    maintenance_type: Mapped[str | None] = mapped_column(String(16), index=True)
+    maintenance_km: Mapped[float | None] = mapped_column(Float)
+    maintenance_cost: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
+    maintenance_responsible: Mapped[str | None] = mapped_column(String(255))
+    maintenance_completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     invoice_id: Mapped[int | None] = mapped_column(ForeignKey("trip_invoices.id", name="fk_occurrence_invoice"))
 

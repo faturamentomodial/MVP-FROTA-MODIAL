@@ -47,6 +47,7 @@ def trip_dict(trip: Trip) -> dict:
 
 def occurrence_dict(item: Occurrence) -> dict:
     return {
+        **{key: getattr(item, key) for key in ("maintenance_type", "maintenance_km", "maintenance_cost", "maintenance_responsible", "maintenance_completed_at")},
         "invoice_id": item.invoice_id,
         "id": item.id,
         "trip_id": item.trip_id,

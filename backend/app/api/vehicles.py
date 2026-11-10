@@ -1,3 +1,10 @@
+from datetime import UTC, datetime
+from typing import Literal
+from sqlalchemy import case, func
+from app.models import Occurrence
+from app.models.enums import OccurrenceStatus
+from app.api.helpers import occurrence_dict
+from app.api.occurrences import occurrence_query
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import or_, select
 from sqlalchemy.exc import IntegrityError
@@ -8,7 +15,7 @@ from app.core.database import get_db
 from app.models import User, Vehicle
 from app.models.enums import UserRole, VehicleStatus
 from app.repositories.pagination import paginate
-from app.schemas import ActiveUpdate, Page, VehicleCreate, VehicleOut, VehicleUpdate
+from app.schemas import OccurrenceOut, ActiveUpdate, Page, VehicleCreate, VehicleOut, VehicleUpdate
 from app.services.audit import audit
 
 
@@ -88,3 +95,42 @@ def update_vehicle(vehicle_id: int, payload: VehicleUpdate, db: Session = Depend
 def set_vehicle_status(vehicle_id: int, payload: ActiveUpdate, db: Session = Depends(get_db), user: User = Depends(require_admin)):
     return update_vehicle(vehicle_id, VehicleUpdate(ativo=payload.ativo), db, user)
 
+
+
+@router.get("/{vehicle_id}/maintenance")
+def vehicle_maintenance(
+    vehicle_id: int,
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    maintenance_type: Literal["PREVENTIVA", "CORRETIVA", "EMERGENCIAL"] | None = None,
+    status_filter: OccurrenceStatus | None = Query(None, alias="status"),
+    date_from: datetime | None = None,
+    date_to: datetime | None = None,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_admin),
+):
+    if not db.get(Vehicle, vehicle_id):
+        raise HTTPException(404, "Veículo não encontrado")
+    if date_from and date_to and date_from > date_to:
+        raise HTTPException(422, "Período inválido")
+    base = (Occurrence.vehicle_id == vehicle_id, Occurrence.maintenance_type.is_not(None))
+    summary = db.execute(select(
+        func.count(Occurrence.id),
+        func.sum(case((Occurrence.status.in_([OccurrenceStatus.ABERTA, OccurrenceStatus.EM_ANALISE]), 1), else_=0)),
+        func.max(case((Occurrence.status == OccurrenceStatus.RESOLVIDA, Occurrence.maintenance_completed_at))),
+        func.coalesce(func.sum(Occurrence.maintenance_cost), 0),
+    ).where(*base)).one()
+    stmt = occurrence_query().where(*base)
+    for condition in (
+        Occurrence.maintenance_type == maintenance_type if maintenance_type else None,
+        Occurrence.status == status_filter if status_filter else None,
+        Occurrence.data_hora >= date_from if date_from else None,
+        Occurrence.data_hora <= date_to if date_to else None,
+    ):
+        if condition is not None:
+            stmt = stmt.where(condition)
+    items, total, pages = paginate(db, stmt.order_by(Occurrence.data_hora.desc(), Occurrence.id.desc()), page, page_size)
+    return {"items": [OccurrenceOut.model_validate(occurrence_dict(item)).model_dump(mode="json") for item in items], "total": total,
+            "page": page, "page_size": page_size, "pages": pages,
+            "summary": {"total": summary[0], "pending": summary[1] or 0,
+                        "last_completed_at": summary[2].replace(tzinfo=UTC) if summary[2] and summary[2].tzinfo is None else summary[2], "cost": summary[3]}}
