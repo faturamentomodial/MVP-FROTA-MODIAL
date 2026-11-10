@@ -29,8 +29,11 @@ def planned(db: Session = Depends(get_db), user: User = Depends(require_driver))
         RoutePlan.data['trip_id'].as_integer().is_(None),
     ).order_by(RoutePlan.id))
     from app.services.route_scheduling import today
-    return [{'id': p.id, **p.data, 'vehicle_plate': db.get(Vehicle, p.data['vehicle_id']).placa} for p in plans
-            if not p.data.get('execution_date') or p.data['execution_date'] == today().isoformat()]
+    local_date = today().isoformat()
+    return [{'id': p.id, **p.data,
+             'can_start': not p.data.get('execution_date') or p.data['execution_date'] == local_date,
+             'vehicle_plate': db.get(Vehicle, p.data['vehicle_id']).placa} for p in plans
+            if not p.data.get('deleted')]
 
 
 def ensure_trip_access(trip: Trip, user: User, db: Session) -> None:

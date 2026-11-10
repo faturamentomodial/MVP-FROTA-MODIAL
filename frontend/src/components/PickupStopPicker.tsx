@@ -1,3 +1,4 @@
+import { useRealtimeEffect } from '../hooks/useRealtimeEffect'
 import { useEffect, useState } from 'react'
 import { Alert, Button } from './UI'
 import { api } from '../services/api'
@@ -16,18 +17,27 @@ export function PickupStopPicker({ onAdd, disabled }: { onAdd: (point: Point) =>
   const [error, setError] = useState('')
   const [refresh, setRefresh] = useState(0)
 
-  useEffect(() => {
+  useRealtimeEffect(['pickups'], () => {
     const controller = new AbortController()
     setLoading(true); setError('')
     api<Pickup[]>('/pickups', { signal: controller.signal })
-      .then(result => { setItems(result.filter(item => item.ativo)); setSelected(null); setCandidates([]) })
+      .then(result => {
+        if (controller.signal.aborted) return
+        const active = result.filter(item => item.ativo)
+        setItems(active)
+        setSelected(previous => {
+          if (!previous) return null
+          const next = active.find(item => item.id === previous.id) || null
+          return JSON.stringify(next) === JSON.stringify(previous) ? previous : next
+        })
+      })
       .catch(e => { if (!controller.signal.aborted) setError((e as Error).message) })
       .finally(() => { if (!controller.signal.aborted) setLoading(false) })
     return () => controller.abort()
   }, [refresh])
 
   useEffect(() => {
-    if (!selected) return
+    if (!selected) { setCandidates([]); setLocating(false); return }
     const controller = new AbortController()
     setLocating(true); setError(''); setCandidates([])
     api<{ candidates: Point[] }>(`/route-plans/geocode?address=${encodeURIComponent(selected.endereco)}`, { signal: controller.signal })

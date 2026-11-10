@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { useRealtimeEffect } from '../hooks/useRealtimeEffect'
+import { useRef, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { Alert, Button, StatusBadge } from '../components/UI'
 import { api } from '../services/api'
@@ -18,7 +19,7 @@ export function TasksPage({admin=false}:{admin?:boolean}) {
   const [busy,setBusy]=useState<number|null>(null)
   const [publishing,setPublishing]=useState(false)
   const refresh=useRef<()=>Promise<void>>(async()=>{})
-  useEffect(()=>{
+  useRealtimeEffect(['tasks'], ()=>{
     let alive=true, running=false
     const controller=new AbortController()
     async function load(){
@@ -36,8 +37,7 @@ export function TasksPage({admin=false}:{admin?:boolean}) {
       }catch(e){if(alive)setError((e as Error).message)}finally{running=false;if(alive)setLoading(false)}
     }
     setItems([]);setLoading(true);refresh.current=load;void load()
-    const timer=setInterval(()=>{if(!document.hidden)void load()},15000)
-    return()=>{alive=false;controller.abort();clearInterval(timer)}
+    return()=>{alive=false;controller.abort()}
   },[admin,section])
   async function publish(e:FormEvent){
     e.preventDefault();setPublishing(true);setError('');setSuccess('')

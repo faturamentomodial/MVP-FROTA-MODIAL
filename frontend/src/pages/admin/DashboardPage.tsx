@@ -1,5 +1,6 @@
+import { useRealtimeEffect } from '../../hooks/useRealtimeEffect'
 import { CalendarDays, CheckCircle2, ClipboardCheck, Gauge, Route, TriangleAlert, Truck } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Alert, StatusBadge } from '../../components/UI'
 import { api } from '../../services/api'
@@ -10,8 +11,8 @@ const periods={today:'Hoje',week:'Esta semana',month:'Este mês',30:'Últimos 30
 function dateFrom(period:string){const d=new Date();if(period==='today')d.setHours(0,0,0,0);else if(period==='week'){d.setDate(d.getDate()-d.getDay()+1);d.setHours(0,0,0,0)}else if(period==='month'){d.setDate(1);d.setHours(0,0,0,0)}else if(period==='30')d.setDate(d.getDate()-30);else return '';return d.toISOString()}
 
 export function DashboardPage(){const navigate=useNavigate();const[data,setData]=useState<Dashboard>();const[drivers,setDrivers]=useState<Driver[]>([]);const[vehicles,setVehicles]=useState<Vehicle[]>([]);const[period,setPeriod]=useState('month');const[driver,setDriver]=useState('');const[vehicle,setVehicle]=useState('');const[type,setType]=useState<OccurrenceType|''>('');const[error,setError]=useState('')
-useEffect(()=>{Promise.all([api<Page<Driver>>('/drivers?page_size=100'),api<Page<Vehicle>>('/vehicles?page_size=100')]).then(([d,v])=>{setDrivers(d.items);setVehicles(v.items)})},[])
-useEffect(()=>{const params=new URLSearchParams();const from=dateFrom(period);if(from)params.set('date_from',from);if(driver)params.set('driver_id',driver);if(vehicle)params.set('vehicle_id',vehicle);if(type)params.set('occurrence_type',type);api<Dashboard>(`/dashboard?${params}`).then(setData).catch(e=>setError(e.message))},[period,driver,vehicle,type])
+useRealtimeEffect(['drivers', 'vehicles'], ()=>{Promise.all([api<Page<Driver>>('/drivers?page_size=100'),api<Page<Vehicle>>('/vehicles?page_size=100')]).then(([d,v])=>{setDrivers(d.items);setVehicles(v.items)})},[])
+useRealtimeEffect(['trips', 'checklists', 'occurrences', 'drivers', 'vehicles', 'routes'], ()=>{const params=new URLSearchParams();const from=dateFrom(period);if(from)params.set('date_from',from);if(driver)params.set('driver_id',driver);if(vehicle)params.set('vehicle_id',vehicle);if(type)params.set('occurrence_type',type);api<Dashboard>(`/dashboard?${params}`).then(setData).catch(e=>setError(e.message))},[period,driver,vehicle,type])
 const maxCheck=Math.max(1,...(data?.checklist_series.map(x=>x.total)||[]));const maxType=Math.max(1,...(data?.occurrence_by_type.map(x=>x.total)||[]));
 if(!data&&!error)return <div className="loading-page">Consolidando indicadores…</div>
 return <div className="admin-page fade-in"><header className="page-heading"><div><p className="eyebrow">CENTRAL OPERACIONAL</p><h1>Visão geral da frota</h1><p>Acompanhe o que está em movimento e o que precisa de atenção.</p></div><span className="date-chip"><CalendarDays/> Atualizado agora</span></header>{error&&<Alert>{error}</Alert>}

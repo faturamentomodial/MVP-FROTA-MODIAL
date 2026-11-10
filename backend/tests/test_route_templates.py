@@ -80,8 +80,10 @@ def test_week_dates_idempotency_history_filters_reschedule_cancel(client, admin_
     later_body = booking(route, today()+timedelta(days=7))
     second = schedule(client, admin_headers, later_body).json()
     assert first['plan_id'] != second['plan_id']
-    assert len(client.get('/api/trips/planned', headers=driver_headers).json()) == 1
-    assert client.get('/api/trips/planned', headers=driver_headers).json()[0]['id'] == first['plan_id']
+    plans = client.get('/api/trips/planned', headers=driver_headers).json()
+    assert [p['id'] for p in plans] == [first['plan_id'], second['plan_id']]
+    assert plans[0]['can_start'] is True
+    assert plans[1]['can_start'] is False
     assert client.post('/api/trips', headers=driver_headers, json={
         'route_plan_id':second['plan_id'], 'vehicle_id':1, 'km_inicial':1000}).status_code == 409
     url = f"/api/route-templates/{route['id']}"

@@ -4,6 +4,8 @@ from app.api import auth, checklists, dashboard, drivers, occurrences, trips, us
 
 
 api_router = APIRouter(prefix="/api")
+from app.api import realtime
+api_router.include_router(realtime.router)
 api_router.include_router(auth.router)
 api_router.include_router(users.router)
 api_router.include_router(drivers.router)

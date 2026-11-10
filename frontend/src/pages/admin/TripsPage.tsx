@@ -1,5 +1,6 @@
+import { useRealtimeEffect } from '../../hooks/useRealtimeEffect'
 import { Search } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Alert, Empty, StatusBadge } from '../../components/UI'
 import { api } from '../../services/api'
@@ -16,7 +17,7 @@ const [period, setPeriod] = useState<Period>('')
 const [date, setDate] = useState('')
 const [error, setError] = useState('')
 const validDate = period === 'day' ? /^\d{4}-\d{2}-\d{2}$/.test(date) : period === 'month' ? /^\d{4}-\d{2}$/.test(date) : period === 'year' && /^\d{4}$/.test(date) && Number(date) >= 1900 && Number(date) <= 9999
-useEffect(() => {
+useRealtimeEffect(['trips', 'drivers', 'vehicles', 'routes'], () => {
  let active = true
  const params = new URLSearchParams({ page_size: '100' })
  if (status) params.set('status', status)

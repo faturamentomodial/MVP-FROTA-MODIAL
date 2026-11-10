@@ -1,3 +1,4 @@
+import { useRealtimeEffect } from '../../hooks/useRealtimeEffect'
 import { useAuth } from '../../hooks/useAuth'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
@@ -24,7 +25,7 @@ export function TrackingPage() {
   const historyRequest=useRef(0); const refreshRequest=useRef(false)
   const container=useRef<HTMLDivElement>(null); const map=useRef<L.Map>(); const layer=useRef<L.LayerGroup>()
   const load=useCallback(async()=>{if(refreshRequest.current)return;refreshRequest.current=true;setLoading(true);try{setFleet(await api<Fleet>('/tracking'));setError('')}catch(e){setError((e as Error).message)}finally{refreshRequest.current=false;setLoading(false)}},[])
-  useEffect(()=>{load();const timer=setInterval(load,30000);return()=>clearInterval(timer)},[load])
+  useRealtimeEffect(['tracking', 'vehicles', 'trips', 'drivers'], ()=>{load();const timer=setInterval(load,30000);return()=>clearInterval(timer)},[load])
   useEffect(()=>{
     if(!container.current)return
     const instance=L.map(container.current).setView([-14.2,-51.9],4);map.current=instance

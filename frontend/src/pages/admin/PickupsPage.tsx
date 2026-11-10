@@ -1,5 +1,6 @@
+import { useRealtimeEffect } from '../../hooks/useRealtimeEffect'
 import { MapPin, Pencil, Plus, Power, Search, Trash2 } from 'lucide-react'
-import { useEffect, useState, type FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import { Alert, Button, Empty, Modal, StatusBadge } from '../../components/UI'
 import { AddressPicker } from '../../components/AddressPicker'
 import { api } from '../../services/api'
@@ -33,9 +34,9 @@ export function PickupsPage() {
     catch (e) { setError((e as Error).message) }
     finally { setLoading(false) }
   }
-  useEffect(() => { void load() }, [])
+  useRealtimeEffect(['pickups'], () => { void load() }, [])
 
-  useEffect(() => {
+  useRealtimeEffect(['routes'], () => {
     const controller = new AbortController()
     setRoutesLoading(true); setRoutesError('')
     async function loadRoutes() {

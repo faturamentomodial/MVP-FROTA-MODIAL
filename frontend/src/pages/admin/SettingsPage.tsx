@@ -1,5 +1,6 @@
+import { useRealtimeEffect } from '../../hooks/useRealtimeEffect'
 import { ArrowRight, ClipboardCheck, Pencil, Plus, Power, Search, ShieldCheck, Users } from 'lucide-react'
-import { useEffect, useState, type FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { Alert, Button, Empty, Modal, StatusBadge } from '../../components/UI'
 import { useAuth } from '../../hooks/useAuth'
@@ -30,7 +31,7 @@ export function SettingsPage() {
     catch (e) { setError((e as Error).message) }
     finally { setLoading(false) }
   }
-  useEffect(() => { void load() }, [])
+  useRealtimeEffect(['users', 'drivers'], () => { void load() }, [])
 
   function show(item?: User) {
     setEditing(item)

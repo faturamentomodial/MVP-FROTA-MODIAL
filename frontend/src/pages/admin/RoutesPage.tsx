@@ -1,8 +1,9 @@
+import { useRealtimeEffect } from '../../hooks/useRealtimeEffect'
 import { routePoint } from '../../utils/routePoint'
 import { AddressPicker } from '../../components/AddressPicker'
 import { EstablishedRoutes } from './EstablishedRoutes'
 import { VehicleRestriction } from '../../components/VehicleRestriction'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Alert, Button } from '../../components/UI'
 import { api } from '../../services/api'
 import type { Driver, Page, Vehicle } from '../../types'
@@ -21,7 +22,7 @@ export function LegacyRoutes(){
   async function lookupInvoice(){await run(async()=>{resetInvoice();try{const result=await api<{invoices:InvoiceLookup[]}>(`/route-plans/invoice-lookup?number=${encodeURIComponent(number.trim())}`);if(result.invoices.length===1)selectInvoice(result.invoices[0]);else {setMatches(result.invoices);setLookupMessage(result.invoices.length?'Selecione a nota pela empresa e série.':'Nota de venda não encontrada no Sankhya.')}}catch(e){setLookupError((e as Error).message)}})}
   const locked=plan.status==='CONFIRMADO'
   async function list(){setPlans(await api<Plan[]>('/route-plans'))}
-  useEffect(()=>{Promise.all([list(),api<Page<Driver>>('/drivers?page_size=100').then(r=>setDrivers(r.items.filter(d=>d.ativo))),api<Page<Vehicle>>('/vehicles?page_size=100').then(r=>setVehicles(r.items.filter(v=>v.ativo)))]).catch(e=>setError(e.message))},[])
+  useRealtimeEffect(['routes', 'drivers', 'vehicles'], ()=>{Promise.all([list(),api<Page<Driver>>('/drivers?page_size=100').then(r=>setDrivers(r.items.filter(d=>d.ativo))),api<Page<Vehicle>>('/vehicles?page_size=100').then(r=>setVehicles(r.items.filter(v=>v.ativo)))]).catch(e=>setError(e.message))},[])
   function change(p:Plan){setPlan({...p,result:null,stops:[]});setDirty(true)}
   async function run(action:()=>Promise<void>){if(busy)return;setBusy(true);setError('');try{await action()}catch(e){setError((e as Error).message)}finally{setBusy(false)}}
   async function save(){const {name,vehicle_id,driver_id,profile,origin,invoices,objective,revision}=plan;const saved=await api<Plan>(plan.id?`/route-plans/${plan.id}`:'/route-plans',{method:plan.id?'PUT':'POST',body:JSON.stringify({name,vehicle_id,driver_id,profile,origin:routePoint(origin),invoices:invoices.map(note=>({...note,destination:routePoint(note.destination)})),objective,revision})});setPlan(saved);setDirty(false);await list();return saved}

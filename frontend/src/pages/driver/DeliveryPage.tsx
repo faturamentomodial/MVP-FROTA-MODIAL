@@ -1,3 +1,4 @@
+import { useRealtimeEffect } from '../../hooks/useRealtimeEffect'
 import { ArrowLeft } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
@@ -12,7 +13,7 @@ export function DeliveryPage(){
  const [showOccurrence,setShowOccurrence]=useState(false);const [reason,setReason]=useState('CLIENTE_FECHADO');const [note,setNote]=useState('');const [confirmation,setConfirmation]=useState('')
  const [showPickup,setShowPickup]=useState(false);const [pickupVolume,setPickupVolume]=useState('');const [pickupDescription,setPickupDescription]=useState('')
  const load=()=>api<Trip>(`/trips/${tripId}`).then(setTrip)
- useEffect(()=>{load().catch(e=>setError(e.message))},[tripId,invoiceId])
+ useRealtimeEffect(['trips', 'pickups', 'routes'], ()=>{load().catch(e=>setError(e.message))},[tripId,invoiceId])
  useEffect(()=>{setShowPickup(false);setPickupVolume('');setPickupDescription('')},[tripId,invoiceId])
  const invoice=trip?.notas.find(n=>n.id===Number(invoiceId))
  const current=trip?.notas.find(n=>n.status==='PENDENTE'||n.status==='EM_ENTREGA')?.id

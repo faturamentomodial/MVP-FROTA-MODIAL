@@ -31,3 +31,4 @@ from app.models.pickups import Pickup
 from app.models.geocoding import GeocodedAddress
 
 from app.models.route_templates import RouteTemplate, RouteExecution
+from app.services.realtime import RealtimeVersion

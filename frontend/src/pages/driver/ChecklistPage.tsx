@@ -1,3 +1,4 @@
+import { useRealtimeEffect } from '../../hooks/useRealtimeEffect'
 import { AlertTriangle, ArrowLeft, ArrowRight, Check, ChevronDown } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -8,7 +9,8 @@ import { formatKm } from '../../utils/format'
 
 type Answer={status?:'OK'|'PROBLEMA';observacao:string}
 export function ChecklistPage(){const {tripId}=useParams();const navigate=useNavigate();const[trip,setTrip]=useState<Trip>();const[items,setItems]=useState<ChecklistItem[]>([]);const[answers,setAnswers]=useState<Record<number,Answer>>({});const[result,setResult]=useState<Checklist>();const[error,setError]=useState('');const[loading,setLoading]=useState(false);const[fetching,setFetching]=useState(true)
-useEffect(()=>{setFetching(true);setItems([]);setAnswers({});setError('');Promise.all([api<Trip>(`/trips/${tripId}`),api<ChecklistItem[]>('/checklist-items')]).then(([t,i])=>{setTrip(t);setItems(i)}).catch(e=>setError(e.message)).finally(()=>setFetching(false))},[tripId])
+useEffect(()=>{setAnswers({});setResult(undefined)},[tripId])
+useRealtimeEffect(['trips','checklists'], ()=>{let active=true;setFetching(true);setError('');Promise.all([api<Trip>(`/trips/${tripId}`),api<ChecklistItem[]>('/checklist-items')]).then(([t,i])=>{if(active){setTrip(t);setItems(i)}}).catch(e=>{if(active)setError(e.message)}).finally(()=>{if(active)setFetching(false)});return()=>{active=false}},[tripId])
 const answered=Object.values(answers).filter(a=>a.status).length;const complete=!fetching&&items.length>0&&answered>0&&items.filter(i=>i.obrigatorio).every(i=>answers[i.id]?.status);const progress=items.length?Math.round(answered/items.length*100):0
 function update(id:number,patch:Partial<Answer>){setAnswers(current=>({...current,[id]:{...(current[id]||{observacao:''}),...patch}}))}
 async function submit(){if(!complete){setError('Responda todos os itens obrigatórios.');return}setLoading(true);setError('');try{const payload=[];for(const item of items){const answer=answers[item.id];if(!answer?.status)continue;payload.push({checklist_item_id:item.id,status:answer.status,observacao:answer.observacao||null})}const checklist=await api<Checklist>(`/trips/${tripId}/checklist`,{method:'POST',body:JSON.stringify({answers:payload})});setResult(checklist)}catch(e){setError(e instanceof Error?e.message:'Erro ao salvar checklist')}finally{setLoading(false)}}

@@ -1,5 +1,6 @@
+import { useRealtimeEffect } from '../../hooks/useRealtimeEffect'
 import { Pencil, Plus, Power } from 'lucide-react'
-import { useEffect, useState, type FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Alert, Button, Empty, Modal, StatusBadge } from '../../components/UI'
 import { api } from '../../services/api'
@@ -8,7 +9,7 @@ import { formatCpf } from '../../utils/format'
 
 const empty={nome:'',email:'',senha:''}
 export function DriversPage(){const navigate=useNavigate();const[items,setItems]=useState<Driver[]>([]);const[editing,setEditing]=useState<Driver>();const[open,setOpen]=useState(false);const[form,setForm]=useState(empty);const[error,setError]=useState('');const[loading,setLoading]=useState(false)
-async function load(){try{setItems((await api<Page<Driver>>('/drivers?page_size=100')).items)}catch(e){setError((e as Error).message)}}useEffect(()=>{load()},[])
+async function load(){try{setItems((await api<Page<Driver>>('/drivers?page_size=100')).items)}catch(e){setError((e as Error).message)}}useRealtimeEffect(['drivers', 'users'], ()=>{load()},[])
 function show(item?:Driver){setEditing(item);setForm(item?{nome:item.nome,email:item.email||'',senha:''}:empty);setOpen(true);setError('')}
 async function save(e:FormEvent){e.preventDefault();setLoading(true);setError('');const body={...form,...(!form.senha&&editing?{senha:undefined}:{})};try{await api(editing?`/drivers/${editing.id}`:'/drivers',{method:editing?'PUT':'POST',body:JSON.stringify(body)});setOpen(false);load()}catch(e){setError((e as Error).message)}finally{setLoading(false)}}
 async function toggle(item:Driver){await api(`/drivers/${item.id}/status`,{method:'PATCH',body:JSON.stringify({ativo:!item.ativo})});load()}

@@ -1,7 +1,8 @@
+import { useRealtimeEffect } from '../../hooks/useRealtimeEffect'
 import { VehicleRestriction, restrictionPreview } from '../../components/VehicleRestriction'
 import { VehicleTrackingLink } from '../../components/VehicleTrackingLink'
 import { Pencil, Plus, Power } from 'lucide-react'
-import { useEffect, useState, type FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Alert, Button, Empty, Modal, StatusBadge } from '../../components/UI'
 import { api } from '../../services/api'
@@ -10,7 +11,7 @@ import { formatKm } from '../../utils/format'
 
 const empty={placa:'',marca:'',modelo:'',tipo:'',km_atual:0,status:'DISPONIVEL' as VehicleStatus,ativo:true}
 export function VehiclesPage(){const navigate=useNavigate();const[items,setItems]=useState<Vehicle[]>([]);const[editing,setEditing]=useState<Vehicle>();const[open,setOpen]=useState(false);const[form,setForm]=useState(empty);const[error,setError]=useState('');const[loading,setLoading]=useState(false)
-async function load(){try{setItems((await api<Page<Vehicle>>('/vehicles?page_size=100')).items)}catch(e){setError((e as Error).message)}}useEffect(()=>{load()},[])
+async function load(){try{setItems((await api<Page<Vehicle>>('/vehicles?page_size=100')).items)}catch(e){setError((e as Error).message)}}useRealtimeEffect(['vehicles', 'trips', 'occurrences'], ()=>{load()},[])
 function show(item?:Vehicle){setEditing(item);setForm(item?{placa:item.placa,marca:item.marca,modelo:item.modelo,tipo:item.tipo,km_atual:item.km_atual,status:item.status,ativo:item.ativo}:empty);setOpen(true);setError('')}
 async function save(e:FormEvent){e.preventDefault();setLoading(true);setError('');try{await api(editing?`/vehicles/${editing.id}`:'/vehicles',{method:editing?'PUT':'POST',body:JSON.stringify(form)});setOpen(false);load()}catch(e){setError((e as Error).message)}finally{setLoading(false)}}
 async function toggle(item:Vehicle){try{await api(`/vehicles/${item.id}/status`,{method:'PATCH',body:JSON.stringify({ativo:!item.ativo})});load()}catch(e){setError((e as Error).message)}}

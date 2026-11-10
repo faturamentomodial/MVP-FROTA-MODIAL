@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useRealtimeEffect } from '../../hooks/useRealtimeEffect'
+import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { RouteMap, type PickupMarker } from '../../components/RouteMap'
 import { Alert, Button } from '../../components/UI'
@@ -26,7 +27,7 @@ export function RouteMapPage() {
   const [pickupError, setPickupError] = useState('')
   const [failed, setFailed] = useState<string[]>([])
   const [unlocated, setUnlocated] = useState<string[]>([])
-  useEffect(() => {
+  useRealtimeEffect(['pickups'], () => {
     const controller = new AbortController()
     const { signal } = controller
     setPickupError(''); setLocating(true); setFailed([]); setUnlocated([])
@@ -74,7 +75,7 @@ export function RouteMapPage() {
     loadPickups().catch(e => { if (!signal.aborted) setPickupError((e as Error).message) }).finally(() => { if (!signal.aborted) setLocating(false) })
     return () => controller.abort()
   }, [refresh])
-  useEffect(() => {
+  useRealtimeEffect(['routes'], () => {
     let active = true
     setLoading(true); setError(''); setSelected(null)
     async function load() {

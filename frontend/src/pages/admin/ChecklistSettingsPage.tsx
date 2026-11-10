@@ -1,12 +1,13 @@
+import { useRealtimeEffect } from '../../hooks/useRealtimeEffect'
 import { ArrowDown, ArrowUp, Pencil, Plus, Power, Trash2 } from 'lucide-react'
-import { useEffect, useState, type FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import { Alert, Button, Modal, StatusBadge } from '../../components/UI'
 import { api } from '../../services/api'
 import type { ChecklistItem } from '../../types'
 
 const empty={nome:'',descricao:'',obrigatorio:true,ativo:true,ordem:1}
 export function ChecklistSettingsPage(){const[items,setItems]=useState<ChecklistItem[]>([]);const[deleting,setDeleting]=useState<ChecklistItem>();const[editing,setEditing]=useState<ChecklistItem>();const[form,setForm]=useState(empty);const[open,setOpen]=useState(false);const[error,setError]=useState('');const[loading,setLoading]=useState(false)
-async function load(){try{setItems(await api<ChecklistItem[]>('/checklist-items?active_only=false'))}catch(e){setError((e as Error).message)}}useEffect(()=>{load()},[])
+async function load(){try{setItems(await api<ChecklistItem[]>('/checklist-items?active_only=false'))}catch(e){setError((e as Error).message)}}useRealtimeEffect(['checklists'], ()=>{load()},[])
 function show(item?:ChecklistItem){setEditing(item);setForm(item?{nome:item.nome,descricao:item.descricao||'',obrigatorio:item.obrigatorio,ativo:item.ativo,ordem:item.ordem}:{...empty,ordem:items.length+1});setOpen(true);setError('')}
 async function save(e:FormEvent){e.preventDefault();setLoading(true);try{await api(editing?`/checklist-items/${editing.id}`:'/checklist-items',{method:editing?'PUT':'POST',body:JSON.stringify(form)});setOpen(false);load()}catch(e){setError((e as Error).message)}finally{setLoading(false)}}
 async function remove(){if(!deleting)return;setLoading(true);setError('');try{await api(`/checklist-items/${deleting.id}`,{method:'DELETE'});setDeleting(undefined);await load()}catch(e){setError((e as Error).message)}finally{setLoading(false)}}
