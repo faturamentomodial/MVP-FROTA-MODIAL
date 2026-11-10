@@ -38,7 +38,7 @@ jobs:
       - name: Transfer image and compose
         run: |
           ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$ORACLE_USER@$ORACLE_HOST" 'mkdir -p ~/modial-frota && test -s ~/modial-frota/.env'
-          scp -o BatchMode=yes -o StrictHostKeyChecking=yes app-image.tar.gz docker-compose.oracle.yml "$ORACLE_USER@$ORACLE_HOST:modial-frota/"
+          scp -o BatchMode=yes -o StrictHostKeyChecking=yes app-image.tar.gz docker-compose.oracle.yml Caddyfile "$ORACLE_USER@$ORACLE_HOST:modial-frota/"
       - name: Configure integration credentials on server
         env:
           SANKHYA_CLIENT_ID: ${{ secrets.SANKHYA_CLIENT_ID }}
@@ -86,7 +86,8 @@ jobs:
           sudo env APP_IMAGE="$APP_IMAGE" docker compose -f docker-compose.oracle.yml up -d --wait --wait-timeout 240
           printf 'APP_IMAGE=%s\n' "$APP_IMAGE" > .release.env
           chmod 600 .release.env
-          curl --fail --silent --show-error http://127.0.0.1/health
+          https_domain=$(sudo env APP_IMAGE="$APP_IMAGE" docker compose -f docker-compose.oracle.yml exec -T caddy printenv HTTPS_DOMAIN)
+          curl --fail --silent --show-error --retry 12 --retry-delay 5 --retry-all-errors "https://${https_domain}/health"
           sudo env APP_IMAGE="$APP_IMAGE" docker compose -f docker-compose.oracle.yml exec -T app python -m app.configure_tracking
           REMOTE
       - name: Remove SSH credentials from runner

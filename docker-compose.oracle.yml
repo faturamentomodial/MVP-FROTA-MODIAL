@@ -36,9 +36,8 @@ services:
       ROUTES_ROUTER_URL: ${ROUTES_ROUTER_URL:-}
       ROUTES_TIMEOUT_SECONDS: ${ROUTES_TIMEOUT_SECONDS:-15}
       ROUTES_MIN_INTERVAL_SECONDS: ${ROUTES_MIN_INTERVAL_SECONDS:-1}
-      CORS_ORIGINS: ${CORS_ORIGINS:?Configure CORS_ORIGINS}
-    ports:
-      - "80:8080"
+      CORS_ORIGINS: https://${HTTPS_DOMAIN:-modialfrotas.com.br}
+      FORWARDED_ALLOW_IPS: "*"
     depends_on:
       db:
         condition: service_healthy
@@ -52,5 +51,27 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      HTTPS_DOMAIN: ${HTTPS_DOMAIN:-modialfrotas.com.br}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      app:
+        condition: service_healthy
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 volumes:
   postgres_data:
+  caddy_data:
+  caddy_config:
