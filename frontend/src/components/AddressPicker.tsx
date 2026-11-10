@@ -4,7 +4,7 @@ import { api } from '../services/api'
 import type { GeocodingResult } from './LocationEditor'
 import type { Point } from '../types/routePlans'
 
-export function AddressPicker({label,onSelect,initialAddress=''}:{label:string;onSelect:(point:Point)=>void;initialAddress?:string}) {
+export function AddressPicker({label,onSelect,initialAddress='',onQueryChange}:{label:string;onSelect:(point:Point)=>void;initialAddress?:string;onQueryChange?:(query:string)=>void}) {
   const [query,setQuery]=useState(initialAddress)
   const [message,setMessage]=useState(''), [busy,setBusy]=useState(false)
   useEffect(()=>{setQuery(initialAddress);setMessage('')},[initialAddress])
@@ -23,7 +23,7 @@ export function AddressPicker({label,onSelect,initialAddress=''}:{label:string;o
       }
     } catch(e){setMessage((e as Error).message)}finally{setBusy(false)}
   }
-  return <div><label>{label}<input disabled={busy} value={query} onChange={e=>{setQuery(e.target.value);setMessage('')}} placeholder="Rua, número, bairro, cidade, UF e CEP"/></label>
+  return <div><label>{label}<input disabled={busy} value={query} onChange={e=>{setQuery(e.target.value);onQueryChange?.(e.target.value);setMessage('')}} placeholder="Rua, número, bairro, cidade, UF e CEP"/></label>
     <Button type="button" variant="secondary" disabled={busy||query.trim().length<5} loading={busy} onClick={search}>Buscar endereço</Button>
     {message&&<Alert tone="info">{message}</Alert>}
     <small>Dados: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors (ODbL)</a>.</small>
