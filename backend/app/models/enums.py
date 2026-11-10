@@ -51,6 +51,7 @@ class OccurrenceType(StrEnum):
     MULTA = "MULTA"
     ABASTECIMENTO = "ABASTECIMENTO"
     LAVAGEM = "LAVAGEM"
+    TROCA_OLEO = "TROCA_OLEO"
     OUTRO = "OUTRO"
 
 

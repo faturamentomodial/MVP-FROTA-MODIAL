@@ -15,7 +15,7 @@ def test_driver_occurrences_are_filtered_by_category(client, admin_headers, driv
     assert client.post(f'/api/trips/{trip_id}/start', headers=driver_headers).status_code == 200
 
     categories = {
-        'VEICULO': {'AVARIA', 'PROBLEMA_MECANICO', 'PROBLEMA_ELETRICO', 'PNEU', 'MULTA', 'ABASTECIMENTO', 'LAVAGEM'},
+        'VEICULO': {'AVARIA', 'PROBLEMA_MECANICO', 'PROBLEMA_ELETRICO', 'PNEU', 'MULTA', 'ABASTECIMENTO', 'LAVAGEM', 'TROCA_OLEO'},
         'ROTA': {'ACIDENTE', 'PROBLEMA_ENTREGA', 'CLIENTE_AUSENTE', 'ATRASO'},
         'OUTROS': {'OUTRO'},
     }
@@ -43,4 +43,4 @@ def test_driver_occurrences_are_filtered_by_category(client, admin_headers, driv
 
     filtered = client.get('/api/occurrences?categoria=OUTROS&status=RESOLVIDA', headers=admin_headers).json()
     assert filtered['total'] == 0
-    assert client.get('/api/occurrences', headers=admin_headers).json()['total'] == 12
+    assert client.get('/api/occurrences', headers=admin_headers).json()['total'] == 13

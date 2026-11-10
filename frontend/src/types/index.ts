@@ -2,7 +2,7 @@ export type Role = 'ADMIN' | 'COMPRAS' | 'MASTER' | 'MOTORISTA'
 export type VehicleStatus = 'DISPONIVEL' | 'EM_VIAGEM' | 'ATENCAO' | 'INATIVO'
 export type TripStatus = 'ABERTA' | 'EM_ANDAMENTO' | 'FINALIZADA' | 'CANCELADA'
 export type OccurrenceStatus = 'ABERTA' | 'EM_ANALISE' | 'RESOLVIDA' | 'CANCELADA'
-export const occurrenceTypes = ['ACIDENTE', 'AVARIA', 'PROBLEMA_MECANICO', 'PROBLEMA_ELETRICO', 'PNEU', 'PROBLEMA_ENTREGA', 'CLIENTE_AUSENTE', 'ATRASO', 'MULTA', 'ABASTECIMENTO', 'LAVAGEM', 'OUTRO'] as const
+export const occurrenceTypes = ['ACIDENTE', 'AVARIA', 'PROBLEMA_MECANICO', 'PROBLEMA_ELETRICO', 'PNEU', 'PROBLEMA_ENTREGA', 'CLIENTE_AUSENTE', 'ATRASO', 'MULTA', 'ABASTECIMENTO', 'LAVAGEM', 'TROCA_OLEO', 'OUTRO'] as const
 export type OccurrenceType = typeof occurrenceTypes[number]
 
 export interface User { id: number; nome: string; email: string; role: Role; ativo: boolean }
