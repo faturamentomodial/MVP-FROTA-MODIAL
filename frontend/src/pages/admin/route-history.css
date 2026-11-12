@@ -1,0 +1,16 @@
+.route-history-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px;flex-wrap:wrap}
+.route-history-heading h2{margin:0}
+.route-history-heading h2 small{font-size:12px;font-weight:400;color:var(--muted);margin-left:6px}
+.route-history-heading input{width:240px;max-width:100%;min-height:34px;padding:6px 10px;font-size:13px;border-radius:6px}
+.route-history-list{max-height:360px;overflow-y:auto;scrollbar-gutter:stable}
+.route-history-row{display:flex;align-items:center;gap:8px;border-bottom:1px solid #e5e7eb}
+.route-history-row:last-child{border-bottom:0}
+.route-history-row .button{min-height:36px;border-radius:4px;box-shadow:none;font-size:13px;transform:none}
+.route-history-row .route-history-open{flex:1;min-width:0;justify-content:space-between;text-align:left;padding:8px 4px;gap:16px;font-weight:500}
+.route-history-name{overflow-wrap:anywhere;min-width:0}
+.route-history-meta{display:flex;align-items:center;gap:12px;font-size:11px;font-weight:400;color:var(--muted);flex-shrink:0}
+.route-history-row .route-history-delete{flex-shrink:0;width:32px;padding:0;color:var(--muted)}
+.route-history-open:hover:not(:disabled){background:#f7f7f8}
+.route-history-delete:hover:not(:disabled){color:var(--red);background:#fff1f0}
+@media(max-width:600px){.route-history-row .route-history-open{align-items:flex-start;flex-direction:column;gap:2px}.route-history-heading input{width:100%}}
+@media(pointer:coarse){.route-history-row .button{min-height:44px}.route-history-row .route-history-delete{width:44px}}
