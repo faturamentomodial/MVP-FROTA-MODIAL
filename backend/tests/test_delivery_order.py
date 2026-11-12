@@ -140,3 +140,42 @@ def test_start_response_revision_can_be_used_to_reorder(client,driver_headers):
     started=client.post(f"/api/trips/{tid}/start",headers=driver_headers).json()
     assert started["delivery_revision"] == current(client,driver_headers,tid)["delivery_revision"]
     assert order(client,driver_headers,tid,[n["id"] for n in reversed(started["notas"])],started["delivery_revision"]).status_code == 200
+
+
+def test_driver_can_skip_and_return_without_occurrence(client, driver_headers):
+    tid, notes = prepare(client, driver_headers, 3)
+    ids = [n['id'] for n in notes]
+    root = f'/api/trips/{tid}/deliveries'
+    started = client.post(f'{root}/{ids[0]}/start', headers=driver_headers).json()
+    revision = current(client, driver_headers, tid)['delivery_revision']
+    url = f'/api/trips/{tid}/driver-delivery-order'
+    payload = {'invoice_ids': [ids[1], ids[2], ids[0]], 'revision': revision}
+    response = client.put(url, headers=driver_headers, json=payload)
+    assert response.status_code == 200, response.text
+    trip = response.json()
+    deferred = trip['notas'][-1]
+    assert deferred['status'] == 'PENDENTE'
+    assert deferred['started_at'] == started['started_at']
+    assert deferred['occurrence_at'] is None
+    assert trip['occurrence_count'] == 0
+    assert client.put(url, headers=driver_headers, json=payload).status_code == 409
+    assert client.post(f'{root}/{ids[1]}/start', headers=driver_headers).status_code == 200
+    assert client.post(f'{root}/{ids[1]}/finish', headers=driver_headers).status_code == 200
+    revision = current(client, driver_headers, tid)['delivery_revision']
+    # Return to the deferred delivery before the remaining stop.
+    response = client.put(url, headers=driver_headers, json={'invoice_ids': [ids[1], ids[0], ids[2]], 'revision': revision})
+    assert response.status_code == 200, response.text
+    assert client.post(f'{root}/{ids[0]}/start', headers=driver_headers).status_code == 200
+    assert client.post(f'{root}/{ids[0]}/finish', headers=driver_headers).status_code == 200
+    assert client.post(f'/api/trips/{tid}/finish', headers=driver_headers, json={'km_final': 1100}).status_code == 409
+
+
+def test_driver_reorder_rejects_other_driver(client, driver_headers):
+    tid, notes = prepare(client, driver_headers, 2)
+    with SessionLocal() as db:
+        user = User(nome='Other', email='reorder@example.com', senha_hash=get_password_hash('Driver@123'), role=UserRole.MOTORISTA)
+        db.add(Driver(nome='Other', cpf='12345678902', telefone='11999999999', user=user))
+        db.commit()
+    headers = login(client, 'reorder@example.com', 'Driver@123')
+    payload = {'invoice_ids': [n['id'] for n in reversed(notes)], 'revision': current(client, driver_headers, tid)['delivery_revision']}
+    assert client.put(f'/api/trips/{tid}/driver-delivery-order', headers=headers, json=payload).status_code == 403

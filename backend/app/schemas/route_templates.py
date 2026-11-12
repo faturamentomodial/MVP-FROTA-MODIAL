@@ -16,7 +16,7 @@ class TemplateInput(BaseModel):
     objective: Literal['duration', 'distance'] = 'duration'
     weekdays: list[int] = Field(default_factory=list, max_length=7)
     addresses: list[Point] = Field(default_factory=list, max_length=100)
-    invoices: list[PlannedInvoice] = Field(default_factory=list, max_length=10)
+    invoices: list[PlannedInvoice] = Field(default_factory=list, max_length=100)
     revision: int = Field(default=0, ge=0)
 
     @model_validator(mode='after')

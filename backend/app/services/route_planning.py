@@ -203,8 +203,15 @@ def geometry(points):
 
 
 def optimal_order(cost):
-    """Held-Karp: exact circuit from and back to origin, <=10 stops."""
+    """Exact circuit up to 10 stops; bounded nearest-neighbour above that."""
     n = len(cost) - 1
+    if n > 10:
+        order, remaining, current = [], set(range(1, n + 1)), 0
+        while remaining:
+            current = min(remaining, key=lambda j: (cost[current][j], j))
+            order.append(current)
+            remaining.remove(current)
+        return order
     @lru_cache(None)
     def solve(current, remaining):
         if not remaining:

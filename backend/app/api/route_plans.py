@@ -179,7 +179,7 @@ def calculate(plan_id: int, payload: CalculateInput, db: Session = Depends(get_d
     data['stops'] = [stops[i-1] for i in order]
     notes = {n['number']: n for n in data['invoices']}
     data['invoices'] = [notes[number] for stop in data['stops'] for number in stop['invoices']]
-    data['result'] = {**result, 'matrix': {'durations': matrix['durations'], 'distances': matrix['distances']}, 'matrix_points': points, 'provider': 'osrm', 'truck_restrictions_supported': False, 'warning': WARNING if data['profile'] == 'truck' else None, 'algorithm': 'held-karp' if payload.optimize else 'manual', 'objective': data['objective'], 'return_to_origin': True}
+    data['result'] = {**result, 'matrix': {'durations': matrix['durations'], 'distances': matrix['distances']}, 'matrix_points': points, 'provider': 'osrm', 'truck_restrictions_supported': False, 'warning': WARNING if data['profile'] == 'truck' else None, 'algorithm': ('held-karp' if len(stops) <= 10 else 'nearest-neighbour') if payload.optimize else 'manual', 'objective': data['objective'], 'return_to_origin': True}
     return save(db, plan, payload.revision, data, user)
 
 

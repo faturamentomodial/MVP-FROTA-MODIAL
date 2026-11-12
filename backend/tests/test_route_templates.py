@@ -63,7 +63,7 @@ def test_persistence_address_limit_return_optimization_and_revisions(client, adm
     with SessionLocal() as db:
         assert len(db.get(RouteTemplate, route['id']).data['addresses']) == 12
     for invalid in ({'weekdays':[7]}, {'weekdays':[0,0]}, {'addresses':[point(1)]*101},
-                    {'invoices':[{'number':str(i), 'volumes':1, 'destination':point(i)} for i in range(11)], 'addresses':[]}):
+                    {'invoices':[{'number':str(i), 'volumes':1, 'destination':point(i)} for i in range(101)], 'addresses':[]}):
         assert client.post('/api/route-templates', headers=admin_headers,
                            json={**template_body(), **invalid}).status_code == 422
 

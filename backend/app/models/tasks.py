@@ -13,6 +13,7 @@ class TaskStatus(str, PyEnum):
     ACEITA = "ACEITA"
     EM_ANDAMENTO = "EM_ANDAMENTO"
     CONCLUIDA = "CONCLUIDA"
+    CANCELADA = "CANCELADA"
 
 
 class Task(TimestampMixin, Base):
@@ -20,7 +21,7 @@ class Task(TimestampMixin, Base):
     __table_args__ = (
         Index("ix_tasks_status", "status"),
         Index("ix_tasks_driver_status", "driver_id", "status"),
-        CheckConstraint("(status = 'DISPONIVEL' AND driver_id IS NULL AND accepted_at IS NULL AND started_at IS NULL AND completed_at IS NULL) OR (status IN ('ACEITA', 'EM_ANDAMENTO', 'CONCLUIDA') AND driver_id IS NOT NULL AND accepted_at IS NOT NULL AND ((status = 'CONCLUIDA' AND completed_at IS NOT NULL) OR (status != 'CONCLUIDA' AND completed_at IS NULL)))", name="ck_task_assignment"),
+        CheckConstraint("(status = 'CANCELADA' AND completed_at IS NULL) OR (status = 'DISPONIVEL' AND driver_id IS NULL AND accepted_at IS NULL AND started_at IS NULL AND completed_at IS NULL) OR (status IN ('ACEITA', 'EM_ANDAMENTO', 'CONCLUIDA') AND driver_id IS NOT NULL AND accepted_at IS NOT NULL AND ((status = 'CONCLUIDA' AND completed_at IS NOT NULL) OR (status != 'CONCLUIDA' AND completed_at IS NULL)))", name="ck_task_assignment"),
     )
     id: Mapped[int] = mapped_column(primary_key=True)
     titulo: Mapped[str] = mapped_column(String(160), nullable=False)

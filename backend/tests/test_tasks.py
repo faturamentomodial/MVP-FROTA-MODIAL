@@ -1,6 +1,8 @@
 from concurrent.futures import ThreadPoolExecutor
 from threading import Barrier
 
+import pytest
+
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 
@@ -118,3 +120,39 @@ def test_task_does_not_change_current_route(client, admin_headers, driver_header
         trip = db.get(Trip, trip_id)
         after = (trip.status, trip.delivery_revision, [(i.id, i.status, i.numero_nota) for i in trip.invoices])
     assert before == after
+
+
+@pytest.mark.parametrize('status', ['DISPONIVEL', 'ACEITA', 'EM_ANDAMENTO'])
+def test_cancel_task(client, admin_headers, driver_headers, status):
+    tid = create(client, admin_headers)['id']
+    if status != 'DISPONIVEL':
+        assert client.post(f'/api/tasks/{tid}/accept', headers=driver_headers).status_code == 200
+    if status == 'EM_ANDAMENTO':
+        with SessionLocal() as db:
+            db.get(Task, tid).status = status
+            db.commit()
+    before = client.get(f'/api/tasks/{tid}', headers=admin_headers).json()
+    response = client.post(f'/api/tasks/{tid}/cancel', headers=admin_headers)
+    assert response.status_code == 200, response.text
+    assert response.json()['status'] == 'CANCELADA'
+    assert response.json()['driver_id'] == before['driver_id']
+    assert response.json()['accepted_at'] == before['accepted_at']
+    assert client.get('/api/tasks/available', headers=driver_headers).json() == []
+    assert client.get('/api/tasks/mine', headers=driver_headers).json() == []
+    assert client.get('/api/tasks?status=CANCELADA', headers=admin_headers).json()[0]['id'] == tid
+    if status != 'DISPONIVEL':
+        assert client.get('/api/tasks/mine?completed=true', headers=driver_headers).json()[0]['id'] == tid
+    assert client.post(f'/api/tasks/{tid}/accept', headers=driver_headers).status_code == 409
+    assert client.post(f'/api/tasks/{tid}/complete', headers=driver_headers).status_code in (403, 409)
+    assert client.post(f'/api/tasks/{tid}/cancel', headers=admin_headers).status_code == 409
+
+
+def test_cancel_permissions_and_completed_task(client, admin_headers, driver_headers):
+    tid = create(client, admin_headers)['id']
+    assert client.post(f'/api/tasks/{tid}/cancel').status_code == 401
+    assert client.post(f'/api/tasks/{tid}/cancel', headers=driver_headers).status_code == 403
+    assert client.post('/api/tasks/9999/cancel', headers=admin_headers).status_code == 404
+    client.post(f'/api/tasks/{tid}/accept', headers=driver_headers)
+    completed = client.post(f'/api/tasks/{tid}/complete', headers=driver_headers).json()
+    assert client.post(f'/api/tasks/{tid}/cancel', headers=admin_headers).status_code == 409
+    assert client.get(f'/api/tasks/{tid}', headers=admin_headers).json()['completed_at'] == completed['completed_at']

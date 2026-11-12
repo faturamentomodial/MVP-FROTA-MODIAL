@@ -71,7 +71,7 @@ def available_tasks(offset: int = Query(0, ge=0), limit: int = Query(100, ge=1, 
 @router.get("/mine")
 def my_tasks(completed: bool = False, offset: int = Query(0, ge=0), limit: int = Query(100, ge=1, le=200), driver: Driver = Depends(eligible_driver), db: Session = Depends(get_db)):
     query = select(Task).options(joinedload(Task.driver)).where(Task.driver_id == driver.id)
-    query = query.where(Task.status == TaskStatus.CONCLUIDA) if completed else query.where(Task.status.in_([TaskStatus.ACEITA, TaskStatus.EM_ANDAMENTO]))
+    query = query.where(Task.status.in_([TaskStatus.CONCLUIDA, TaskStatus.CANCELADA])) if completed else query.where(Task.status.in_([TaskStatus.ACEITA, TaskStatus.EM_ANDAMENTO]))
     return [task_dict(task) for task in db.scalars(query.order_by(Task.id.desc()).offset(offset).limit(limit))]
 
 
@@ -106,6 +106,18 @@ def complete_task(task_id: int, driver: Driver = Depends(eligible_driver), db: S
         if task.driver_id != driver.id:
             raise HTTPException(403, "Você só pode concluir suas próprias tarefas")
         raise HTTPException(409, "Esta tarefa já foi concluída ou não pode ser concluída")
+    db.commit()
+    db.expire_all()
+    return task_dict(find_task(db, task_id))
+
+
+@router.post("/{task_id}/cancel")
+def cancel_task(task_id: int, user: User = Depends(require_operations), db: Session = Depends(get_db)):
+    result = db.execute(update(Task).where(Task.id == task_id, Task.status.in_([TaskStatus.DISPONIVEL, TaskStatus.ACEITA, TaskStatus.EM_ANDAMENTO])).values(status=TaskStatus.CANCELADA), execution_options={"synchronize_session": False})
+    if result.rowcount != 1:
+        db.rollback()
+        find_task(db, task_id)
+        raise HTTPException(409, "Esta tarefa já foi concluída ou cancelada")
     db.commit()
     db.expire_all()
     return task_dict(find_task(db, task_id))

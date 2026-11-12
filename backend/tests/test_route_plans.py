@@ -292,3 +292,32 @@ def test_geocoder_rejects_mismatched_public_endpoint(monkeypatch):
     with pytest.raises(HTTPException) as caught:
         provider.geocode('04744040')
     assert 'incompatível' in caught.value.detail
+
+
+def test_hundred_invoices_planning_limit_and_calculation(client, admin_headers, monkeypatch):
+    monkeypatch.setattr(provider, 'matrix', fake_matrix)
+    monkeypatch.setattr(provider, 'geometry', fake_geometry)
+    body = payload()
+    point = body['invoices'][0]['destination']
+    body['invoices'] = [
+        {'number': str(i), 'volumes': 1,
+         'destination': {**point, 'latitude': -23.5 + i / 1000}}
+        for i in range(100)
+    ]
+    for endpoint in ('route-plans', 'route-templates'):
+        request_body = {k: v for k, v in body.items() if endpoint == 'route-plans' or k != 'vehicle_id'}
+        response = client.post(f'/api/{endpoint}', json=request_body, headers=admin_headers)
+        assert response.status_code == 201, response.text
+        saved = response.json()
+        calculated = client.post(
+            f"/api/{endpoint}/{saved['id']}/calculate",
+            json={'revision': 0, 'optimize': True}, headers=admin_headers)
+        assert calculated.status_code == 200, calculated.text
+        result = calculated.json()
+        assert len(result['invoices']) == 100
+        assert len(result['stops']) == 100
+        assert result['result']['algorithm'] == 'nearest-neighbour'
+        assert {n['number'] for n in result['invoices']} == {str(i) for i in range(100)}
+        too_many = {**request_body, 'invoices': body['invoices'] + [
+            {**body['invoices'][0], 'number': '101'}]}
+        assert client.post(f'/api/{endpoint}', json=too_many, headers=admin_headers).status_code == 422

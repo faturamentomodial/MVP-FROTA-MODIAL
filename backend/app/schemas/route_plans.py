@@ -25,7 +25,7 @@ class PlanInput(BaseModel):
     driver_id: int | None = Field(default=None, gt=0)
     profile: Literal["car", "truck"] = "car"
     origin: Point | None = None
-    invoices: list[PlannedInvoice] = Field(default_factory=list, max_length=10)
+    invoices: list[PlannedInvoice] = Field(default_factory=list, max_length=100)
     objective: Literal["duration", "distance"] = "duration"
     revision: int = Field(default=0, ge=0)
 

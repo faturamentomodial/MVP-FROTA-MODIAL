@@ -162,6 +162,17 @@ def delivery_occurrence(trip_id: int, invoice_id: int, payload: DeliveryOccurren
     return transition(db, delivery_trip(db, trip_id, user, True), invoice_id, user, "occurrence", payload)
 
 
+@router.put("/{trip_id}/driver-delivery-order", response_model=TripOut)
+def driver_delivery_order(trip_id: int, payload: DeliveryOrderIn, db: Session = Depends(get_db), user: User = Depends(require_driver)):
+    trip = delivery_trip(db, trip_id, user, True)
+    if trip.status != TripStatus.EM_ANDAMENTO:
+        raise HTTPException(409, "A viagem precisa estar em andamento para reorganizar as entregas")
+    # Change execution order only; preserve the scheduled route and its snapshot.
+    reorder(db, trip, payload, user)
+    db.expire_all()
+    return trip_dict(load_trip(db, trip_id))
+
+
 @router.put("/{trip_id}/delivery-order", response_model=TripOut)
 def update_delivery_order(trip_id: int, payload: DeliveryOrderIn, db: Session = Depends(get_db), user: User = Depends(require_admin)):
     trip = delivery_trip(db, trip_id, user, True)
