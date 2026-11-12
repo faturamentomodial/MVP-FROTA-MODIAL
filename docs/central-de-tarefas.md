@@ -53,3 +53,7 @@ EM_ANDAMENTO é reconhecido, mas não há ação de início nesta versão: o flu
 - Frontend: TypeScript and Vite production build passed.
 - git diff --check: passed.
 - Browser/mobile visual validation and PostgreSQL staging concurrency validation remain to be performed during homologation.
+
+## Tarefas na rota
+
+O aceite e a inclus?o na rota s?o at?micos: falhas na geocodifica??o ou no c?lculo desfazem o aceite. O endere?o precisa produzir uma ?nica localiza??o. O c?lculo parte da ?ltima parada preservada ou da origem e mant?m o ponto de retorno; as estimativas representam o trecho restante. Concluir pela entrega tamb?m conclui a tarefa; concluir ou cancelar pela Central resolve a parada correspondente. Sem viagem ativa, a tarefa permanece em Minhas tarefas e n?o ? inserida automaticamente em uma viagem futura. N?o exige nova migration.

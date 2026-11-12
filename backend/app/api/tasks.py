@@ -92,7 +92,13 @@ def accept_task(task_id: int, driver: Driver = Depends(eligible_driver), db: Ses
         db.rollback()
         find_task(db, task_id)
         raise HTTPException(409, "Esta tarefa já foi aceita. Escolha outra tarefa ou continue sua rota.")
-    db.commit()
+    from app.services.task_routing import insert_task
+    try:
+        insert_task(db, find_task(db, task_id), driver)
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
     db.expire_all()
     return task_dict(find_task(db, task_id))
 
@@ -106,6 +112,8 @@ def complete_task(task_id: int, driver: Driver = Depends(eligible_driver), db: S
         if task.driver_id != driver.id:
             raise HTTPException(403, "Você só pode concluir suas próprias tarefas")
         raise HTTPException(409, "Esta tarefa já foi concluída ou não pode ser concluída")
+    from app.services.task_routing import resolve_task_stop
+    resolve_task_stop(db, find_task(db, task_id))
     db.commit()
     db.expire_all()
     return task_dict(find_task(db, task_id))
@@ -118,6 +126,8 @@ def cancel_task(task_id: int, user: User = Depends(require_operations), db: Sess
         db.rollback()
         find_task(db, task_id)
         raise HTTPException(409, "Esta tarefa já foi concluída ou cancelada")
+    from app.services.task_routing import resolve_task_stop
+    resolve_task_stop(db, find_task(db, task_id), cancelled=True)
     db.commit()
     db.expire_all()
     return task_dict(find_task(db, task_id))

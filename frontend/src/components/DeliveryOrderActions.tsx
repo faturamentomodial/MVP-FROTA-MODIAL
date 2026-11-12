@@ -6,6 +6,8 @@ import type { Trip, TripInvoice } from '../types'
 const pending = (invoice: TripInvoice) => invoice.status === 'PENDENTE' || invoice.status === 'EM_ENTREGA'
 
 export function stopAddress(trip: Trip, invoice: TripInvoice) {
+  const task = /^Tarefa #(\d+)$/.exec(invoice.numero_nota)
+  if (task) return trip.route_plan?.task_stops?.find(p => p.task_id === Number(task[1]))?.address
   // Address-only stops retain their original name when execution order changes.
   const original = /^Parada (\d+)$/.exec(invoice.numero_nota)
   return trip.route_plan?.addresses?.[(original ? Number(original[1]) : invoice.position) - 1]?.address

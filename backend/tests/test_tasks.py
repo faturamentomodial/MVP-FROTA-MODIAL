@@ -103,23 +103,69 @@ def test_in_progress_can_complete(client, admin_headers, driver_headers):
     assert client.post(f'/api/tasks/{tid}/complete', headers=driver_headers).status_code == 200
 
 
-def test_task_does_not_change_current_route(client, admin_headers, driver_headers):
+@pytest.mark.parametrize('first_status', ['PENDENTE', 'EM_ENTREGA', 'ENTREGUE'])
+def test_task_is_inserted_and_route_recalculated(client, admin_headers, driver_headers, monkeypatch, first_status):
     from conftest import assigned_plan
     from app.models import Trip
+    from app.models.route_plans import RoutePlan
+    from app.services import route_planning as provider
+    point = {'address': 'Rua Central, 10', 'latitude': -23.6, 'longitude': -46.7}
+    monkeypatch.setattr(provider, 'geocode', lambda address: {'candidates': [point]})
+    monkeypatch.setattr(provider, 'matrix', lambda points: {
+        key: [[0 if i == j else 10 for j in points] for i in points]
+        for key in ('durations', 'distances')})
+    paths = []
+    def geometry(points):
+        paths.append(points)
+        return {'distance': 1234, 'duration': 600, 'geometry': {'type': 'LineString', 'coordinates': [[p['longitude'], p['latitude']] for p in points]}}
+    monkeypatch.setattr(provider, 'geometry', geometry)
     plan_id = assigned_plan()
-    response = client.post('/api/trips', headers=driver_headers, json={'route_plan_id':plan_id, 'vehicle_id':1, 'km_inicial':1000})
-    assert response.status_code == 201
-    trip_id = response.json()['id']
+    trip_id = client.post('/api/trips', headers=driver_headers, json={'route_plan_id':plan_id, 'vehicle_id':1, 'km_inicial':1000}).json()['id']
     with SessionLocal() as db:
         trip = db.get(Trip, trip_id)
-        before = (trip.status, trip.delivery_revision, [(i.id, i.status, i.numero_nota) for i in trip.invoices])
+        first_id = trip.invoices[0].id
+        trip.invoices[0].status = first_status
+        db.commit()
     tid = create(client, admin_headers)['id']
-    assert client.post(f'/api/tasks/{tid}/accept', headers=driver_headers).status_code == 200
+    accepted = client.post(f'/api/tasks/{tid}/accept', headers=driver_headers)
+    assert accepted.status_code == 200, accepted.text
+    with SessionLocal() as db:
+        trip = db.get(Trip, trip_id)
+        assert len(trip.invoices) == 3
+        assert sorted(n.position for n in trip.invoices) == [1, 2, 3]
+        if first_status != 'PENDENTE':
+            first = next(n for n in trip.invoices if n.id == first_id)
+            assert first.position == 1
+            assert first.status.value == first_status
+        assert trip.delivery_revision == 1
+        plan = db.get(RoutePlan, plan_id)
+        assert plan.data['task_stops'][0]['task_id'] == tid
+        assert plan.data['result']['distance'] == 1234
+        assert any(p['address'] == point['address'] for p in paths[0])
+    assert client.post(f'/api/tasks/{tid}/accept', headers=driver_headers).status_code == 409
     assert client.post(f'/api/tasks/{tid}/complete', headers=driver_headers).status_code == 200
     with SessionLocal() as db:
-        trip = db.get(Trip, trip_id)
-        after = (trip.status, trip.delivery_revision, [(i.id, i.status, i.numero_nota) for i in trip.invoices])
-    assert before == after
+        stop = next(n for n in db.get(Trip, trip_id).invoices if n.numero_nota == f'Tarefa #{tid}')
+        assert stop.status.value == 'ENTREGUE'
+
+
+def test_routing_failure_rolls_back_acceptance(client, admin_headers, driver_headers, monkeypatch):
+    from conftest import assigned_plan
+    from fastapi import HTTPException
+    from app.models import Trip
+    from app.services import route_planning as provider
+    plan_id = assigned_plan()
+    trip_id = client.post('/api/trips', headers=driver_headers, json={'route_plan_id':plan_id, 'vehicle_id':1, 'km_inicial':1000}).json()['id']
+    def unavailable(address):
+        raise HTTPException(503, 'Provedor indispon?vel')
+    monkeypatch.setattr(provider, 'geocode', unavailable)
+    tid = create(client, admin_headers)['id']
+    assert client.post(f'/api/tasks/{tid}/accept', headers=driver_headers).status_code == 503
+    with SessionLocal() as db:
+        task = db.get(Task, tid)
+        assert task.status.value == 'DISPONIVEL'
+        assert task.driver_id is None
+        assert len(db.get(Trip, trip_id).invoices) == 2
 
 
 @pytest.mark.parametrize('status', ['DISPONIVEL', 'ACEITA', 'EM_ANDAMENTO'])

@@ -46,7 +46,7 @@ export function TasksPage({admin=false}:{admin?:boolean}) {
   }
   async function act(task:Task){
     setBusy(task.id);setError('');setSuccess('')
-    try{await api(`/tasks/${task.id}/${section==='available'?'accept':'complete'}`,{method:'POST'});setSuccess(section==='available'?'Tarefa aceita. Consulte Minhas tarefas.':'Tarefa concluída com sucesso.');await refresh.current()}
+    try{await api(`/tasks/${task.id}/${section==='available'?'accept':'complete'}`,{method:'POST'});setSuccess(section==='available'?'Tarefa aceita. Se houver viagem ativa, a parada foi inclu?da e a rota recalculada.':'Tarefa concluída com sucesso.');await refresh.current()}
     catch(e){await refresh.current();setError((e as Error).message)}finally{setBusy(null)}
   }
   async function cancel(task:Task){
@@ -56,7 +56,7 @@ export function TasksPage({admin=false}:{admin?:boolean}) {
     catch(e){await refresh.current();setError((e as Error).message)}finally{setBusy(null)}
   }
   return <div className={admin?'admin-page':'tasks-driver'}>
-    <header className="page-heading"><div><h1>{admin?'Central de Tarefas':'Tarefas'}</h1><p>{admin?'Publique serviços e acompanhe os responsáveis.':'Escolha as tarefas que deseja aceitar, sem interromper sua rota.'}</p></div></header>
+    <header className="page-heading"><div><h1>{admin?'Central de Tarefas':'Tarefas'}</h1><p>{admin?'Publique serviços e acompanhe os responsáveis.':'Aceite tarefas para incluir novas paradas na sua viagem ativa.'}</p></div></header>
     {admin&&<section className="panel task-publish"><h2>Publicar tarefa</h2><form className="modal-form" onSubmit={publish}>
       <label>Título da tarefa<input required maxLength={160} value={form.titulo} onChange={e=>setForm({...form,titulo:e.target.value})}/></label>
       <label>Endereço<input required maxLength={500} value={form.endereco} onChange={e=>setForm({...form,endereco:e.target.value})}/></label>

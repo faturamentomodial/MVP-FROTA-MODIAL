@@ -55,6 +55,16 @@ def transition(db, trip, invoice_id, user, action, payload=None):
             descricao=("" if invoice.is_address_stop else "NF ") + f"{invoice.numero_nota}: {REASONS[payload.motivo]}" + (f" · {payload.observacao}" if payload.observacao else ""),
             data_hora=now)
         db.add(occurrence)
+    if invoice.is_address_stop and invoice.numero_nota.startswith('Tarefa #'):
+        from app.models import Task, TaskStatus
+        task = db.get(Task, int(invoice.numero_nota.split('#')[-1]))
+        if task and task.driver_id == trip.driver_id and task.status in (TaskStatus.ACEITA, TaskStatus.EM_ANDAMENTO):
+            if action == 'start':
+                task.status = TaskStatus.EM_ANDAMENTO
+                task.started_at = task.started_at or now
+            elif action == 'finish':
+                task.status = TaskStatus.CONCLUIDA
+                task.completed_at = now
     audit(db, user, {"start": "INICIAR_ENTREGA", "finish": "FINALIZAR_ENTREGA", "occurrence": "REGISTRAR_OCORRENCIA_ENTREGA"}[action],
         "TRIP_INVOICE", invoice_id, {"trip_id": trip.id, "driver_id": trip.driver_id,
         "numero_nota": invoice.numero_nota, "status_anterior": previous.value, "status_novo": target.value,
