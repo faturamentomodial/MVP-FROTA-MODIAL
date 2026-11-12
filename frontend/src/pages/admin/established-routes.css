@@ -1,5 +1,22 @@
-.established-catalog{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px}
-.established-card{border:1px solid var(--border,#e5e7eb);border-left:3px solid #ef7c20;border-radius:12px;padding:18px;background:#fff;min-width:0}
+.established-catalog{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+.established-card{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:24px;row-gap:4px;border:0;border-top:1px solid #e5e7eb;border-radius:0;padding:14px 0;background:#fff;min-width:0;font-family:"Helvetica Neue",Arial,sans-serif}
+.established-card> :not(.established-actions){grid-column:1}
+.established-card p{margin:0;font-size:13px;line-height:1.5;color:#667085}
+.established-card .established-card-heading{justify-content:flex-start;flex-wrap:nowrap;gap:10px}
+.established-card-heading h3{margin:0;font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+.established-card .established-actions{grid-column:2;grid-row:1 / span 5;align-self:center;justify-content:flex-end;gap:4px}
+.established-card .button{min-height:32px;padding:5px 9px;border-radius:5px;font-size:12px;box-shadow:none}
+.established-card .button--secondary{border-color:transparent;background:transparent;color:#475467}
+.established-card .button--secondary:hover:not(:disabled){background:#f7f7f8}
+.established-card .button--danger{background:transparent;color:var(--red)}
+.established-card .button--primary{background:#ff4f00;color:#fff}
+.established-card .established-card-hint{font-size:12px}
+.established-card-description{font-size:12px;color:#667085;min-width:0}
+.established-card-description summary{cursor:pointer;width:fit-content;padding:3px 0}
+.established-card-description p{padding:4px 0;max-width:70ch}
+.established-card-description summary:focus-visible{outline:2px solid #ff4f00;outline-offset:2px}
+@media(max-width:1100px){.established-card{grid-template-columns:minmax(0,1fr)}.established-card .established-actions{grid-column:1;grid-row:auto;justify-content:flex-start;margin-top:6px}}
+@media(pointer:coarse){.established-card .button{min-height:44px}}
 .established-card p{overflow-wrap:anywhere}
 .established-card-heading,.established-week-heading{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
 .established-card-heading span{font-size:12px;border:1px solid #e5e7eb;padding:3px 9px;border-radius:20px}
@@ -19,4 +36,4 @@
 .established-booking>span{color:#9a4c10;font-size:12px}
 .established-stops{display:grid;gap:12px;padding-left:24px}
 .established-stops li{padding:12px;background:#f7f7f8;border-radius:8px;overflow-wrap:anywhere}
-@media(max-width:700px){.established-week{grid-template-columns:repeat(7,210px)}.established-card{padding:14px}}
+@media(max-width:700px){.established-week{grid-template-columns:repeat(7,210px)}.established-card{padding:12px 0}}
