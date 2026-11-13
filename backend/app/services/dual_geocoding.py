@@ -1,4 +1,4 @@
-"""Conservative geocoding: one full-address request per provider, no retries."""
+"""Conservative geocoding selection and shared quotas for the configured provider."""
 import math
 import re
 import time
@@ -100,7 +100,7 @@ def select_result(address, results, errors=None):
                 precision='building' if selected else 'street' if eligible else 'unverified',
                 approximate=selected is None, original_address=address, manual_confirmed=False,
                 verified_at=time.time(), errors=errors or [],
-                attribution='© OpenStreetMap contributors', schema_version=2)
+                attribution='Geoapify | © OpenStreetMap contributors' if settings.routes_geocoder_provider == 'geoapify' else '© OpenStreetMap contributors', schema_version=2)
 
 
 def lookup(db, address):
@@ -112,7 +112,7 @@ def lookup(db, address):
         try:
             interval = max(
                 settings.routes_min_interval_seconds,
-                1.1 if urlsplit(settings.routes_geocoder_url).hostname == 'nominatim.openstreetmap.org' else 0)
+                1.1 if name == 'nominatim' and urlsplit(settings.routes_geocoder_url).hostname == 'nominatim.openstreetmap.org' else 0)
             def fetch(query):
                 reserve(db, bucket, interval)
                 return route_planning._geocode_exact(query)

@@ -7,6 +7,11 @@ os.environ["ENVIRONMENT"] = "test"
 os.environ["POSITRON_LOGIN"] = ""
 os.environ["POSITRON_PASSWORD"] = ""
 
+# Never use live geocoding/routing credentials in the offline test suite.
+os.environ["GEOAPIFY_API_KEY"] = ""
+os.environ["ROUTES_GEOCODER_PROVIDER"] = "nominatim"
+os.environ["ROUTES_ROUTER_PROVIDER"] = "osrm"
+
 import pytest
 from fastapi.testclient import TestClient
 

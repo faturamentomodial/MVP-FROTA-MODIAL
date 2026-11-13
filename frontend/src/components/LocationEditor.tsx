@@ -53,6 +53,7 @@ export function LocationEditor({ address, candidates, currentPoint, onConfirmed 
     <h3>Corrigir localização</h3><p>Endereço original: <strong>{address}</strong></p>
     <p>Selecione uma sugestão ou clique no mapa. Arraste o marcador com ✓ até o local definitivo. A confirmação será reutilizada nas próximas buscas.</p>
     <div ref={container} style={{ height: 360, width: '100%', pointerEvents: busy ? 'none' : 'auto' }} aria-label="Mapa para corrigir localização" />
+    <small>Geocodificação: <a href="https://www.geoapify.com/">Geoapify</a>. Os créditos da fonte são preservados com os resultados.</small>
     <div className="form-row">
       <label>Latitude<input disabled={busy} type="number" step="any" min={-90} max={90} value={latitude} onChange={e => setLatitude(e.target.value)} /></label>
       <label>Longitude<input disabled={busy} type="number" step="any" min={-180} max={180} value={longitude} onChange={e => setLongitude(e.target.value)} /></label>

@@ -151,7 +151,7 @@ def calculate(id: int, payload: CalculateInput, db: Session = Depends(get_db)):
     else:
         notes = {n['number']: n for n in data['invoices']}
         data['invoices'] = [notes[n] for s in data['stops'] for n in s['invoices']]
-    data['result'] = {**result, 'provider': 'osrm', 'return_to_origin': origin == end,
+    data['result'] = {**result, 'provider': provider.settings.routes_router_provider, 'return_to_origin': origin == end,
                       'warning': WARNING if data['profile'] == 'truck' else None,
                       'truck_restrictions_supported': False,
                       'algorithm': 'manual' if not payload.optimize else 'held-karp' if len(stops) <= 10 else 'nearest-neighbour'}
