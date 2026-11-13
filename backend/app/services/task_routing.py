@@ -13,7 +13,7 @@ from app.services.deliveries import claim_revision
 from app.services.trips import get_active_trip
 
 
-def insert_task(db, task, driver):
+def insert_task(db, task, driver, selected_point=None):
     trip = get_active_trip(db, driver.id)
     if trip is None:
         return
@@ -21,11 +21,14 @@ def insert_task(db, task, driver):
     if plan is None or not plan.data.get('origin'):
         raise HTTPException(409, 'A viagem precisa de uma rota com origem para receber tarefas')
     data = deepcopy(plan.data)
-    candidates = provider.geocode(task.endereco)['candidates']
+    candidates = [selected_point] if selected_point is not None else provider.geocode(task.endereco)['candidates']
     if len(candidates) != 1:
         raise HTTPException(422, 'Informe um endereço mais preciso para a tarefa; não foi possível localizar uma única parada')
     point = {key: candidates[0][key] for key in ('latitude', 'longitude')}
-    point['address'] = task.endereco
+    point['address'] = candidates[0].get('address', task.endereco)
+    point['original_address'] = task.endereco
+    point['manual_confirmed'] = selected_point is not None
+    point['confirmed_by'] = driver.user_id if selected_point is not None else None
     label = f'Tarefa #{task.id}'
     point.update(task_id=task.id, title=task.titulo)
     addresses = data.get('addresses', [])

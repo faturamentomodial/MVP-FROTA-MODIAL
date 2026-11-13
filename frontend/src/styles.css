@@ -93,3 +93,14 @@ label{display:flex;flex-direction:column;gap:.45rem;font-weight:600;color:#3f3c3
 .maintenance-list dl { display: grid; grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap: 1rem; }
 .maintenance-list dt { color: #64748b; font-size: .85rem; }
 .maintenance-list dd { margin: .25rem 0; overflow-wrap: anywhere; }
+
+.task-locations { display:grid; gap:10px; margin:20px 0; }
+.task-locations fieldset { min-width:0; border:1px solid var(--line); border-radius:12px; padding:16px; }
+.task-locations legend { font-weight:700; padding:0 5px; }
+.task-locations fieldset>p { color:var(--muted); margin:0 0 12px; }
+.task-location { padding:12px 0; border-top:1px solid var(--line); }
+.task-location label { display:flex; flex-direction:row; align-items:flex-start; gap:10px; cursor:pointer; }
+.task-location input { width:auto; flex-shrink:0; margin-top:4px; accent-color:var(--orange); }
+.task-location label>span { display:grid; gap:6px; }
+.task-location:has(input:checked) { background:var(--orange-soft); }
+.task-location a { display:inline-block; margin:10px 0 0 24px; text-decoration:underline; }

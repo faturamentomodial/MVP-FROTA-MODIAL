@@ -1,5 +1,8 @@
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Annotated
+
+import jwt
+from jwt import InvalidTokenError
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, ConfigDict, StringConstraints
@@ -7,6 +10,7 @@ from sqlalchemy import select, update
 from sqlalchemy.orm import Session, joinedload
 
 from app.api.dependencies import get_current_user, require_operations, require_driver
+from app.core.config import settings
 from app.core.database import get_db
 from app.models import Driver, Task, TaskStatus, User
 from app.models.entities import utcnow
@@ -20,6 +24,11 @@ class TaskCreate(BaseModel):
     titulo: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=160)]
     endereco: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=500)]
     observacoes: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=10000)]
+
+
+class TaskAcceptance(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    location_token: str
 
 
 def eligible_driver(user: User = Depends(require_driver), db: Session = Depends(get_db)) -> Driver:
@@ -84,8 +93,46 @@ def task_detail(task_id: int, user: User = Depends(get_current_user), db: Sessio
     return task_dict(task)
 
 
+@router.get("/{task_id}/locations")
+def task_locations(task_id: int, driver: Driver = Depends(eligible_driver), db: Session = Depends(get_db)):
+    task = find_task(db, task_id)
+    if task.status != TaskStatus.DISPONIVEL:
+        raise HTTPException(409, "Esta tarefa já foi aceita ou cancelada")
+    from app.services.trips import get_active_trip
+    if get_active_trip(db, driver.id) is None:
+        return {"required": False, "candidates": []}
+    from app.services.geocoding_cache import geocode
+    result = geocode(db, task.endereco)
+    if not result.get('candidates') and result.get('errors'):
+        limited = any(error.get('status') == 429 for error in result['errors'])
+        raise HTTPException(429 if limited else 503,
+                            'Consulta de endereços indisponível. Aguarde e tente novamente.')
+    candidates = []
+    for point in result.get('candidates', []):
+        if not point.get('street_found') and not point.get('manual_confirmed'):
+            continue
+        token = jwt.encode({
+            'purpose': 'task_location', 'task_id': task.id, 'driver_id': driver.id,
+            'address': task.endereco, 'point': point,
+            'exp': datetime.now(UTC) + timedelta(minutes=15),
+        }, settings.secret_key, algorithm='HS256')
+        candidates.append({**point, 'location_token': token})
+    return {"required": True, "candidates": candidates}
+
+
 @router.post("/{task_id}/accept")
-def accept_task(task_id: int, driver: Driver = Depends(eligible_driver), db: Session = Depends(get_db)):
+def accept_task(task_id: int, body: TaskAcceptance | None = None, driver: Driver = Depends(eligible_driver), db: Session = Depends(get_db)):
+    selected_point = None
+    if body is not None:
+        task = find_task(db, task_id)
+        try:
+            payload = jwt.decode(body.location_token, settings.secret_key, algorithms=['HS256'])
+            if (payload.get('purpose') != 'task_location' or payload.get('task_id') != task.id
+                    or payload.get('driver_id') != driver.id or payload.get('address') != task.endereco):
+                raise InvalidTokenError()
+            selected_point = payload['point']
+        except (InvalidTokenError, KeyError):
+            raise HTTPException(422, 'Seleção inválida ou expirada. Consulte os endereços novamente.') from None
     # The conditional UPDATE arbitrates competing requests inside the database.
     result = db.execute(update(Task).where(Task.id == task_id, Task.status == TaskStatus.DISPONIVEL, Task.driver_id.is_(None)).values(status=TaskStatus.ACEITA, driver_id=driver.id, accepted_at=utcnow()), execution_options={"synchronize_session": False})
     if result.rowcount != 1:
@@ -94,7 +141,7 @@ def accept_task(task_id: int, driver: Driver = Depends(eligible_driver), db: Ses
         raise HTTPException(409, "Esta tarefa já foi aceita. Escolha outra tarefa ou continue sua rota.")
     from app.services.task_routing import insert_task
     try:
-        insert_task(db, find_task(db, task_id), driver)
+        insert_task(db, find_task(db, task_id), driver, selected_point=selected_point)
         db.commit()
     except Exception:
         db.rollback()

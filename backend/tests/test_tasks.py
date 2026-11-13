@@ -168,6 +168,78 @@ def test_routing_failure_rolls_back_acceptance(client, admin_headers, driver_hea
         assert len(db.get(Trip, trip_id).invoices) == 2
 
 
+def test_select_task_location(client, admin_headers, driver_headers, monkeypatch):
+    from conftest import assigned_plan
+    from app.models.route_plans import RoutePlan
+    from app.services import geocoding_cache, route_planning
+    points = [
+        {'address': 'Rua Rafael Dias Gomes, 65', 'latitude': -23.42, 'longitude': -46.52, 'street_found': True},
+        {'address': 'Rua Dias Gomes, 65, Bananal', 'latitude': -23.40, 'longitude': -46.47, 'street_found': True},
+    ]
+    monkeypatch.setattr(geocoding_cache, 'geocode', lambda db, address: {'candidates': points})
+    monkeypatch.setattr(route_planning, 'matrix', lambda points: {
+        key: [[0 if i == j else 10 for j in points] for i in points]
+        for key in ('durations', 'distances')})
+    monkeypatch.setattr(route_planning, 'geometry', lambda points: {'distance': 100, 'duration': 60})
+    plan_id = assigned_plan()
+    client.post('/api/trips', headers=driver_headers, json={'route_plan_id': plan_id, 'vehicle_id': 1, 'km_inicial': 1000})
+    tid = create(client, admin_headers)['id']
+    response = client.get(f'/api/tasks/{tid}/locations', headers=driver_headers)
+    assert response.status_code == 200
+    assert response.json()['required'] is True
+    candidates = response.json()['candidates']
+    assert len(candidates) == 2
+    with SessionLocal() as db:
+        assert db.get(Task, tid).status.value == 'DISPONIVEL'
+    token = candidates[1]['location_token']
+    other_tid = create(client, admin_headers)['id']
+    assert client.post(f'/api/tasks/{other_tid}/accept', headers=driver_headers,
+                       json={'location_token': token}).status_code == 422
+    other = second_driver(client)
+    assert client.post(f'/api/tasks/{tid}/accept', headers=other,
+                       json={'location_token': token}).status_code == 422
+    assert client.post(f'/api/tasks/{tid}/accept', headers=driver_headers,
+                       json={'location_token': 'invalid'}).status_code == 422
+    response = client.post(f'/api/tasks/{tid}/accept', headers=driver_headers, json={'location_token': token})
+    assert response.status_code == 200, response.text
+    with SessionLocal() as db:
+        stop = db.get(RoutePlan, plan_id).data['task_stops'][0]
+        assert stop['latitude'] == points[1]['latitude']
+        assert stop['address'] == points[1]['address']
+        assert stop['original_address'] == 'Rua Central, 10'
+        assert stop['manual_confirmed'] is True
+    assert client.post(f'/api/tasks/{tid}/accept', headers=driver_headers,
+                       json={'location_token': token}).status_code == 409
+
+
+def test_task_location_permissions_and_no_active_trip(client, admin_headers, driver_headers, monkeypatch):
+    from app.services import geocoding_cache
+    def unexpected(*args):
+        raise AssertionError('No provider lookup without active trip')
+    monkeypatch.setattr(geocoding_cache, 'geocode', unexpected)
+    tid = create(client, admin_headers)['id']
+    assert client.get(f'/api/tasks/{tid}/locations').status_code == 401
+    assert client.get(f'/api/tasks/{tid}/locations', headers=admin_headers).status_code == 403
+    assert client.get('/api/tasks/9999/locations', headers=driver_headers).status_code == 404
+    assert client.get(f'/api/tasks/{tid}/locations', headers=driver_headers).json() == {'required': False, 'candidates': []}
+
+
+@pytest.mark.parametrize('errors,status', [([], 200), ([{'status': 429}], 429), ([{'status': 503}], 503)])
+def test_task_locations_empty_or_unavailable(client, admin_headers, driver_headers, monkeypatch, errors, status):
+    from conftest import assigned_plan
+    from app.services import geocoding_cache
+    plan_id = assigned_plan()
+    client.post('/api/trips', headers=driver_headers, json={'route_plan_id': plan_id, 'vehicle_id': 1, 'km_inicial': 1000})
+    monkeypatch.setattr(geocoding_cache, 'geocode', lambda db, address: {'candidates': [], 'errors': errors})
+    tid = create(client, admin_headers)['id']
+    response = client.get(f'/api/tasks/{tid}/locations', headers=driver_headers)
+    assert response.status_code == status
+    if status == 200:
+        assert response.json() == {'required': True, 'candidates': []}
+    with SessionLocal() as db:
+        assert db.get(Task, tid).status.value == 'DISPONIVEL'
+
+
 @pytest.mark.parametrize('status', ['DISPONIVEL', 'ACEITA', 'EM_ANDAMENTO'])
 def test_cancel_task(client, admin_headers, driver_headers, status):
     tid = create(client, admin_headers)['id']
