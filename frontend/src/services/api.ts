@@ -6,7 +6,7 @@ export class ApiError extends Error {
   constructor(public status: number, message: string) { super(message) }
 }
 
-export async function api<T>(path: string, options: RequestInit = {}): Promise<T> {
+export async function api<T>(path: string, options: RequestInit = {}, responseType: 'json' | 'blob' = 'json'): Promise<T> {
   const token = localStorage.getItem('fleet_token')
   const headers = new Headers(options.headers)
   headers.set('Content-Type', 'application/json')
@@ -23,6 +23,7 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     throw new ApiError(response.status, detail || 'Erro inesperado')
   }
   if (response.status === 204) return undefined as T
+  if (responseType === 'blob') return await response.blob() as T
   return response.json()
 }
 

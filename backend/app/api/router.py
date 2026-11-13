@@ -28,3 +28,6 @@ api_router.include_router(pickups.router)
 
 from app.api import route_templates
 api_router.include_router(route_templates.router)
+
+from app.api import route_pdf
+api_router.include_router(route_pdf.router)
