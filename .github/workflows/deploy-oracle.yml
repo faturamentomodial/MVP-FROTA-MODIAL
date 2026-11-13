@@ -41,6 +41,7 @@ jobs:
           scp -o BatchMode=yes -o StrictHostKeyChecking=yes app-image.tar.gz docker-compose.oracle.yml Caddyfile "$ORACLE_USER@$ORACLE_HOST:modial-frota/"
       - name: Configure integration credentials on server
         env:
+          GEOAPIFY_API_KEY: ${{ secrets.GEOAPIFY_API_KEY }}
           SANKHYA_CLIENT_ID: ${{ secrets.SANKHYA_CLIENT_ID }}
           SANKHYA_CLIENT_SECRET: ${{ secrets.SANKHYA_CLIENT_SECRET }}
           SANKHYA_TOKEN: ${{ secrets.SANKHYA_TOKEN }}
@@ -51,9 +52,10 @@ jobs:
           python3 - <<'PY'
           import json, os
           from pathlib import Path
-          values = {key: os.environ[key] for key in ('POSITRON_LOGIN', 'POSITRON_PASSWORD', 'SANKHYA_CLIENT_ID', 'SANKHYA_CLIENT_SECRET', 'SANKHYA_TOKEN')}
+          values = {key: os.environ[key] for key in ('GEOAPIFY_API_KEY', 'POSITRON_LOGIN', 'POSITRON_PASSWORD', 'SANKHYA_CLIENT_ID', 'SANKHYA_CLIENT_SECRET', 'SANKHYA_TOKEN')}
           if not all(values.values()):
-              raise SystemExit('Configure Positron and Sankhya repository secrets before deploying.')
+              raise SystemExit('Configure Geoapify, Positron and Sankhya repository secrets before deploying.')
+          values.update(ROUTES_GEOCODER_PROVIDER='geoapify', ROUTES_ROUTER_PROVIDER='geoapify')
           path = Path('.integrations.env')
           path.touch(mode=0o600)
           path.write_text(''.join(f'{key}={json.dumps(value)}\n' for key, value in values.items()))
@@ -65,7 +67,7 @@ jobs:
           target, incoming = root / '.env', root / '.integrations.env'
           incoming.chmod(0o600)
           lines = [line for line in target.read_text().splitlines()
-                   if line.partition('=')[0].strip() not in ('POSITRON_LOGIN', 'POSITRON_PASSWORD', 'SANKHYA_CLIENT_ID', 'SANKHYA_CLIENT_SECRET', 'SANKHYA_TOKEN')]
+                   if line.partition('=')[0].strip() not in ('GEOAPIFY_API_KEY', 'ROUTES_GEOCODER_PROVIDER', 'ROUTES_ROUTER_PROVIDER', 'POSITRON_LOGIN', 'POSITRON_PASSWORD', 'SANKHYA_CLIENT_ID', 'SANKHYA_CLIENT_SECRET', 'SANKHYA_TOKEN')]
           replacement = root / '.env.next'
           replacement.touch(mode=0o600)
           replacement.chmod(0o600)
