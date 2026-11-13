@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field, ConfigDict, model_validator
 
 class Point(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True, extra="forbid")
+    pickup_volume: str | None = Field(default=None, min_length=1, max_length=500)
     address: str = Field(min_length=5, max_length=500)
     latitude: float = Field(ge=-90, le=90, allow_inf_nan=False)
     longitude: float = Field(ge=-180, le=180, allow_inf_nan=False)

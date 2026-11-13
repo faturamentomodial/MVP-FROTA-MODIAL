@@ -147,7 +147,7 @@ def calculate(id: int, payload: CalculateInput, db: Session = Depends(get_db)):
         raise HTTPException(422, 'Estimativa inválida do provedor')
     data['stops'] = [stops[i-1] for i in order]
     if data['addresses']:
-        data['addresses'] = [{k: s[k] for k in ('address', 'latitude', 'longitude')} for s in data['stops']]
+        data['addresses'] = [{k: s[k] for k in ('address', 'latitude', 'longitude', 'pickup_volume') if k in s} for s in data['stops']]
     else:
         notes = {n['number']: n for n in data['invoices']}
         data['invoices'] = [notes[n] for s in data['stops'] for n in s['invoices']]

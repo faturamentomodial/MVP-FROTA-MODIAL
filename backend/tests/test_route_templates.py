@@ -294,3 +294,22 @@ def test_delete_template_keeps_started_trip(client, admin_headers, driver_header
         assert db.get(Trip, trip.json()['id']) is not None
         assert db.get(RoutePlan, execution['plan_id']) is not None
         assert db.get(RoutePlan, future['plan_id']) is None
+
+
+def test_pickup_volume_text_survives_optimization(client, admin_headers, monkeypatch):
+    monkeypatch.setattr(provider, 'matrix', fake_matrix)
+    monkeypatch.setattr(provider, 'geometry', fake_geometry)
+    body = template_body(1)
+    body['addresses'][0]['pickup_volume'] = '  10 caixas e 2 paletes  '
+    created = client.post('/api/route-templates', headers=admin_headers, json=body)
+    assert created.status_code == 201, created.text
+    route = created.json()
+    assert route['addresses'][0]['pickup_volume'] == '10 caixas e 2 paletes'
+    calculated = client.post(f"/api/route-templates/{route['id']}/calculate",
+                             headers=admin_headers, json={'revision': 0})
+    assert calculated.status_code == 200, calculated.text
+    assert calculated.json()['addresses'][0]['pickup_volume'] == '10 caixas e 2 paletes'
+    assert calculated.json()['stops'][0]['pickup_volume'] == '10 caixas e 2 paletes'
+    for invalid in ('', '   ', 10):
+        body['addresses'][0]['pickup_volume'] = invalid
+        assert client.post('/api/route-templates', headers=admin_headers, json=body).status_code == 422
