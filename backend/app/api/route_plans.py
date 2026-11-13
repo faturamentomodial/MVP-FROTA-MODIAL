@@ -20,7 +20,7 @@ class LocationConfirmation(BaseModel):
     longitude: float = Field(ge=-180, le=180, allow_inf_nan=False)
 
 router = APIRouter(prefix='/route-plans', tags=['Planejamento de rotas'], dependencies=[Depends(require_operations)])
-WARNING = 'OSRM driving não considera altura, peso, eixos ou restrições legais de caminhões. Revisão humana obrigatória antes da operação.'
+WARNING = 'O perfil de direção não considera altura, peso, eixos ou restrições legais de caminhões. Revisão humana obrigatória antes da operação.'
 
 
 def load(db, plan_id):
@@ -67,7 +67,7 @@ def list_plans(db: Session = Depends(get_db), limit: int = Query(50, ge=1, le=10
 
 @router.get('/providers', dependencies=[Depends(require_admin)])
 def providers():
-    return {'geocoder': provider.settings.routes_geocoder_provider, 'router': 'osrm', 'truck_restrictions_supported': False, 'warning': WARNING, 'max_invoices': 10, 'return_to_origin': True}
+    return {'geocoder': provider.settings.routes_geocoder_provider, 'router': provider.settings.routes_router_provider, 'truck_restrictions_supported': False, 'warning': WARNING, 'max_invoices': 10, 'return_to_origin': True}
 
 
 @router.get('/geocode')
@@ -163,7 +163,7 @@ def points_and_stops(plan):
 @router.post('/{plan_id}/matrix', dependencies=[Depends(require_admin)])
 def matrix(plan_id: int, db: Session = Depends(get_db)):
     points, stops = points_and_stops(load(db, plan_id))
-    return {'stops': stops, 'provider': 'osrm', **provider.matrix(points)}
+    return {'stops': stops, 'provider': provider.settings.routes_router_provider, **provider.matrix(points)}
 
 
 @router.post('/{plan_id}/calculate', dependencies=[Depends(require_admin)])
@@ -179,7 +179,7 @@ def calculate(plan_id: int, payload: CalculateInput, db: Session = Depends(get_d
     data['stops'] = [stops[i-1] for i in order]
     notes = {n['number']: n for n in data['invoices']}
     data['invoices'] = [notes[number] for stop in data['stops'] for number in stop['invoices']]
-    data['result'] = {**result, 'matrix': {'durations': matrix['durations'], 'distances': matrix['distances']}, 'matrix_points': points, 'provider': 'osrm', 'truck_restrictions_supported': False, 'warning': WARNING if data['profile'] == 'truck' else None, 'algorithm': ('held-karp' if len(stops) <= 10 else 'nearest-neighbour') if payload.optimize else 'manual', 'objective': data['objective'], 'return_to_origin': True}
+    data['result'] = {**result, 'matrix': {'durations': matrix['durations'], 'distances': matrix['distances']}, 'matrix_points': points, 'provider': provider.settings.routes_router_provider, 'truck_restrictions_supported': False, 'warning': WARNING if data['profile'] == 'truck' else None, 'algorithm': ('held-karp' if len(stops) <= 10 else 'nearest-neighbour') if payload.optimize else 'manual', 'objective': data['objective'], 'return_to_origin': True}
     return save(db, plan, payload.revision, data, user)
 
 

@@ -1,4 +1,4 @@
-"""Real Nominatim/Photon geocoding and OSRM routing adapters."""
+"""Provider dispatch with Geoapify defaults and explicit legacy adapters."""
 import json
 import logging
 import math
@@ -60,6 +60,9 @@ def geocode(address, fetch=None):
 
 
 def _geocode_exact(address):
+    if settings.routes_geocoder_provider == 'geoapify':
+        from app.services.geoapify import geocode
+        return geocode(address)
     # A previous Photon configuration may remain when switching to Nominatim.
     host = urlsplit(settings.routes_geocoder_url).hostname or ''
     if ((settings.routes_geocoder_provider == 'nominatim' and host == 'photon.komoot.io')
@@ -173,6 +176,9 @@ def coordinates(points):
 
 
 def matrix(points):
+    if settings.routes_router_provider == 'geoapify':
+        from app.services.geoapify import matrix
+        return matrix(points)
     data = request(settings.routes_router_url, '/table/v1/driving/' + coordinates(points) + '?annotations=duration,distance')
     try:
         if data['code'] != 'Ok':
@@ -189,6 +195,9 @@ def matrix(points):
 
 
 def geometry(points):
+    if settings.routes_router_provider == 'geoapify':
+        from app.services.geoapify import geometry
+        return geometry(points)
     data = request(settings.routes_router_url, '/route/v1/driving/' + coordinates(points) + '?overview=full&geometries=geojson&steps=false')
     try:
         route = data['routes'][0]

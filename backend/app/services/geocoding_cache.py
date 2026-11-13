@@ -13,7 +13,7 @@ def geocode(db, address):
     address = address.strip()
     cached = db.get(GeocodedAddress, address)
     if cached and (cached.result.get('manual_confirmed') or
-                   cached.result.get('schema_version') == 2 and cached.result.get('expires_at', 0) > time.time()):
+                   cached.result.get('schema_version') == 2 and cached.result.get('cache_provider') == settings.routes_geocoder_provider and cached.result.get('expires_at', 0) > time.time()):
         return cached.result
     lease = 'address:' + hashlib.sha256(address.encode()).hexdigest()
     dual_geocoding.reserve(db, lease, settings.routes_timeout_seconds * 2 + 10)
@@ -24,6 +24,7 @@ def geocode(db, address):
             return cached.result
         result = dual_geocoding.lookup(db, address)
         ttl = settings.geocoding_cache_seconds if result.get('candidates') and not result.get('errors') else settings.geocoding_failure_cache_seconds
+        result['cache_provider'] = settings.routes_geocoder_provider
         result['expires_at'] = time.time() + ttl
         if cached:
             # A concurrent manual confirmation always wins over this lookup.

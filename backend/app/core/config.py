@@ -25,7 +25,9 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+psycopg://fleet:fleet@db:5432/fleet"
     cors_origins: str = "http://localhost:5173,http://localhost:3000"
     frontend_dist: Path | None = None
-    routes_geocoder_provider: Literal['photon', 'nominatim'] = 'nominatim'
+    routes_geocoder_provider: Literal['geoapify', 'photon', 'nominatim'] = 'geoapify'
+    routes_router_provider: Literal['geoapify', 'osrm'] = 'geoapify'
+    geoapify_api_key: SecretStr = SecretStr('')
     routes_geocoder_url: str = 'https://nominatim.openstreetmap.org'
     routes_router_url: str = ''
     routes_timeout_seconds: float = Field(default=15, gt=0, le=60)
@@ -50,7 +52,9 @@ class Settings(BaseSettings):
             "nominatim": "nominatim.openstreetmap.org",
         }
         host = urlsplit(self.routes_geocoder_url).hostname
-        expected_host = public_hosts[self.routes_geocoder_provider]
+        expected_host = public_hosts.get(self.routes_geocoder_provider)
+        if expected_host is None:
+            return self
         if host in public_hosts.values() and host != expected_host:
             self.routes_geocoder_url = f"https://{expected_host}"
             logging.getLogger(__name__).warning(

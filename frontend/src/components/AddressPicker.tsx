@@ -26,6 +26,6 @@ export function AddressPicker({label,onSelect,initialAddress='',onQueryChange}:{
   return <div><label>{label}<input disabled={busy} value={query} onChange={e=>{setQuery(e.target.value);onQueryChange?.(e.target.value);setMessage('')}} placeholder="Rua, número, bairro, cidade, UF e CEP"/></label>
     <Button type="button" variant="secondary" disabled={busy||query.trim().length<5} loading={busy} onClick={search}>Buscar endereço</Button>
     {message&&<Alert tone="info">{message}</Alert>}
-    <small>Dados: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors (ODbL)</a>.</small>
+    <small>Geocodificação: <a href="https://www.geoapify.com/">Geoapify</a> | © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors (ODbL)</a>.</small>
   </div>
 }

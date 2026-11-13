@@ -1,0 +1,3944 @@
+{
+  "checked_at": "2026-11-13T15:42:52.389209+00:00",
+  "provider": "geoapify",
+  "attribution": "Geoapify | © OpenStreetMap contributors",
+  "addresses": [
+    {
+      "query": "Rua Carinas, 76, Jardim Santa Inês, Guarulhos, SP",
+      "candidates": [
+        {
+          "address": "Rua Carinas 76, Taboão, Vila Jardim Santa Inês, Distrito-sede de Guarulhos, Guarulhos - SP, 07140-130, Brasil",
+          "latitude": -23.427929,
+          "longitude": -46.505493,
+          "components": {
+            "street": "Rua Carinas",
+            "number": "76",
+            "city": "Guarulhos",
+            "neighborhood": "Taboão",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "result_type": "building",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "51b0ad9ffeb34047c0598e0244c18c6d37c0c00203e203466f70656e6164647265737365733a616464726573733a62722f73702f7374617465776964652d6164647265737365732d73746174653a34313633646463373331646137656235",
+          "rank": {
+            "importance": 0.053397476920729346,
+            "popularity": 6.283121066985729,
+            "confidence": 1,
+            "confidence_city_level": 1,
+            "confidence_street_level": 1,
+            "confidence_building_level": 1,
+            "match_type": "full_match"
+          },
+          "precision": "street",
+          "status": "approximate",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        }
+      ],
+      "selected": null,
+      "selection_required": true,
+      "provider": null,
+      "status": "approximate",
+      "precision": "street",
+      "approximate": true,
+      "original_address": "Rua Carinas, 76, Jardim Santa Inês, Guarulhos, SP",
+      "manual_confirmed": false,
+      "verified_at": 1794584574.4440484,
+      "errors": [],
+      "attribution": "Geoapify | © OpenStreetMap contributors",
+      "schema_version": 2
+    },
+    {
+      "query": "Avenida Paulo Faccini, Macedo, Guarulhos, SP",
+      "candidates": [
+        {
+          "address": "Avenida Paulo Faccini, Maia, Distrito-sede de Guarulhos, Guarulhos - SP, 07115-010, Brasil",
+          "latitude": -23.459983,
+          "longitude": -46.5284556,
+          "components": {
+            "street": "Avenida Paulo Faccini",
+            "number": "",
+            "city": "Guarulhos",
+            "neighborhood": "Maia",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": false,
+          "result_type": "street",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "51acb1df6ea44347c0594ab72572c17537c0f00102f901307ac01100000000c002049203154176656e696461205061756c6f2046616363696e69",
+          "rank": {
+            "importance": 0.05341195162890055,
+            "popularity": 7.149875851635314,
+            "confidence": 1,
+            "confidence_city_level": 1,
+            "confidence_street_level": 1,
+            "match_type": "full_match"
+          },
+          "precision": "street",
+          "status": "approximate",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Avenida Paulo Faccini, Macedo, Distrito-sede de Guarulhos, Guarulhos - SP, 07111-000, Brasil",
+          "latitude": -23.4678045,
+          "longitude": -46.5228598,
+          "components": {
+            "street": "Avenida Paulo Faccini",
+            "number": "",
+            "city": "Guarulhos",
+            "neighborhood": "Macedo",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": false,
+          "result_type": "street",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "5151b2e611ed4247c059f06b2409c27737c0f00102f90164d7222200000000c002049203154176656e696461205061756c6f2046616363696e69",
+          "rank": {
+            "importance": 0.05341195162890055,
+            "popularity": 7.41573091129505,
+            "confidence": 1,
+            "confidence_city_level": 1,
+            "confidence_street_level": 1,
+            "match_type": "full_match"
+          },
+          "precision": "street",
+          "status": "approximate",
+          "manual_confirmed": false,
+          "neighborhood_matches": true
+        },
+        {
+          "address": "Avenida Paulo Faccini, Maia, Distrito-sede de Guarulhos, Guarulhos - SP, 07095-150, Brasil",
+          "latitude": -23.4566628,
+          "longitude": -46.5314333,
+          "components": {
+            "street": "Avenida Paulo Faccini",
+            "number": "",
+            "city": "Guarulhos",
+            "neighborhood": "Maia",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": false,
+          "result_type": "street",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "51b0c0a101064447c059bf4c6fdae77437c0f00102f901317ac01100000000c002049203154176656e696461205061756c6f2046616363696e69",
+          "rank": {
+            "importance": 0.05341195162890055,
+            "popularity": 7.247868129605267,
+            "confidence": 1,
+            "confidence_city_level": 1,
+            "confidence_street_level": 1,
+            "match_type": "full_match"
+          },
+          "precision": "street",
+          "status": "approximate",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Avenida Paulo Faccini, Macedo, Distrito-sede de Guarulhos, Guarulhos - SP, 07111-340, Brasil",
+          "latitude": -23.4655858,
+          "longitude": -46.5253356,
+          "components": {
+            "street": "Avenida Paulo Faccini",
+            "number": "",
+            "city": "Guarulhos",
+            "neighborhood": "Macedo",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": false,
+          "result_type": "street",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "5157b66a323e4347c059647b88a1307737c0f00102f9013c6b153300000000c002049203154176656e696461205061756c6f2046616363696e69",
+          "rank": {
+            "importance": 0.05341195162890055,
+            "popularity": 7.471600920738312,
+            "confidence": 1,
+            "confidence_city_level": 1,
+            "confidence_street_level": 1,
+            "match_type": "full_match"
+          },
+          "precision": "street",
+          "status": "approximate",
+          "manual_confirmed": false,
+          "neighborhood_matches": true
+        },
+        {
+          "address": "Avenida Paulo Faccini, Macedo, Distrito-sede de Guarulhos, Guarulhos - SP, 07113-001, Brasil",
+          "latitude": -23.4640878,
+          "longitude": -46.5267244,
+          "components": {
+            "street": "Avenida Paulo Faccini",
+            "number": "",
+            "city": "Guarulhos",
+            "neighborhood": "Macedo",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": false,
+          "result_type": "street",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "51ab0084b46b4347c059fc784375ce7637c0f00102f90165d7222200000000c002049203154176656e696461205061756c6f2046616363696e69",
+          "rank": {
+            "importance": 0.05341195162890055,
+            "popularity": 7.468428485674092,
+            "confidence": 1,
+            "confidence_city_level": 1,
+            "confidence_street_level": 1,
+            "match_type": "full_match"
+          },
+          "precision": "street",
+          "status": "approximate",
+          "manual_confirmed": false,
+          "neighborhood_matches": true
+        }
+      ],
+      "selected": null,
+      "selection_required": true,
+      "provider": null,
+      "status": "conflict",
+      "precision": "street",
+      "approximate": true,
+      "original_address": "Avenida Paulo Faccini, Macedo, Guarulhos, SP",
+      "manual_confirmed": false,
+      "verified_at": 1794584576.1298046,
+      "errors": [],
+      "attribution": "Geoapify | © OpenStreetMap contributors",
+      "schema_version": 2
+    },
+    {
+      "query": "Rua Dom Pedro II, Centro, Guarulhos, SP",
+      "candidates": [
+        {
+          "address": "Rua Dom Pedro II, Centro, Distrito-sede de Guarulhos, Guarulhos - SP, 07012-020, Brasil",
+          "latitude": -23.4701246,
+          "longitude": -46.5294409,
+          "components": {
+            "street": "Rua Dom Pedro II",
+            "number": "",
+            "city": "Guarulhos",
+            "neighborhood": "Centro",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": false,
+          "result_type": "street",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "5118552bb8c44347c0598a0bf6155a7837c0f00102f901b0db6d0200000000c0020492031052756120446f6d20506564726f204949",
+          "rank": {
+            "importance": 0.05341195162890055,
+            "popularity": 8.041443158718087,
+            "confidence": 1,
+            "confidence_city_level": 1,
+            "confidence_street_level": 1,
+            "match_type": "full_match"
+          },
+          "precision": "street",
+          "status": "approximate",
+          "manual_confirmed": false,
+          "neighborhood_matches": true
+        },
+        {
+          "address": "Rua Dom Pedro II, Centro, Distrito-sede de Guarulhos, Guarulhos - SP, 07110-110, Brasil",
+          "latitude": -23.469698,
+          "longitude": -46.527177,
+          "components": {
+            "street": "Rua Dom Pedro II",
+            "number": "",
+            "city": "Guarulhos",
+            "neighborhood": "Centro",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": false,
+          "result_type": "street",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "51091a33897a4347c05922ffcc203e7837c0f00102f9019a77353800000000c0020492031052756120446f6d20506564726f204949",
+          "rank": {
+            "importance": 0.05341195162890055,
+            "popularity": 7.948153740110874,
+            "confidence": 1,
+            "confidence_city_level": 1,
+            "confidence_street_level": 1,
+            "match_type": "full_match"
+          },
+          "precision": "street",
+          "status": "approximate",
+          "manual_confirmed": false,
+          "neighborhood_matches": true
+        },
+        {
+          "address": "Rua Dom Pedro II, Centro, Itaquaquecetuba - SP, 08570-140, Brasil",
+          "latitude": -23.4731171,
+          "longitude": -46.3505221,
+          "components": {
+            "street": "Rua Dom Pedro II",
+            "number": "",
+            "city": "Itaquaquecetuba",
+            "neighborhood": "Centro",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": false,
+          "result_type": "street",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "513b037ee8dd2c47c059a9adc7331e7937c0f00102f9012ea7ca0100000000c0020492031052756120446f6d20506564726f204949",
+          "rank": {
+            "importance": 0.05339523231860834,
+            "popularity": 5.736421805520412,
+            "confidence": 1,
+            "confidence_city_level": 0.3301154854469477,
+            "confidence_street_level": 0.3301154854469477,
+            "match_type": "full_match"
+          },
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": true
+        },
+        {
+          "address": "Rua Dom Pedro II, Centro, Suzano - SP, 08685-000, Brasil",
+          "latitude": -23.530949,
+          "longitude": -46.308434,
+          "components": {
+            "street": "Rua Dom Pedro II",
+            "number": "",
+            "city": "Suzano",
+            "neighborhood": "Centro",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": false,
+          "result_type": "street",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "51bb7cebc37a2747c0590ad80e46ec8737c0f00102f901984f3a0900000000c0020492031052756120446f6d20506564726f204949",
+          "rank": {
+            "importance": 0.053395607690547,
+            "popularity": 5.866440476826587,
+            "confidence": 1,
+            "confidence_city_level": 0.23602049919244666,
+            "confidence_street_level": 0.23602049919244666,
+            "match_type": "full_match"
+          },
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": true
+        }
+      ],
+      "selected": null,
+      "selection_required": true,
+      "provider": null,
+      "status": "conflict",
+      "precision": "street",
+      "approximate": true,
+      "original_address": "Rua Dom Pedro II, Centro, Guarulhos, SP",
+      "manual_confirmed": false,
+      "verified_at": 1794584577.9109585,
+      "errors": [],
+      "attribution": "Geoapify | © OpenStreetMap contributors",
+      "schema_version": 2
+    },
+    {
+      "query": "Viela Projetada 3, Recreio São Jorge, Guarulhos, SP",
+      "candidates": [
+        {
+          "address": "Viela Projetada 3, Guarulhos - Sudeste, 07144-546, Brasil",
+          "latitude": -23.402618,
+          "longitude": -46.517677,
+          "components": {
+            "street": "Viela Projetada",
+            "number": "3",
+            "city": "Guarulhos",
+            "neighborhood": "Guarulhos",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "result_type": "road",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "5119726c3d434247c059ebc726f9116737c0c00203e203466f70656e6164647265737365733a616464726573733a62722f73702f7374617465776964652d6164647265737365732d73746174653a38326536303631313263323161313263",
+          "rank": {
+            "popularity": 4.7485522293988,
+            "confidence": 0.9,
+            "confidence_city_level": 1,
+            "confidence_street_level": 0.9,
+            "match_type": "inner_part"
+          },
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Viela Projetada 40, Guarulhos - Sudeste, 07144-546, Brasil",
+          "latitude": -23.402369,
+          "longitude": -46.517033,
+          "components": {
+            "street": "Viela Projetada",
+            "number": "40",
+            "city": "Guarulhos",
+            "neighborhood": "Guarulhos",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "result_type": "road",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "51f4f928232e4247c0599aec9fa7016737c0c00203e203466f70656e6164647265737365733a616464726573733a62722f73702f7374617465776964652d6164647265737365732d73746174653a64663837336638323830666230626233",
+          "rank": {
+            "popularity": 4.750832417101207,
+            "confidence": 0.9,
+            "confidence_city_level": 1,
+            "confidence_street_level": 0.9,
+            "match_type": "inner_part"
+          },
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Viela Projetada 28, Guarulhos - Sudeste, 07144-546, Brasil",
+          "latitude": -23.402243,
+          "longitude": -46.517078,
+          "components": {
+            "street": "Viela Projetada",
+            "number": "28",
+            "city": "Guarulhos",
+            "neighborhood": "Guarulhos",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "result_type": "road",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "5194bda59c2f4247c059800bb265f96637c0c00203e203466f70656e6164647265737365733a616464726573733a62722f73702f7374617465776964652d6164647265737365732d73746174653a61643166346533313434343635366332",
+          "rank": {
+            "popularity": 4.750832417101207,
+            "confidence": 0.9,
+            "confidence_city_level": 1,
+            "confidence_street_level": 0.9,
+            "match_type": "inner_part"
+          },
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Viela Projetada 17, Guarulhos - Sudeste, 07144-546, Brasil",
+          "latitude": -23.402367,
+          "longitude": -46.517273,
+          "components": {
+            "street": "Viela Projetada",
+            "number": "17",
+            "city": "Guarulhos",
+            "neighborhood": "Guarulhos",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "result_type": "road",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "514a0d6d00364247c05959fd1186016737c0c00203e203466f70656e6164647265737365733a616464726573733a62722f73702f7374617465776964652d6164647265737365732d73746174653a61346361313938303863616262326463",
+          "rank": {
+            "popularity": 4.750832417101207,
+            "confidence": 0.9,
+            "confidence_city_level": 1,
+            "confidence_street_level": 0.9,
+            "match_type": "inner_part"
+          },
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Viela Projetada 19, Guarulhos - Sudeste, 07144-546, Brasil",
+          "latitude": -23.402863,
+          "longitude": -46.517307,
+          "components": {
+            "street": "Viela Projetada",
+            "number": "19",
+            "city": "Guarulhos",
+            "neighborhood": "Guarulhos",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "result_type": "road",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "51f67ea31d374247c059b9c49107226737c0c00203e203466f70656e6164647265737365733a616464726573733a62722f73702f7374617465776964652d6164647265737365732d73746174653a36383365333462333663306437666431",
+          "rank": {
+            "popularity": 5.237273342331297,
+            "confidence": 0.9,
+            "confidence_city_level": 1,
+            "confidence_street_level": 0.9,
+            "match_type": "inner_part"
+          },
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        }
+      ],
+      "selected": null,
+      "selection_required": true,
+      "provider": null,
+      "status": "needs_confirmation",
+      "precision": "unverified",
+      "approximate": true,
+      "original_address": "Viela Projetada 3, Recreio São Jorge, Guarulhos, SP",
+      "manual_confirmed": false,
+      "verified_at": 1794584581.6829896,
+      "errors": [],
+      "attribution": "Geoapify | © OpenStreetMap contributors",
+      "schema_version": 2
+    },
+    {
+      "query": "Rua A, 68, Ponte Alta, Guarulhos, SP",
+      "candidates": [
+        {
+          "address": "Rua A 68, Bonsucesso, Guarulhos - SP, 07170-550, Brasil",
+          "latitude": -23.40181,
+          "longitude": -46.421528,
+          "components": {
+            "street": "Rua A",
+            "number": "68",
+            "city": "Guarulhos",
+            "neighborhood": "Bonsucesso",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "result_type": "building",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "51952c27a1f43547c059ad342905dd6637c0c00203e203466f70656e6164647265737365733a616464726573733a62722f73702f7374617465776964652d6164647265737365732d73746174653a34666637363238353731663065376166",
+          "rank": {
+            "importance": 0.053397476920729346,
+            "popularity": 5.114704749266336,
+            "confidence": 1,
+            "confidence_city_level": 1,
+            "confidence_street_level": 1,
+            "confidence_building_level": 1,
+            "match_type": "full_match"
+          },
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        }
+      ],
+      "selected": null,
+      "selection_required": true,
+      "provider": null,
+      "status": "needs_confirmation",
+      "precision": "unverified",
+      "approximate": true,
+      "original_address": "Rua A, 68, Ponte Alta, Guarulhos, SP",
+      "manual_confirmed": false,
+      "verified_at": 1794584584.0765362,
+      "errors": [],
+      "attribution": "Geoapify | © OpenStreetMap contributors",
+      "schema_version": 2
+    },
+    {
+      "query": "Rua Arthur de Azevedo, 6, Jardim Bela Vista, Guarulhos, SP",
+      "candidates": [
+        {
+          "address": "Rua Arthur De Azevedo 6, Vila Gopoúva, Guarulhos - Sudeste, 07194-190, Brasil",
+          "latitude": -23.441406,
+          "longitude": -46.511879,
+          "components": {
+            "street": "Rua Arthur De Azevedo",
+            "number": "6",
+            "city": "Guarulhos",
+            "neighborhood": "Vila Gopoúva",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "result_type": "building",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "512d414640854147c0591842cefbff7037c0c00203e203466f70656e6164647265737365733a616464726573733a62722f73702f7374617465776964652d6164647265737365732d73746174653a33336139396338633339343533323435",
+          "rank": {
+            "popularity": 6.660051572087538,
+            "confidence": 1,
+            "confidence_city_level": 1,
+            "confidence_street_level": 1,
+            "confidence_building_level": 1,
+            "match_type": "full_match"
+          },
+          "precision": "street",
+          "status": "approximate",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Rua Arthur De Azevedo 6, Vila Gopoúva, Guarulhos - Sudeste, 07194-090, Brasil",
+          "latitude": -23.442225,
+          "longitude": -46.513113,
+          "components": {
+            "street": "Rua Arthur De Azevedo",
+            "number": "6",
+            "city": "Guarulhos",
+            "neighborhood": "Vila Gopoúva",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "result_type": "building",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "518313d1afad4147c0593e7958a8357137c0c00203e203456f70656e6164647265737365733a616464726573733a62722f73702f67756172756c686f732d6164647265737365732d636974793a32623936336339613238663066656637",
+          "rank": {
+            "popularity": 6.633779844211968,
+            "confidence": 1,
+            "confidence_city_level": 1,
+            "confidence_street_level": 1,
+            "confidence_building_level": 1,
+            "match_type": "full_match"
+          },
+          "precision": "street",
+          "status": "approximate",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        }
+      ],
+      "selected": null,
+      "selection_required": true,
+      "provider": null,
+      "status": "approximate",
+      "precision": "street",
+      "approximate": true,
+      "original_address": "Rua Arthur de Azevedo, 6, Jardim Bela Vista, Guarulhos, SP",
+      "manual_confirmed": false,
+      "verified_at": 1794584586.8964357,
+      "errors": [],
+      "attribution": "Geoapify | © OpenStreetMap contributors",
+      "schema_version": 2
+    },
+    {
+      "query": "Rua Palmira D'Oeste, 5, Jardim Betel, Guarulhos, SP",
+      "candidates": [
+        {
+          "address": "Rua Palmira D'Oeste 5, Jacana, Guarulhos - Sudeste, 07083-340, Brasil",
+          "latitude": -23.435209,
+          "longitude": -46.548549,
+          "components": {
+            "street": "Rua Palmira D'Oeste",
+            "number": "5",
+            "city": "Guarulhos",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "result_type": "building",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "5173a087da364647c059c4ec65db696f37c0c00203e203456f70656e6164647265737365733a616464726573733a62722f73702f67756172756c686f732d6164647265737365732d636974793a38653061666433313030303266306632",
+          "rank": {
+            "popularity": 6.323056791426884,
+            "confidence": 0.8,
+            "confidence_city_level": 1,
+            "confidence_street_level": 1,
+            "confidence_building_level": 1,
+            "match_type": "full_match"
+          },
+          "precision": "street",
+          "status": "approximate",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Rua Palmira D'Oeste 4, Jacana, Guarulhos - Sudeste, 07083-340, Brasil",
+          "latitude": -23.435127,
+          "longitude": -46.548582,
+          "components": {
+            "street": "Rua Palmira D'Oeste",
+            "number": "4",
+            "city": "Guarulhos",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "result_type": "building",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "514f965aef374647c0594a9baa7b646f37c0c00203e203456f70656e6164647265737365733a616464726573733a62722f73702f67756172756c686f732d6164647265737365732d636974793a61626436363763383562306664353535",
+          "rank": {
+            "popularity": 6.323056791426884,
+            "confidence": 0.52,
+            "confidence_city_level": 1,
+            "confidence_street_level": 1,
+            "confidence_building_level": 0.65,
+            "match_type": "full_match"
+          },
+          "precision": "street",
+          "status": "approximate",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Rua Palmira D'Oeste 10, Jacana, Guarulhos - Sudeste, 07083-340, Brasil",
+          "latitude": -23.435155,
+          "longitude": -46.548632,
+          "components": {
+            "street": "Rua Palmira D'Oeste",
+            "number": "10",
+            "city": "Guarulhos",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "result_type": "building",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "5100c5c892394647c059deb06d51666f37c0c00203e203456f70656e6164647265737365733a616464726573733a62722f73702f67756172756c686f732d6164647265737365732d636974793a36653531353538326264343033613237",
+          "rank": {
+            "popularity": 6.323056791426884,
+            "confidence": 0.52,
+            "confidence_city_level": 1,
+            "confidence_street_level": 1,
+            "confidence_building_level": 0.65,
+            "match_type": "full_match"
+          },
+          "precision": "street",
+          "status": "approximate",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Rua Palmira D'Oeste 16, Jacana, Guarulhos - Sudeste, 07083-340, Brasil",
+          "latitude": -23.435167,
+          "longitude": -46.548674,
+          "components": {
+            "street": "Rua Palmira D'Oeste",
+            "number": "16",
+            "city": "Guarulhos",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "result_type": "building",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "512f151bf33a4647c059664cc11a676f37c0c00203e203456f70656e6164647265737365733a616464726573733a62722f73702f67756172756c686f732d6164647265737365732d636974793a65363339613666333132663530356234",
+          "rank": {
+            "popularity": 6.323056791426884,
+            "confidence": 0.43636363636363634,
+            "confidence_city_level": 1,
+            "confidence_street_level": 1,
+            "confidence_building_level": 0.5454545454545454,
+            "match_type": "full_match"
+          },
+          "precision": "street",
+          "status": "approximate",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        }
+      ],
+      "selected": null,
+      "selection_required": true,
+      "provider": null,
+      "status": "approximate",
+      "precision": "street",
+      "approximate": true,
+      "original_address": "Rua Palmira D'Oeste, 5, Jardim Betel, Guarulhos, SP",
+      "manual_confirmed": false,
+      "verified_at": 1794584589.5671556,
+      "errors": [],
+      "attribution": "Geoapify | © OpenStreetMap contributors",
+      "schema_version": 2
+    },
+    {
+      "query": "Avenida Josino Vieira de Goes, 275, Jardim Joamar, Guarulhos, SP",
+      "candidates": [
+        {
+          "address": "Guarulhos, SP, Brasil",
+          "latitude": -23.4675941,
+          "longitude": -46.5277704,
+          "components": {
+            "street": "",
+            "number": "",
+            "city": "Guarulhos",
+            "neighborhood": "",
+            "country_code": "br"
+          },
+          "street_found": false,
+          "house_number_found": false,
+          "result_type": "city",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "51ffe5fffa8d4347c059744d373fb47737c0f00101f901b58c040000000000c0020892030947756172756c686f73",
+          "rank": {
+            "importance": 0.5851222374098455,
+            "popularity": 7.788207432250846,
+            "confidence": 0.16000000000000003,
+            "confidence_city_level": 1,
+            "match_type": "full_match"
+          },
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Avenida Josino Vieira De Goes 1307, Jacana, São Paulo - Sudeste, 02319-000, Brasil",
+          "latitude": -23.444731,
+          "longitude": -46.590351,
+          "components": {
+            "street": "Avenida Josino Vieira De Goes",
+            "number": "1307",
+            "city": "São Paulo",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "result_type": "building",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "5198141f9f904b47c05973840ce4d97137c0c00203e203466f70656e6164647265737365733a616464726573733a62722f73702f7374617465776964652d6164647265737365732d73746174653a33653232613661306536646330393339",
+          "rank": {
+            "popularity": 5.838453537414171,
+            "confidence": 0.029991521295697016,
+            "confidence_city_level": 0.44987281943545526,
+            "confidence_street_level": 0.44987281943545526,
+            "confidence_building_level": 0.002615539647880554,
+            "match_type": "full_match"
+          },
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Avenida Josino Vieira De Goes 1301, Jacana, São Paulo - Sudeste, 02319-000, Brasil",
+          "latitude": -23.444729,
+          "longitude": -46.590378,
+          "components": {
+            "street": "Avenida Josino Vieira De Goes",
+            "number": "1301",
+            "city": "São Paulo",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "result_type": "building",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "5192239d81914b47c05931957ec2d97137c0c00203e203466f70656e6164647265737365733a616464726573733a62722f73702f7374617465776964652d6164647265737365732d73746174653a34383530383135373830313731306431",
+          "rank": {
+            "popularity": 5.838453537414171,
+            "confidence": 0.029990076368744,
+            "confidence_city_level": 0.44985114553116,
+            "confidence_street_level": 0.44985114553116,
+            "confidence_building_level": 0.0026307084533985963,
+            "match_type": "full_match"
+          },
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Avenida Josino Vieira De Goes 1215, Jacana, São Paulo - Sudeste, 02319-000, Brasil",
+          "latitude": -23.444977,
+          "longitude": -46.590374,
+          "components": {
+            "street": "Avenida Josino Vieira De Goes",
+            "number": "1215",
+            "city": "São Paulo",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "result_type": "building",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openaddresses",
+            "attribution": "© OpenAddresses contributors",
+            "license": "BSD-3-Clause License"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "5150340f60914b47c059e2783e03ea7137c0c00203e203466f70656e6164647265737365733a616464726573733a62722f73702f7374617465776964652d6164647265737365732d73746174653a65306234356234303839316565376331",
+          "rank": {
+            "popularity": 5.838453537414171,
+            "confidence": 0.02999584036913149,
+            "confidence_city_level": 0.4499376055369723,
+            "confidence_street_level": 0.4499376055369723,
+            "confidence_building_level": 0.0028719421630019506,
+            "match_type": "full_match"
+          },
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        },
+        {
+          "address": "Avenida Josino Vieira de Goes 275, Jacana, São Paulo - Sudeste, 02319-010, Brasil",
+          "latitude": -23.450899,
+          "longitude": -46.597046,
+          "components": {
+            "street": "Avenida Josino Vieira de Goes",
+            "number": "275",
+            "city": "São Paulo",
+            "neighborhood": "Jacana",
+            "country_code": "br"
+          },
+          "street_found": true,
+          "house_number_found": true,
+          "result_type": "building",
+          "provider": "geoapify",
+          "datasource": {
+            "sourcename": "openstreetmap",
+            "attribution": "© OpenStreetMap contributors",
+            "license": "Open Database License",
+            "url": "https://www.openstreetmap.org/copyright"
+          },
+          "attribution": "Geoapify | © OpenStreetMap contributors",
+          "place_id": "51931ada006c4c47c05992ccea1d6e7337c0c00203e203466f70656e6164647265737365733a616464726573733a62722f73702f7374617465776964652d6164647265737365732d73746174653a37643864363435383439663562393564",
+          "rank": {
+            "popularity": 5.86809576373077,
+            "confidence": 0.059503200836002336,
+            "confidence_city_level": 0.44627400627001756,
+            "confidence_street_level": 0.44627400627001756,
+            "confidence_building_level": 0.44627400627001756,
+            "match_type": "full_match"
+          },
+          "precision": "unverified",
+          "status": "needs_confirmation",
+          "manual_confirmed": false,
+          "neighborhood_matches": false
+        }
+      ],
+      "selected": null,
+      "selection_required": true,
+      "provider": null,
+      "status": "needs_confirmation",
+      "precision": "unverified",
+      "approximate": true,
+      "original_address": "Avenida Josino Vieira de Goes, 275, Jardim Joamar, Guarulhos, SP",
+      "manual_confirmed": false,
+      "verified_at": 1794584595.4775388,
+      "errors": [],
+      "attribution": "Geoapify | © OpenStreetMap contributors",
+      "schema_version": 2
+    }
+  ],
+  "route": {
+    "ordered_points": [
+      {
+        "address": "Rua Carinas 76, Taboão, Vila Jardim Santa Inês, Distrito-sede de Guarulhos, Guarulhos - SP, 07140-130, Brasil",
+        "latitude": -23.427929,
+        "longitude": -46.505493,
+        "components": {
+          "street": "Rua Carinas",
+          "number": "76",
+          "city": "Guarulhos",
+          "neighborhood": "Taboão",
+          "country_code": "br"
+        },
+        "street_found": true,
+        "house_number_found": true,
+        "result_type": "building",
+        "provider": "geoapify",
+        "datasource": {
+          "sourcename": "openstreetmap",
+          "attribution": "© OpenStreetMap contributors",
+          "license": "Open Database License",
+          "url": "https://www.openstreetmap.org/copyright"
+        },
+        "attribution": "Geoapify | © OpenStreetMap contributors",
+        "place_id": "51b0ad9ffeb34047c0598e0244c18c6d37c0c00203e203466f70656e6164647265737365733a616464726573733a62722f73702f7374617465776964652d6164647265737365732d73746174653a34313633646463373331646137656235",
+        "rank": {
+          "importance": 0.053397476920729346,
+          "popularity": 6.283121066985729,
+          "confidence": 1,
+          "confidence_city_level": 1,
+          "confidence_street_level": 1,
+          "confidence_building_level": 1,
+          "match_type": "full_match"
+        },
+        "precision": "street",
+        "status": "approximate",
+        "manual_confirmed": false,
+        "neighborhood_matches": false
+      },
+      {
+        "address": "Avenida Paulo Faccini, Maia, Distrito-sede de Guarulhos, Guarulhos - SP, 07115-010, Brasil",
+        "latitude": -23.459983,
+        "longitude": -46.5284556,
+        "components": {
+          "street": "Avenida Paulo Faccini",
+          "number": "",
+          "city": "Guarulhos",
+          "neighborhood": "Maia",
+          "country_code": "br"
+        },
+        "street_found": true,
+        "house_number_found": false,
+        "result_type": "street",
+        "provider": "geoapify",
+        "datasource": {
+          "sourcename": "openstreetmap",
+          "attribution": "© OpenStreetMap contributors",
+          "license": "Open Database License",
+          "url": "https://www.openstreetmap.org/copyright"
+        },
+        "attribution": "Geoapify | © OpenStreetMap contributors",
+        "place_id": "51acb1df6ea44347c0594ab72572c17537c0f00102f901307ac01100000000c002049203154176656e696461205061756c6f2046616363696e69",
+        "rank": {
+          "importance": 0.05341195162890055,
+          "popularity": 7.149875851635314,
+          "confidence": 1,
+          "confidence_city_level": 1,
+          "confidence_street_level": 1,
+          "match_type": "full_match"
+        },
+        "precision": "street",
+        "status": "approximate",
+        "manual_confirmed": false,
+        "neighborhood_matches": false
+      },
+      {
+        "address": "Rua Dom Pedro II, Centro, Distrito-sede de Guarulhos, Guarulhos - SP, 07012-020, Brasil",
+        "latitude": -23.4701246,
+        "longitude": -46.5294409,
+        "components": {
+          "street": "Rua Dom Pedro II",
+          "number": "",
+          "city": "Guarulhos",
+          "neighborhood": "Centro",
+          "country_code": "br"
+        },
+        "street_found": true,
+        "house_number_found": false,
+        "result_type": "street",
+        "provider": "geoapify",
+        "datasource": {
+          "sourcename": "openstreetmap",
+          "attribution": "© OpenStreetMap contributors",
+          "license": "Open Database License",
+          "url": "https://www.openstreetmap.org/copyright"
+        },
+        "attribution": "Geoapify | © OpenStreetMap contributors",
+        "place_id": "5118552bb8c44347c0598a0bf6155a7837c0f00102f901b0db6d0200000000c0020492031052756120446f6d20506564726f204949",
+        "rank": {
+          "importance": 0.05341195162890055,
+          "popularity": 8.041443158718087,
+          "confidence": 1,
+          "confidence_city_level": 1,
+          "confidence_street_level": 1,
+          "match_type": "full_match"
+        },
+        "precision": "street",
+        "status": "approximate",
+        "manual_confirmed": false,
+        "neighborhood_matches": true
+      },
+      {
+        "address": "Rua Carinas 76, Taboão, Vila Jardim Santa Inês, Distrito-sede de Guarulhos, Guarulhos - SP, 07140-130, Brasil",
+        "latitude": -23.427929,
+        "longitude": -46.505493,
+        "components": {
+          "street": "Rua Carinas",
+          "number": "76",
+          "city": "Guarulhos",
+          "neighborhood": "Taboão",
+          "country_code": "br"
+        },
+        "street_found": true,
+        "house_number_found": true,
+        "result_type": "building",
+        "provider": "geoapify",
+        "datasource": {
+          "sourcename": "openstreetmap",
+          "attribution": "© OpenStreetMap contributors",
+          "license": "Open Database License",
+          "url": "https://www.openstreetmap.org/copyright"
+        },
+        "attribution": "Geoapify | © OpenStreetMap contributors",
+        "place_id": "51b0ad9ffeb34047c0598e0244c18c6d37c0c00203e203466f70656e6164647265737365733a616464726573733a62722f73702f7374617465776964652d6164647265737365732d73746174653a34313633646463373331646137656235",
+        "rank": {
+          "importance": 0.053397476920729346,
+          "popularity": 6.283121066985729,
+          "confidence": 1,
+          "confidence_city_level": 1,
+          "confidence_street_level": 1,
+          "confidence_building_level": 1,
+          "match_type": "full_match"
+        },
+        "precision": "street",
+        "status": "approximate",
+        "manual_confirmed": false,
+        "neighborhood_matches": false
+      }
+    ],
+    "optimize_stops": false,
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [
+          -46.50549,
+          -23.427874
+        ],
+        [
+          -46.50548,
+          -23.427874
+        ],
+        [
+          -46.505372,
+          -23.427858
+        ],
+        [
+          -46.505265,
+          -23.427825
+        ],
+        [
+          -46.504932,
+          -23.427702
+        ],
+        [
+          -46.504774,
+          -23.427635
+        ],
+        [
+          -46.504641,
+          -23.427574
+        ],
+        [
+          -46.504545,
+          -23.427516
+        ],
+        [
+          -46.504439,
+          -23.427435
+        ],
+        [
+          -46.50436,
+          -23.427358
+        ],
+        [
+          -46.504312,
+          -23.427566
+        ],
+        [
+          -46.503609,
+          -23.427475
+        ],
+        [
+          -46.502988,
+          -23.427431
+        ],
+        [
+          -46.502909,
+          -23.427778
+        ],
+        [
+          -46.502874,
+          -23.42793
+        ],
+        [
+          -46.502765,
+          -23.428453
+        ],
+        [
+          -46.502704,
+          -23.42877
+        ],
+        [
+          -46.502659,
+          -23.42903
+        ],
+        [
+          -46.50261,
+          -23.429313
+        ],
+        [
+          -46.502506,
+          -23.430025
+        ],
+        [
+          -46.502507,
+          -23.430144
+        ],
+        [
+          -46.502507,
+          -23.430185
+        ],
+        [
+          -46.502515,
+          -23.430291
+        ],
+        [
+          -46.502532,
+          -23.430542
+        ],
+        [
+          -46.502542,
+          -23.430571
+        ],
+        [
+          -46.502578,
+          -23.430676
+        ],
+        [
+          -46.502623,
+          -23.430774
+        ],
+        [
+          -46.50268,
+          -23.430889
+        ],
+        [
+          -46.502972,
+          -23.431327
+        ],
+        [
+          -46.50299,
+          -23.431355
+        ],
+        [
+          -46.50306,
+          -23.43146
+        ],
+        [
+          -46.503122,
+          -23.431564
+        ],
+        [
+          -46.503212,
+          -23.431674
+        ],
+        [
+          -46.503364,
+          -23.431888
+        ],
+        [
+          -46.503412,
+          -23.431955
+        ],
+        [
+          -46.503498,
+          -23.432072
+        ],
+        [
+          -46.503598,
+          -23.432212
+        ],
+        [
+          -46.503745,
+          -23.432398
+        ],
+        [
+          -46.503817,
+          -23.432491
+        ],
+        [
+          -46.504069,
+          -23.43277
+        ],
+        [
+          -46.504121,
+          -23.432826
+        ],
+        [
+          -46.504287,
+          -23.433008
+        ],
+        [
+          -46.504326,
+          -23.433049
+        ],
+        [
+          -46.504554,
+          -23.433351
+        ],
+        [
+          -46.504644,
+          -23.433493
+        ],
+        [
+          -46.504747,
+          -23.433688
+        ],
+        [
+          -46.504836,
+          -23.433882
+        ],
+        [
+          -46.505038,
+          -23.434386
+        ],
+        [
+          -46.505058,
+          -23.434435
+        ],
+        [
+          -46.50512,
+          -23.434595
+        ],
+        [
+          -46.505277,
+          -23.435033
+        ],
+        [
+          -46.505357,
+          -23.435204
+        ],
+        [
+          -46.505524,
+          -23.435494
+        ],
+        [
+          -46.505668,
+          -23.435708
+        ],
+        [
+          -46.505744,
+          -23.435812
+        ],
+        [
+          -46.505805,
+          -23.43589
+        ],
+        [
+          -46.505892,
+          -23.436021
+        ],
+        [
+          -46.5062,
+          -23.436485
+        ],
+        [
+          -46.506261,
+          -23.436578
+        ],
+        [
+          -46.506361,
+          -23.436727
+        ],
+        [
+          -46.506396,
+          -23.436779
+        ],
+        [
+          -46.506633,
+          -23.437134
+        ],
+        [
+          -46.50675,
+          -23.437309
+        ],
+        [
+          -46.506781,
+          -23.437356
+        ],
+        [
+          -46.506813,
+          -23.437403
+        ],
+        [
+          -46.506942,
+          -23.437588
+        ],
+        [
+          -46.507012,
+          -23.437686
+        ],
+        [
+          -46.507139,
+          -23.437863
+        ],
+        [
+          -46.507237,
+          -23.438
+        ],
+        [
+          -46.507539,
+          -23.438423
+        ],
+        [
+          -46.507596,
+          -23.438502
+        ],
+        [
+          -46.507829,
+          -23.43879
+        ],
+        [
+          -46.507902,
+          -23.438868
+        ],
+        [
+          -46.507886,
+          -23.439372
+        ],
+        [
+          -46.50787,
+          -23.439541
+        ],
+        [
+          -46.507861,
+          -23.439649
+        ],
+        [
+          -46.507851,
+          -23.439731
+        ],
+        [
+          -46.507827,
+          -23.439777
+        ],
+        [
+          -46.507821,
+          -23.439878
+        ],
+        [
+          -46.507819,
+          -23.439899
+        ],
+        [
+          -46.507809,
+          -23.440043
+        ],
+        [
+          -46.507799,
+          -23.440201
+        ],
+        [
+          -46.507794,
+          -23.440294
+        ],
+        [
+          -46.507792,
+          -23.440348
+        ],
+        [
+          -46.507788,
+          -23.440436
+        ],
+        [
+          -46.507784,
+          -23.44052
+        ],
+        [
+          -46.507782,
+          -23.440564
+        ],
+        [
+          -46.507768,
+          -23.440824
+        ],
+        [
+          -46.507758,
+          -23.440958
+        ],
+        [
+          -46.50774,
+          -23.441233
+        ],
+        [
+          -46.507719,
+          -23.44147
+        ],
+        [
+          -46.507708,
+          -23.441739
+        ],
+        [
+          -46.507691,
+          -23.442011
+        ],
+        [
+          -46.507671,
+          -23.442788
+        ],
+        [
+          -46.507664,
+          -23.443024
+        ],
+        [
+          -46.507664,
+          -23.443041
+        ],
+        [
+          -46.507662,
+          -23.443237
+        ],
+        [
+          -46.507661,
+          -23.44333
+        ],
+        [
+          -46.507679,
+          -23.443425
+        ],
+        [
+          -46.507726,
+          -23.4437
+        ],
+        [
+          -46.507915,
+          -23.444703
+        ],
+        [
+          -46.507937,
+          -23.444798
+        ],
+        [
+          -46.50804,
+          -23.44531
+        ],
+        [
+          -46.508051,
+          -23.445368
+        ],
+        [
+          -46.508077,
+          -23.445529
+        ],
+        [
+          -46.508161,
+          -23.445922
+        ],
+        [
+          -46.508171,
+          -23.445968
+        ],
+        [
+          -46.508194,
+          -23.446091
+        ],
+        [
+          -46.50821,
+          -23.446145
+        ],
+        [
+          -46.50826,
+          -23.446372
+        ],
+        [
+          -46.508285,
+          -23.446486
+        ],
+        [
+          -46.508335,
+          -23.446715
+        ],
+        [
+          -46.508367,
+          -23.44691
+        ],
+        [
+          -46.508374,
+          -23.446951
+        ],
+        [
+          -46.508434,
+          -23.447309
+        ],
+        [
+          -46.50845,
+          -23.447694
+        ],
+        [
+          -46.508458,
+          -23.447906
+        ],
+        [
+          -46.508467,
+          -23.44814
+        ],
+        [
+          -46.508467,
+          -23.448173
+        ],
+        [
+          -46.508467,
+          -23.448187
+        ],
+        [
+          -46.508463,
+          -23.448318
+        ],
+        [
+          -46.508455,
+          -23.448482
+        ],
+        [
+          -46.50845,
+          -23.448644
+        ],
+        [
+          -46.508442,
+          -23.448909
+        ],
+        [
+          -46.508458,
+          -23.449306
+        ],
+        [
+          -46.508464,
+          -23.449434
+        ],
+        [
+          -46.508485,
+          -23.449961
+        ],
+        [
+          -46.508506,
+          -23.450401
+        ],
+        [
+          -46.508515,
+          -23.450567
+        ],
+        [
+          -46.508525,
+          -23.450748
+        ],
+        [
+          -46.508542,
+          -23.451134
+        ],
+        [
+          -46.508548,
+          -23.451256
+        ],
+        [
+          -46.508553,
+          -23.451377
+        ],
+        [
+          -46.508563,
+          -23.451538
+        ],
+        [
+          -46.50857,
+          -23.451634
+        ],
+        [
+          -46.508586,
+          -23.451891
+        ],
+        [
+          -46.508591,
+          -23.45198
+        ],
+        [
+          -46.508636,
+          -23.452395
+        ],
+        [
+          -46.508719,
+          -23.452779
+        ],
+        [
+          -46.508741,
+          -23.452885
+        ],
+        [
+          -46.508829,
+          -23.452885
+        ],
+        [
+          -46.509142,
+          -23.452882
+        ],
+        [
+          -46.509706,
+          -23.452875
+        ],
+        [
+          -46.509854,
+          -23.452831
+        ],
+        [
+          -46.509946,
+          -23.452781
+        ],
+        [
+          -46.510307,
+          -23.452585
+        ],
+        [
+          -46.511484,
+          -23.451962
+        ],
+        [
+          -46.511614,
+          -23.451895
+        ],
+        [
+          -46.511804,
+          -23.451804
+        ],
+        [
+          -46.512036,
+          -23.451723
+        ],
+        [
+          -46.513022,
+          -23.451389
+        ],
+        [
+          -46.513314,
+          -23.45129
+        ],
+        [
+          -46.513471,
+          -23.451237
+        ],
+        [
+          -46.513558,
+          -23.451208
+        ],
+        [
+          -46.513677,
+          -23.451167
+        ],
+        [
+          -46.513984,
+          -23.451075
+        ],
+        [
+          -46.514096,
+          -23.451046
+        ],
+        [
+          -46.5145,
+          -23.450943
+        ],
+        [
+          -46.514657,
+          -23.450907
+        ],
+        [
+          -46.514729,
+          -23.450897
+        ],
+        [
+          -46.514801,
+          -23.450887
+        ],
+        [
+          -46.514892,
+          -23.450877
+        ],
+        [
+          -46.514992,
+          -23.450874
+        ],
+        [
+          -46.515049,
+          -23.450878
+        ],
+        [
+          -46.515112,
+          -23.45089
+        ],
+        [
+          -46.515217,
+          -23.450923
+        ],
+        [
+          -46.515319,
+          -23.450965
+        ],
+        [
+          -46.515443,
+          -23.45104
+        ],
+        [
+          -46.51562,
+          -23.451193
+        ],
+        [
+          -46.515636,
+          -23.451206
+        ],
+        [
+          -46.515733,
+          -23.451294
+        ],
+        [
+          -46.515819,
+          -23.451369
+        ],
+        [
+          -46.516131,
+          -23.451642
+        ],
+        [
+          -46.516503,
+          -23.451968
+        ],
+        [
+          -46.516945,
+          -23.452348
+        ],
+        [
+          -46.517369,
+          -23.452699
+        ],
+        [
+          -46.517471,
+          -23.452787
+        ],
+        [
+          -46.517473,
+          -23.452789
+        ],
+        [
+          -46.517559,
+          -23.452864
+        ],
+        [
+          -46.517644,
+          -23.452937
+        ],
+        [
+          -46.517673,
+          -23.452962
+        ],
+        [
+          -46.517974,
+          -23.453225
+        ],
+        [
+          -46.518249,
+          -23.45348
+        ],
+        [
+          -46.518401,
+          -23.453622
+        ],
+        [
+          -46.518822,
+          -23.454018
+        ],
+        [
+          -46.519246,
+          -23.454403
+        ],
+        [
+          -46.519731,
+          -23.454809
+        ],
+        [
+          -46.520007,
+          -23.455062
+        ],
+        [
+          -46.520051,
+          -23.455126
+        ],
+        [
+          -46.520084,
+          -23.455187
+        ],
+        [
+          -46.520117,
+          -23.455273
+        ],
+        [
+          -46.520153,
+          -23.455437
+        ],
+        [
+          -46.520127,
+          -23.455704
+        ],
+        [
+          -46.520108,
+          -23.456047
+        ],
+        [
+          -46.520091,
+          -23.456313
+        ],
+        [
+          -46.520093,
+          -23.456483
+        ],
+        [
+          -46.520095,
+          -23.45671
+        ],
+        [
+          -46.520103,
+          -23.456792
+        ],
+        [
+          -46.520122,
+          -23.456878
+        ],
+        [
+          -46.520149,
+          -23.456952
+        ],
+        [
+          -46.520198,
+          -23.45705
+        ],
+        [
+          -46.520247,
+          -23.457136
+        ],
+        [
+          -46.520385,
+          -23.457379
+        ],
+        [
+          -46.520451,
+          -23.457494
+        ],
+        [
+          -46.520664,
+          -23.457846
+        ],
+        [
+          -46.52098,
+          -23.458403
+        ],
+        [
+          -46.521068,
+          -23.458558
+        ],
+        [
+          -46.521274,
+          -23.458817
+        ],
+        [
+          -46.521333,
+          -23.458871
+        ],
+        [
+          -46.52141,
+          -23.458942
+        ],
+        [
+          -46.521569,
+          -23.459093
+        ],
+        [
+          -46.522196,
+          -23.459636
+        ],
+        [
+          -46.522645,
+          -23.460049
+        ],
+        [
+          -46.522972,
+          -23.460374
+        ],
+        [
+          -46.523055,
+          -23.460457
+        ],
+        [
+          -46.523452,
+          -23.460835
+        ],
+        [
+          -46.523892,
+          -23.46127
+        ],
+        [
+          -46.523918,
+          -23.461301
+        ],
+        [
+          -46.523965,
+          -23.461348
+        ],
+        [
+          -46.524081,
+          -23.461462
+        ],
+        [
+          -46.524173,
+          -23.461542
+        ],
+        [
+          -46.524255,
+          -23.461598
+        ],
+        [
+          -46.524372,
+          -23.461668
+        ],
+        [
+          -46.524454,
+          -23.461719
+        ],
+        [
+          -46.524582,
+          -23.461784
+        ],
+        [
+          -46.526722,
+          -23.463017
+        ],
+        [
+          -46.526813,
+          -23.46307
+        ],
+        [
+          -46.526845,
+          -23.463083
+        ],
+        [
+          -46.526862,
+          -23.463087
+        ],
+        [
+          -46.526883,
+          -23.463092
+        ],
+        [
+          -46.526905,
+          -23.463096
+        ],
+        [
+          -46.526926,
+          -23.463097
+        ],
+        [
+          -46.526945,
+          -23.463096
+        ],
+        [
+          -46.526957,
+          -23.463096
+        ],
+        [
+          -46.526965,
+          -23.463096
+        ],
+        [
+          -46.526982,
+          -23.463094
+        ],
+        [
+          -46.527031,
+          -23.463083
+        ],
+        [
+          -46.52709,
+          -23.463044
+        ],
+        [
+          -46.527122,
+          -23.462997
+        ],
+        [
+          -46.527172,
+          -23.462849
+        ],
+        [
+          -46.527198,
+          -23.462774
+        ],
+        [
+          -46.527291,
+          -23.462495
+        ],
+        [
+          -46.527456,
+          -23.462004
+        ],
+        [
+          -46.527474,
+          -23.461947
+        ],
+        [
+          -46.527688,
+          -23.46125
+        ],
+        [
+          -46.527909,
+          -23.460613
+        ],
+        [
+          -46.528091,
+          -23.460238
+        ],
+        [
+          -46.528235,
+          -23.460007
+        ],
+        [
+          -46.528389,
+          -23.459813
+        ],
+        [
+          -46.528792,
+          -23.459392
+        ],
+        [
+          -46.529186,
+          -23.458991
+        ],
+        [
+          -46.529411,
+          -23.458767
+        ],
+        [
+          -46.529573,
+          -23.458599
+        ],
+        [
+          -46.52988,
+          -23.458272
+        ],
+        [
+          -46.529913,
+          -23.458264
+        ],
+        [
+          -46.529944,
+          -23.458263
+        ],
+        [
+          -46.529975,
+          -23.458262
+        ],
+        [
+          -46.530017,
+          -23.458268
+        ],
+        [
+          -46.530066,
+          -23.45828
+        ],
+        [
+          -46.529605,
+          -23.458749
+        ],
+        [
+          -46.529216,
+          -23.459164
+        ],
+        [
+          -46.52881,
+          -23.459586
+        ],
+        [
+          -46.528483,
+          -23.459953
+        ],
+        [
+          -46.528416,
+          -23.460027
+        ],
+        [
+          -46.528224,
+          -23.460287
+        ],
+        [
+          -46.528081,
+          -23.460619
+        ],
+        [
+          -46.528005,
+          -23.460813
+        ],
+        [
+          -46.527875,
+          -23.461192
+        ],
+        [
+          -46.527829,
+          -23.461325
+        ],
+        [
+          -46.52761,
+          -23.461978
+        ],
+        [
+          -46.527589,
+          -23.46204
+        ],
+        [
+          -46.52756,
+          -23.462132
+        ],
+        [
+          -46.52741,
+          -23.462579
+        ],
+        [
+          -46.527332,
+          -23.462839
+        ],
+        [
+          -46.527231,
+          -23.463181
+        ],
+        [
+          -46.527217,
+          -23.463222
+        ],
+        [
+          -46.527196,
+          -23.46328
+        ],
+        [
+          -46.527303,
+          -23.463342
+        ],
+        [
+          -46.527923,
+          -23.463725
+        ],
+        [
+          -46.52807,
+          -23.463817
+        ],
+        [
+          -46.529349,
+          -23.464563
+        ],
+        [
+          -46.529569,
+          -23.464718
+        ],
+        [
+          -46.529938,
+          -23.46501
+        ],
+        [
+          -46.530225,
+          -23.465254
+        ],
+        [
+          -46.530281,
+          -23.465284
+        ],
+        [
+          -46.530519,
+          -23.465304
+        ],
+        [
+          -46.531301,
+          -23.465359
+        ],
+        [
+          -46.531403,
+          -23.465367
+        ],
+        [
+          -46.531496,
+          -23.465376
+        ],
+        [
+          -46.531563,
+          -23.465379
+        ],
+        [
+          -46.531923,
+          -23.465382
+        ],
+        [
+          -46.531949,
+          -23.465461
+        ],
+        [
+          -46.531489,
+          -23.465458
+        ],
+        [
+          -46.531398,
+          -23.465448
+        ],
+        [
+          -46.531388,
+          -23.465551
+        ],
+        [
+          -46.531335,
+          -23.466096
+        ],
+        [
+          -46.531296,
+          -23.466442
+        ],
+        [
+          -46.531263,
+          -23.466991
+        ],
+        [
+          -46.531243,
+          -23.467147
+        ],
+        [
+          -46.531221,
+          -23.467341
+        ],
+        [
+          -46.53121,
+          -23.46742
+        ],
+        [
+          -46.531198,
+          -23.467449
+        ],
+        [
+          -46.531176,
+          -23.467505
+        ],
+        [
+          -46.531103,
+          -23.467685
+        ],
+        [
+          -46.531017,
+          -23.467899
+        ],
+        [
+          -46.530972,
+          -23.468286
+        ],
+        [
+          -46.530837,
+          -23.469243
+        ],
+        [
+          -46.530827,
+          -23.469333
+        ],
+        [
+          -46.530816,
+          -23.469438
+        ],
+        [
+          -46.530733,
+          -23.470072
+        ],
+        [
+          -46.530736,
+          -23.470102
+        ],
+        [
+          -46.530751,
+          -23.470138
+        ],
+        [
+          -46.530796,
+          -23.470217
+        ],
+        [
+          -46.530881,
+          -23.470319
+        ],
+        [
+          -46.530958,
+          -23.470411
+        ],
+        [
+          -46.531161,
+          -23.47062
+        ],
+        [
+          -46.531536,
+          -23.471194
+        ],
+        [
+          -46.531761,
+          -23.471529
+        ],
+        [
+          -46.531761,
+          -23.471564
+        ],
+        [
+          -46.531758,
+          -23.471589
+        ],
+        [
+          -46.531748,
+          -23.471615
+        ],
+        [
+          -46.531733,
+          -23.471631
+        ],
+        [
+          -46.531719,
+          -23.471641
+        ],
+        [
+          -46.531706,
+          -23.471647
+        ],
+        [
+          -46.531691,
+          -23.471652
+        ],
+        [
+          -46.531676,
+          -23.471655
+        ],
+        [
+          -46.531655,
+          -23.471656
+        ],
+        [
+          -46.531633,
+          -23.471656
+        ],
+        [
+          -46.531321,
+          -23.471622
+        ],
+        [
+          -46.531213,
+          -23.471602
+        ],
+        [
+          -46.53111,
+          -23.471572
+        ],
+        [
+          -46.530948,
+          -23.471529
+        ],
+        [
+          -46.530872,
+          -23.471506
+        ],
+        [
+          -46.530826,
+          -23.471482
+        ],
+        [
+          -46.53069,
+          -23.471413
+        ],
+        [
+          -46.530565,
+          -23.471349
+        ],
+        [
+          -46.530418,
+          -23.471267
+        ],
+        [
+          -46.529952,
+          -23.470946
+        ],
+        [
+          -46.529701,
+          -23.470779
+        ],
+        [
+          -46.529562,
+          -23.470765
+        ],
+        [
+          -46.529573,
+          -23.47067
+        ],
+        [
+          -46.529603,
+          -23.47031
+        ],
+        [
+          -46.529573,
+          -23.47067
+        ],
+        [
+          -46.529562,
+          -23.470765
+        ],
+        [
+          -46.529526,
+          -23.471127
+        ],
+        [
+          -46.529523,
+          -23.471281
+        ],
+        [
+          -46.52954,
+          -23.471406
+        ],
+        [
+          -46.529568,
+          -23.471515
+        ],
+        [
+          -46.529778,
+          -23.472053
+        ],
+        [
+          -46.529758,
+          -23.472097
+        ],
+        [
+          -46.529765,
+          -23.472177
+        ],
+        [
+          -46.529756,
+          -23.472224
+        ],
+        [
+          -46.529725,
+          -23.472291
+        ],
+        [
+          -46.529681,
+          -23.472365
+        ],
+        [
+          -46.529555,
+          -23.472499
+        ],
+        [
+          -46.529318,
+          -23.472373
+        ],
+        [
+          -46.528105,
+          -23.471749
+        ],
+        [
+          -46.527985,
+          -23.471688
+        ],
+        [
+          -46.527935,
+          -23.471713
+        ],
+        [
+          -46.527804,
+          -23.471807
+        ],
+        [
+          -46.527436,
+          -23.47203
+        ],
+        [
+          -46.527246,
+          -23.472139
+        ],
+        [
+          -46.527057,
+          -23.472234
+        ],
+        [
+          -46.526833,
+          -23.472331
+        ],
+        [
+          -46.526804,
+          -23.472358
+        ],
+        [
+          -46.526799,
+          -23.472373
+        ],
+        [
+          -46.526794,
+          -23.472406
+        ],
+        [
+          -46.526798,
+          -23.472448
+        ],
+        [
+          -46.526806,
+          -23.472488
+        ],
+        [
+          -46.526921,
+          -23.472501
+        ],
+        [
+          -46.527235,
+          -23.472547
+        ],
+        [
+          -46.527591,
+          -23.472624
+        ],
+        [
+          -46.528001,
+          -23.472723
+        ],
+        [
+          -46.52822,
+          -23.472775
+        ],
+        [
+          -46.528398,
+          -23.472811
+        ],
+        [
+          -46.528603,
+          -23.472859
+        ],
+        [
+          -46.528813,
+          -23.472907
+        ],
+        [
+          -46.528902,
+          -23.472935
+        ],
+        [
+          -46.528927,
+          -23.472947
+        ],
+        [
+          -46.528949,
+          -23.472959
+        ],
+        [
+          -46.528971,
+          -23.472976
+        ],
+        [
+          -46.52899,
+          -23.473014
+        ],
+        [
+          -46.528999,
+          -23.473041
+        ],
+        [
+          -46.529003,
+          -23.473071
+        ],
+        [
+          -46.529003,
+          -23.473107
+        ],
+        [
+          -46.528993,
+          -23.47314
+        ],
+        [
+          -46.528974,
+          -23.473176
+        ],
+        [
+          -46.528947,
+          -23.473209
+        ],
+        [
+          -46.528917,
+          -23.473236
+        ],
+        [
+          -46.528886,
+          -23.473258
+        ],
+        [
+          -46.528797,
+          -23.473243
+        ],
+        [
+          -46.528605,
+          -23.473144
+        ],
+        [
+          -46.528394,
+          -23.473045
+        ],
+        [
+          -46.52833,
+          -23.473016
+        ],
+        [
+          -46.528167,
+          -23.472948
+        ],
+        [
+          -46.527962,
+          -23.472868
+        ],
+        [
+          -46.527754,
+          -23.472807
+        ],
+        [
+          -46.527428,
+          -23.472736
+        ],
+        [
+          -46.527068,
+          -23.472663
+        ],
+        [
+          -46.526899,
+          -23.472638
+        ],
+        [
+          -46.526653,
+          -23.472611
+        ],
+        [
+          -46.526434,
+          -23.472594
+        ],
+        [
+          -46.526273,
+          -23.472587
+        ],
+        [
+          -46.526092,
+          -23.472591
+        ],
+        [
+          -46.526058,
+          -23.472593
+        ],
+        [
+          -46.525878,
+          -23.472602
+        ],
+        [
+          -46.525653,
+          -23.472628
+        ],
+        [
+          -46.52402,
+          -23.472797
+        ],
+        [
+          -46.523312,
+          -23.472868
+        ],
+        [
+          -46.522809,
+          -23.472866
+        ],
+        [
+          -46.522403,
+          -23.472837
+        ],
+        [
+          -46.522021,
+          -23.472788
+        ],
+        [
+          -46.521714,
+          -23.472734
+        ],
+        [
+          -46.52146,
+          -23.47268
+        ],
+        [
+          -46.521118,
+          -23.472526
+        ],
+        [
+          -46.519875,
+          -23.471861
+        ],
+        [
+          -46.51982,
+          -23.471832
+        ],
+        [
+          -46.518922,
+          -23.471364
+        ],
+        [
+          -46.518593,
+          -23.471193
+        ],
+        [
+          -46.518533,
+          -23.471163
+        ],
+        [
+          -46.518052,
+          -23.470945
+        ],
+        [
+          -46.517602,
+          -23.470753
+        ],
+        [
+          -46.51717,
+          -23.47055
+        ],
+        [
+          -46.516705,
+          -23.4703
+        ],
+        [
+          -46.51658,
+          -23.470231
+        ],
+        [
+          -46.514969,
+          -23.469295
+        ],
+        [
+          -46.514856,
+          -23.469231
+        ],
+        [
+          -46.514725,
+          -23.469152
+        ],
+        [
+          -46.514269,
+          -23.468885
+        ],
+        [
+          -46.513768,
+          -23.46862
+        ],
+        [
+          -46.513648,
+          -23.468555
+        ],
+        [
+          -46.513299,
+          -23.468385
+        ],
+        [
+          -46.512979,
+          -23.468272
+        ],
+        [
+          -46.512902,
+          -23.46825
+        ],
+        [
+          -46.512762,
+          -23.468217
+        ],
+        [
+          -46.512493,
+          -23.468163
+        ],
+        [
+          -46.512331,
+          -23.468141
+        ],
+        [
+          -46.512306,
+          -23.468139
+        ],
+        [
+          -46.512221,
+          -23.46817
+        ],
+        [
+          -46.512187,
+          -23.468177
+        ],
+        [
+          -46.51212,
+          -23.468181
+        ],
+        [
+          -46.512032,
+          -23.468181
+        ],
+        [
+          -46.511942,
+          -23.468173
+        ],
+        [
+          -46.511625,
+          -23.468137
+        ],
+        [
+          -46.511578,
+          -23.468126
+        ],
+        [
+          -46.511537,
+          -23.46811
+        ],
+        [
+          -46.511501,
+          -23.468087
+        ],
+        [
+          -46.511465,
+          -23.46805
+        ],
+        [
+          -46.510612,
+          -23.467937
+        ],
+        [
+          -46.510243,
+          -23.467919
+        ],
+        [
+          -46.509011,
+          -23.4678
+        ],
+        [
+          -46.508295,
+          -23.467716
+        ],
+        [
+          -46.507841,
+          -23.467642
+        ],
+        [
+          -46.507444,
+          -23.467539
+        ],
+        [
+          -46.503559,
+          -23.466115
+        ],
+        [
+          -46.503005,
+          -23.465914
+        ],
+        [
+          -46.501762,
+          -23.465462
+        ],
+        [
+          -46.501494,
+          -23.465353
+        ],
+        [
+          -46.501195,
+          -23.4652
+        ],
+        [
+          -46.50102,
+          -23.465096
+        ],
+        [
+          -46.49904,
+          -23.463738
+        ],
+        [
+          -46.498937,
+          -23.463675
+        ],
+        [
+          -46.498801,
+          -23.463596
+        ],
+        [
+          -46.497325,
+          -23.462545
+        ],
+        [
+          -46.497311,
+          -23.462534
+        ],
+        [
+          -46.497091,
+          -23.462407
+        ],
+        [
+          -46.497033,
+          -23.462386
+        ],
+        [
+          -46.496863,
+          -23.462319
+        ],
+        [
+          -46.496809,
+          -23.46226
+        ],
+        [
+          -46.496794,
+          -23.462192
+        ],
+        [
+          -46.496836,
+          -23.462097
+        ],
+        [
+          -46.496997,
+          -23.461732
+        ],
+        [
+          -46.497101,
+          -23.461496
+        ],
+        [
+          -46.497222,
+          -23.461222
+        ],
+        [
+          -46.497296,
+          -23.461053
+        ],
+        [
+          -46.497376,
+          -23.460791
+        ],
+        [
+          -46.497353,
+          -23.460585
+        ],
+        [
+          -46.497223,
+          -23.460411
+        ],
+        [
+          -46.497046,
+          -23.460204
+        ],
+        [
+          -46.496898,
+          -23.460037
+        ],
+        [
+          -46.496799,
+          -23.459937
+        ],
+        [
+          -46.496602,
+          -23.459759
+        ],
+        [
+          -46.496413,
+          -23.459622
+        ],
+        [
+          -46.496064,
+          -23.459456
+        ],
+        [
+          -46.495933,
+          -23.459407
+        ],
+        [
+          -46.495531,
+          -23.459238
+        ],
+        [
+          -46.495265,
+          -23.459129
+        ],
+        [
+          -46.495102,
+          -23.45906
+        ],
+        [
+          -46.49483,
+          -23.458948
+        ],
+        [
+          -46.494616,
+          -23.458868
+        ],
+        [
+          -46.494342,
+          -23.458767
+        ],
+        [
+          -46.494294,
+          -23.458748
+        ],
+        [
+          -46.494127,
+          -23.458681
+        ],
+        [
+          -46.493495,
+          -23.458445
+        ],
+        [
+          -46.493349,
+          -23.458398
+        ],
+        [
+          -46.493197,
+          -23.458355
+        ],
+        [
+          -46.493112,
+          -23.458335
+        ],
+        [
+          -46.493012,
+          -23.458315
+        ],
+        [
+          -46.492928,
+          -23.458344
+        ],
+        [
+          -46.492875,
+          -23.458382
+        ],
+        [
+          -46.492833,
+          -23.458437
+        ],
+        [
+          -46.492802,
+          -23.458493
+        ],
+        [
+          -46.4928,
+          -23.458499
+        ],
+        [
+          -46.492352,
+          -23.459553
+        ],
+        [
+          -46.492288,
+          -23.459637
+        ],
+        [
+          -46.492202,
+          -23.459715
+        ],
+        [
+          -46.492123,
+          -23.459751
+        ],
+        [
+          -46.492013,
+          -23.459754
+        ],
+        [
+          -46.491932,
+          -23.459713
+        ],
+        [
+          -46.491875,
+          -23.45967
+        ],
+        [
+          -46.491829,
+          -23.459601
+        ],
+        [
+          -46.491807,
+          -23.459532
+        ],
+        [
+          -46.491481,
+          -23.457552
+        ],
+        [
+          -46.491457,
+          -23.457413
+        ],
+        [
+          -46.491212,
+          -23.455924
+        ],
+        [
+          -46.491228,
+          -23.45573
+        ],
+        [
+          -46.491242,
+          -23.455545
+        ],
+        [
+          -46.491265,
+          -23.45541
+        ],
+        [
+          -46.491314,
+          -23.455217
+        ],
+        [
+          -46.491439,
+          -23.454541
+        ],
+        [
+          -46.49146,
+          -23.454435
+        ],
+        [
+          -46.491666,
+          -23.45357
+        ],
+        [
+          -46.491715,
+          -23.453453
+        ],
+        [
+          -46.491755,
+          -23.453361
+        ],
+        [
+          -46.491798,
+          -23.453296
+        ],
+        [
+          -46.491905,
+          -23.453139
+        ],
+        [
+          -46.49251,
+          -23.452517
+        ],
+        [
+          -46.4926,
+          -23.45239
+        ],
+        [
+          -46.49268,
+          -23.45227
+        ],
+        [
+          -46.49282,
+          -23.452
+        ],
+        [
+          -46.493662,
+          -23.449889
+        ],
+        [
+          -46.493706,
+          -23.449782
+        ],
+        [
+          -46.49375,
+          -23.44967
+        ],
+        [
+          -46.494247,
+          -23.448455
+        ],
+        [
+          -46.494285,
+          -23.448356
+        ],
+        [
+          -46.494335,
+          -23.448235
+        ],
+        [
+          -46.494512,
+          -23.447805
+        ],
+        [
+          -46.494915,
+          -23.44687
+        ],
+        [
+          -46.495039,
+          -23.446537
+        ],
+        [
+          -46.49528,
+          -23.445925
+        ],
+        [
+          -46.49545,
+          -23.445439
+        ],
+        [
+          -46.495514,
+          -23.44512
+        ],
+        [
+          -46.495621,
+          -23.444628
+        ],
+        [
+          -46.49571,
+          -23.44412
+        ],
+        [
+          -46.495759,
+          -23.443878
+        ],
+        [
+          -46.495848,
+          -23.443593
+        ],
+        [
+          -46.495917,
+          -23.443338
+        ],
+        [
+          -46.495937,
+          -23.443132
+        ],
+        [
+          -46.495893,
+          -23.441667
+        ],
+        [
+          -46.495882,
+          -23.441287
+        ],
+        [
+          -46.495804,
+          -23.439613
+        ],
+        [
+          -46.49578,
+          -23.439458
+        ],
+        [
+          -46.495735,
+          -23.439303
+        ],
+        [
+          -46.495668,
+          -23.439131
+        ],
+        [
+          -46.495464,
+          -23.438629
+        ],
+        [
+          -46.495367,
+          -23.438354
+        ],
+        [
+          -46.495281,
+          -23.438058
+        ],
+        [
+          -46.495099,
+          -23.436985
+        ],
+        [
+          -46.494906,
+          -23.436001
+        ],
+        [
+          -46.494876,
+          -23.435821
+        ],
+        [
+          -46.494681,
+          -23.434633
+        ],
+        [
+          -46.494607,
+          -23.434029
+        ],
+        [
+          -46.494552,
+          -23.433744
+        ],
+        [
+          -46.49455,
+          -23.433573
+        ],
+        [
+          -46.494478,
+          -23.43263
+        ],
+        [
+          -46.494473,
+          -23.432522
+        ],
+        [
+          -46.494406,
+          -23.431315
+        ],
+        [
+          -46.494373,
+          -23.430754
+        ],
+        [
+          -46.494345,
+          -23.430361
+        ],
+        [
+          -46.494331,
+          -23.430179
+        ],
+        [
+          -46.494294,
+          -23.429826
+        ],
+        [
+          -46.494233,
+          -23.429347
+        ],
+        [
+          -46.494193,
+          -23.428958
+        ],
+        [
+          -46.494183,
+          -23.428831
+        ],
+        [
+          -46.494195,
+          -23.42872
+        ],
+        [
+          -46.494221,
+          -23.428625
+        ],
+        [
+          -46.494274,
+          -23.42852
+        ],
+        [
+          -46.494345,
+          -23.428433
+        ],
+        [
+          -46.494491,
+          -23.428297
+        ],
+        [
+          -46.494703,
+          -23.428116
+        ],
+        [
+          -46.494826,
+          -23.427988
+        ],
+        [
+          -46.494933,
+          -23.427859
+        ],
+        [
+          -46.494996,
+          -23.42775
+        ],
+        [
+          -46.495203,
+          -23.427341
+        ],
+        [
+          -46.495293,
+          -23.427211
+        ],
+        [
+          -46.495455,
+          -23.427019
+        ],
+        [
+          -46.495627,
+          -23.426869
+        ],
+        [
+          -46.49576,
+          -23.426778
+        ],
+        [
+          -46.495892,
+          -23.426697
+        ],
+        [
+          -46.495962,
+          -23.42665
+        ],
+        [
+          -46.496028,
+          -23.426594
+        ],
+        [
+          -46.496091,
+          -23.426519
+        ],
+        [
+          -46.496165,
+          -23.426388
+        ],
+        [
+          -46.496161,
+          -23.426324
+        ],
+        [
+          -46.496162,
+          -23.426281
+        ],
+        [
+          -46.496168,
+          -23.426244
+        ],
+        [
+          -46.496211,
+          -23.426192
+        ],
+        [
+          -46.496258,
+          -23.426151
+        ],
+        [
+          -46.496321,
+          -23.426121
+        ],
+        [
+          -46.496361,
+          -23.42611
+        ],
+        [
+          -46.49643,
+          -23.426098
+        ],
+        [
+          -46.496552,
+          -23.426206
+        ],
+        [
+          -46.496624,
+          -23.426278
+        ],
+        [
+          -46.496687,
+          -23.426338
+        ],
+        [
+          -46.496771,
+          -23.426444
+        ],
+        [
+          -46.496881,
+          -23.42658
+        ],
+        [
+          -46.496953,
+          -23.426698
+        ],
+        [
+          -46.497,
+          -23.426771
+        ],
+        [
+          -46.497044,
+          -23.426845
+        ],
+        [
+          -46.497087,
+          -23.42692
+        ],
+        [
+          -46.497235,
+          -23.427177
+        ],
+        [
+          -46.497323,
+          -23.427331
+        ],
+        [
+          -46.497381,
+          -23.427455
+        ],
+        [
+          -46.497511,
+          -23.42758
+        ],
+        [
+          -46.497677,
+          -23.427719
+        ],
+        [
+          -46.497889,
+          -23.427851
+        ],
+        [
+          -46.497984,
+          -23.427905
+        ],
+        [
+          -46.498022,
+          -23.427927
+        ],
+        [
+          -46.498165,
+          -23.42801
+        ],
+        [
+          -46.498518,
+          -23.428208
+        ],
+        [
+          -46.498971,
+          -23.42846
+        ],
+        [
+          -46.499095,
+          -23.428529
+        ],
+        [
+          -46.499155,
+          -23.42856
+        ],
+        [
+          -46.499486,
+          -23.428738
+        ],
+        [
+          -46.499527,
+          -23.42876
+        ],
+        [
+          -46.499734,
+          -23.428869
+        ],
+        [
+          -46.499972,
+          -23.429006
+        ],
+        [
+          -46.500062,
+          -23.429057
+        ],
+        [
+          -46.500167,
+          -23.429122
+        ],
+        [
+          -46.500276,
+          -23.429188
+        ],
+        [
+          -46.500654,
+          -23.429411
+        ],
+        [
+          -46.5009,
+          -23.429543
+        ],
+        [
+          -46.501276,
+          -23.429741
+        ],
+        [
+          -46.501748,
+          -23.429981
+        ],
+        [
+          -46.501867,
+          -23.430025
+        ],
+        [
+          -46.501991,
+          -23.430049
+        ],
+        [
+          -46.502115,
+          -23.430072
+        ],
+        [
+          -46.502225,
+          -23.43009
+        ],
+        [
+          -46.502315,
+          -23.430092
+        ],
+        [
+          -46.50237,
+          -23.43009
+        ],
+        [
+          -46.502404,
+          -23.430083
+        ],
+        [
+          -46.502423,
+          -23.430079
+        ],
+        [
+          -46.502463,
+          -23.430056
+        ],
+        [
+          -46.502506,
+          -23.430025
+        ],
+        [
+          -46.50261,
+          -23.429313
+        ],
+        [
+          -46.502659,
+          -23.42903
+        ],
+        [
+          -46.502704,
+          -23.42877
+        ],
+        [
+          -46.502765,
+          -23.428453
+        ],
+        [
+          -46.502874,
+          -23.42793
+        ],
+        [
+          -46.502909,
+          -23.427778
+        ],
+        [
+          -46.502988,
+          -23.427431
+        ],
+        [
+          -46.503609,
+          -23.427475
+        ],
+        [
+          -46.504312,
+          -23.427566
+        ],
+        [
+          -46.50436,
+          -23.427358
+        ],
+        [
+          -46.504439,
+          -23.427435
+        ],
+        [
+          -46.504545,
+          -23.427516
+        ],
+        [
+          -46.504641,
+          -23.427574
+        ],
+        [
+          -46.504774,
+          -23.427635
+        ],
+        [
+          -46.504932,
+          -23.427702
+        ],
+        [
+          -46.505265,
+          -23.427825
+        ],
+        [
+          -46.505372,
+          -23.427858
+        ],
+        [
+          -46.50548,
+          -23.427874
+        ],
+        [
+          -46.50549,
+          -23.427874
+        ]
+      ]
+    },
+    "distance": 19536,
+    "duration": 1509.487
+  },
+  "matrix": {
+    "code": "Ok",
+    "durations": [
+      [
+        0,
+        551,
+        710
+      ],
+      [
+        735,
+        0,
+        182
+      ],
+      [
+        807,
+        214,
+        0
+      ]
+    ],
+    "distances": [
+      [
+        0,
+        6780,
+        9418
+      ],
+      [
+        12048,
+        0,
+        2043
+      ],
+      [
+        11051,
+        2286,
+        0
+      ]
+    ]
+  }
+}
