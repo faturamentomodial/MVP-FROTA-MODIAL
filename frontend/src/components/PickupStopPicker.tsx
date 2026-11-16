@@ -7,7 +7,7 @@ import type { Point } from '../types/routePlans'
 type Pickup = { id: number; nome: string; endereco: string; ativo: boolean }
 const normalize = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR')
 
-export function PickupStopPicker({ onAdd, disabled }: { onAdd: (point: Point) => void; disabled: boolean }) {
+export function PickupStopPicker({ onSelect, disabled }: { onSelect: (point: Point) => void; disabled: boolean }) {
   const [items, setItems] = useState<Pickup[]>([])
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState<Pickup | null>(null)
@@ -55,6 +55,7 @@ export function PickupStopPicker({ onAdd, disabled }: { onAdd: (point: Point) =>
     <label>Pesquisar coleta pelo nome<input value={query} onChange={e => { setQuery(e.target.value); setSelected(null); setCandidates([]); setLocating(false); setError('') }}/></label>
     <Button variant="secondary" loading={loading} onClick={() => setRefresh(value => value + 1)}>Atualizar coletas</Button>
     {error && <Alert>{error}</Alert>}
+    {disabled && <p role="status">A rota atingiu o limite de 100 paradas. Remova uma parada para adicionar outra coleta.</p>}
     {!loading && query.trim() && !selected && <div>
       <p role="status">{matches.length ? `${matches.length} coleta(s) encontrada(s). Selecione para localizar o endereço.` : 'Nenhuma coleta ativa encontrada com esse nome.'}</p>
       {matches.slice(0, 20).map(item => <Button key={item.id} variant="secondary" disabled={disabled} onClick={() => setSelected(item)}>{item.nome} · {item.endereco}</Button>)}
@@ -63,14 +64,14 @@ export function PickupStopPicker({ onAdd, disabled }: { onAdd: (point: Point) =>
     {selected && <div>
       <p><strong>{selected.nome}</strong> · {selected.endereco}</p>
       {locating && <p role="status">Localizando endereço da coleta…</p>}
-      {candidates.length > 0 && <p>Confira a localização e adicione a coleta à rota.</p>}
+      {candidates.length > 0 && <p>Selecione o endereço e depois informe o volume a retirar.</p>}
       {candidates.map((point, index) => <div key={index}>
         <p>{point.address} ({point.latitude.toFixed(5)}, {point.longitude.toFixed(5)}){point.house_number_found === false && ' — Número não localizado; confira o ponto no mapa.'}</p>
         <Button disabled={disabled || loading} onClick={() => {
           const address = `${selected.nome} · ${selected.endereco}`.slice(0, 500)
-          onAdd({ address, latitude: point.latitude, longitude: point.longitude })
+          onSelect({ address, latitude: point.latitude, longitude: point.longitude })
           setQuery(''); setSelected(null); setCandidates([])
-        }}>Adicionar coleta à rota</Button>
+        }}>Selecionar endereço da coleta</Button>
       </div>)}
     </div>}
   </div>
