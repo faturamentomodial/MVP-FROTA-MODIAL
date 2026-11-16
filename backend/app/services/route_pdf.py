@@ -16,7 +16,6 @@ def sheet_rows(data, pickups):
     stops = data.get('stops') or [
         {**point, 'invoices': []} for point in data.get('addresses', [])
     ] or [{**n['destination'], 'invoices': [n['number']]} for n in data.get('invoices', [])]
-    notes = {n['number']: n for n in data.get('invoices', [])}
     rows = []
     for index, stop in enumerate(stops, 1):
         address = stop['address']
@@ -25,11 +24,10 @@ def sheet_rows(data, pickups):
         if not matches:
             matches = [p for p in pickups if address == p.endereco]
         pickup = matches[0] if len(matches) == 1 else None
-        volumes = sum(notes[number]['volumes'] for number in stop.get('invoices', []) if number in notes)
         rows.append([str(index), pickup.nome if pickup else '', pickup.telefone if pickup else '',
                      pickup.endereco if pickup else address,
                      PRODUCTS.get(pickup.tipo, '') if pickup else '',
-                     stop.get('pickup_volume') or (str(volumes) if volumes else ''), '', ''])
+                     '', ''])
     return rows
 
 
@@ -42,11 +40,11 @@ def render_sheet(data, pickups, driver='', vehicle='', date=''):
     heading = ParagraphStyle('heading', parent=style, fontName='Helvetica-Bold', alignment=1)
     def cell(value, header=False):
         return Paragraph(escape(str(value)).replace('\n', '<br/>'), heading if header else style)
-    headers = ['Nº', 'Nome', 'Telefone', 'Endereço', 'Produto', 'Volumes',
+    headers = ['Nº', 'Nome', 'Telefone', 'Endereço', 'Produto',
                'Volumes para deixar', 'Volumes recolhidos']
     rows = sheet_rows(data, pickups)
     table = Table([[cell(h, True) for h in headers]] + [[cell(v) for v in row] for row in rows],
-                  colWidths=[26, 120, 80, width-36-26-120-80-85-48-75-75, 85, 48, 75, 75],
+                  colWidths=[26, 120, 80, width-36-26-120-80-85-75-75, 85, 75, 75],
                   minRowHeights=[36] + [26]*len(rows), repeatRows=1)
     table.setStyle(TableStyle([
         ('GRID', (0, 0), (-1, -1), .5, colors.black),

@@ -68,12 +68,12 @@ def test_rows_keep_stop_order_and_blank_manual_columns():
                       {'address': 'Rua A', 'invoices': []}],
             'invoices': [{'number': '1', 'volumes': 3}, {'number': '2', 'volumes': 4}]}
     rows = sheet_rows(data, pickups)
-    assert rows[0] == ['1', '', '', 'Rua desconhecida', '', '7', '', '']
+    assert rows[0] == ['1', '', '', 'Rua desconhecida', '', '', '']
     assert rows[1][1:5] == ['Ana', '111', 'Rua A', 'Florista']
     assert rows[2][1:3] == ['', '']  # Never guess between contacts at the same address.
     assert all(row[-2:] == ['', ''] for row in rows)
     data['stops'][1]['pickup_volume'] = '10 caixas e 2 paletes'
-    assert sheet_rows(data, pickups)[1][5] == '10 caixas e 2 paletes'
+    assert sheet_rows(data, pickups)[1][5:] == ['', '']
 
 
 def test_long_route_repeats_headers_without_losing_stops():
