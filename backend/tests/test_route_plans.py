@@ -321,3 +321,31 @@ def test_hundred_invoices_planning_limit_and_calculation(client, admin_headers, 
         too_many = {**request_body, 'invoices': body['invoices'] + [
             {**body['invoices'][0], 'number': '101'}]}
         assert client.post(f'/api/{endpoint}', json=too_many, headers=admin_headers).status_code == 422
+
+
+def test_cancel_confirmation_reopens_plan(client, admin_headers, driver_headers):
+    from conftest import assigned_plan
+    plan_id = assigned_plan()
+    url = f'/api/route-plans/{plan_id}'
+    cancel = url + '/cancel-confirmation'
+    assert client.post(cancel, headers=driver_headers, json={'revision': 0}).status_code == 403
+    assert client.post(cancel, headers=admin_headers, json={'revision': 1}).status_code == 409
+    result = client.post(cancel, headers=admin_headers, json={'revision': 0})
+    assert result.status_code == 200, result.text
+    assert result.json()['status'] == 'RASCUNHO'
+    assert result.json()['revision'] == 1
+    assert client.get('/api/trips/planned', headers=driver_headers).json() == []
+    assert client.post('/api/trips', headers=driver_headers, json={'vehicle_id': 1, 'km_inicial': 1000, 'route_plan_id': plan_id}).status_code == 409
+    assert client.post(cancel, headers=admin_headers, json={'revision': 1}).status_code == 409
+    assert client.get(url + '/versions', headers=admin_headers).json()[-1]['data']['status'] == 'RASCUNHO'
+    assert client.put(url, headers=admin_headers, json={**payload(), 'revision': 1}).status_code == 200
+
+
+def test_cancel_confirmation_rejects_started_trip(client, admin_headers, driver_headers):
+    from conftest import assigned_plan
+    plan_id = assigned_plan()
+    result = client.post('/api/trips', headers=driver_headers, json={'vehicle_id': 1, 'km_inicial': 1000, 'route_plan_id': plan_id})
+    assert result.status_code == 201, result.text
+    url = f'/api/route-plans/{plan_id}'
+    assert client.post(url + '/cancel-confirmation', headers=admin_headers, json={'revision': 0}).status_code == 409
+    assert client.get(url, headers=admin_headers).json()['status'] == 'CONFIRMADO'

@@ -190,3 +190,24 @@ def confirm(plan_id: int, payload: RevisionInput, db: Session = Depends(get_db),
     if not plan.data.get('result'):
         raise HTTPException(422, 'Calcule o percurso antes de confirmar')
     return save(db, plan, payload.revision, plan.data, user, 'CONFIRMADO')
+
+
+@router.post('/{plan_id}/cancel-confirmation', dependencies=[Depends(require_admin)])
+def cancel_confirmation(plan_id: int, payload: RevisionInput, db: Session = Depends(get_db), user=Depends(require_admin)):
+    from app.services.route_scheduling import is_execution_plan
+    plan = load(db, plan_id)
+    if is_execution_plan(db, plan_id):
+        raise HTTPException(409, 'Use a programação semanal para cancelar esta execução')
+    claimed = db.execute(update(RoutePlan).where(
+        RoutePlan.id == plan_id, RoutePlan.revision == payload.revision,
+        RoutePlan.status == 'CONFIRMADO', RoutePlan.data['trip_id'].as_integer().is_(None),
+    ).values(status='RASCUNHO', revision=payload.revision+1), execution_options={'synchronize_session': False})
+    if claimed.rowcount != 1:
+        db.rollback()
+        raise HTTPException(409, 'Planejamento alterado ou saída já iniciada. Recarregue antes de cancelar a confirmação.')
+    db.add(RoutePlanVersion(plan_id=plan_id, revision=payload.revision+1,
+                           data={'status': 'RASCUNHO', **deepcopy(plan.data)}, created_by=user.id))
+    audit(db, user, 'CANCELAR_CONFIRMACAO', 'ROUTE_PLAN', plan_id)
+    db.commit()
+    db.refresh(plan)
+    return output(plan)
